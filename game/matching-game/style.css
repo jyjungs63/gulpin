@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #eee;
+    color: #111;
+    /* 배경 이미지 경로 설정 */
+    background-image: url('../../assets/game/matching-game/game_backgrd.jpg');
+
+    /* 배경 이미지를 꽉 채우도록 설정 */
+    background-size: cover;
+
+    /* 배경 이미지를 고정시키거나 스크롤에 따라 이동시킬 수 있음 */
+    background-attachment: fixed;
+
+    /* 배경 색상을 설정할 수도 있음 (이미지 로딩 중이거나 설정한 이미지가 로딩되지 않았을 때 보여짐) */
+    background-color: #f0f0f0;
+
+    /* 배경 이미지를 가운데 정렬할 수도 있음 */
+    background-position: center;
+
+    /* 다양한 설정을 적용할 수 있음 */
+    /* 예를 들면, background-repeat: no-repeat; 는 배경 이미지를 반복하지 않도록 설정 */
+}
+
+
+#game {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* background-color: rgb(255, 239, 66, 0.7); */
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+    box-shadow: 0 25px 50px rgb(33 33 33 / 25%);
+    /* background: linear-gradient(135deg, #6f00fc 0%, #fc7900 50%, #fcc700 100%); */
+    transition: transform .6s cubic-bezier(0.4, 0.0, 0.2, 1);
+    backface-visibility: hidden;
+    /* background-color: transparent; */
+}
+
+.score {
+    font-family: monospace;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.25rem;
+    margin: 1rem;
+    position: relative;
+    transition: opacity 0.2s;
+}
+
+#play-again-btn {
+    position: absolute;
+    top: -0.5rem;
+    left: 50%;
+    margin-left: -50px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #aa3f5f;
+    border: 5px double #fff;
+    border-radius: 14px;
+    padding: 8px 10px;
+    outline: none;
+    letter-spacing: .05em;
+    cursor: pointer;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s, background-color 0.2s;
+}
+
+#play-again-btn:hover {
+    background-color: #333;
+}
+
+#play-again-btn:active {
+    background-color: #555;
+}
+
+#play-again-btn.play-again-btn-entrance {
+    opacity: 1;
+    transform: translateX(6rem);
+}
+
+.draggable-items {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 1rem 1.5rem 1rem;
+    transition: opacity 0.5s;
+}
+
+.draggable {
+    height: 8rem;
+    width: 8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 0rem 0.5rem;
+    cursor: move;
+    transition: opacity 0.2s;
+}
+
+.draggable:hover {
+    opacity: 0.5;
+}
+
+.matching-pairs {
+    transition: opacity 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 300px;
+    margin: 0rem 0.5rem;
+}
+
+.matching-pair {
+    height: 8rem;
+    width: 8rem;
+    margin: 0rem 0.5rem;
+    /* margin: 1rem auto; */
+    /* justify-content: space-between; */
+}
+
+.matching-pair span {
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    user-select: none;
+}
+
+.label {
+    width: 15rem;
+    font-size: 2rem;
+}
+
+.droppable {
+    width: 8rem;
+    display: flex;
+    font-size: 1.5rem;
+    background-color: #fff;
+    border: 1.5px dashed #111;
+    transition: 0.2s;
+    margin-bottom: -50px;
+}
+
+.droppable-hover {
+    background-color: #bee3f0;
+    transform: scale(1.1);
+}
+
+.dropped {
+    border-style: solid;
+}
+
+.dragged {
+    user-select: none;
+    opacity: 0.1;
+    cursor: default;
+}
+
+.draggable.dragged:hover {
+    opacity: 0.1;
+}
+
+@media screen and (max-width: 600px) {
+    html {
+        font-size: 14px;
+    }
+
+    .draggable {
+        height: 4rem;
+        width: 4rem;
+    }
+
+    .matching-pair {
+        height: 4rem;
+        width: 4rem;
+        font-size: 1.2rem;
+        margin: 0rem 0.5rem;
+    }
+
+    .droppable {
+        width: 4rem;
+        display: flex;
+        font-size: 1.2rem;
+        background-color: #fff;
+        border: 1.5px dashed #111;
+        transition: 0.2s;
+        margin: 0rem 0.5rem;
+    }
+
+    #play-again-btn {
+        top: -0.4rem;
+    }
+
+    #play-again-btn.play-again-btn-entrance {
+        transform: translateX(7rem);
+    }
+}

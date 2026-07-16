@@ -1,0 +1,630 @@
+/* ========================================
+   폰트 설정
+======================================== */
+@font-face {
+    font-family: "TypoDodam";
+    src: url("fonts/Typo_DodamB.ttf") format("truetype");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "TypoDodam";
+    src: url("fonts/Typo_DodamM.ttf") format("truetype");
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "TypoDodam";
+    src: url("fonts/Typo_DodamL.ttf") format("truetype");
+    font-weight: 300;
+}
+
+/* ========================================
+   기본 스타일 초기화
+======================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "TypoDodam", Arial, sans-serif;
+    background-color: #f0f0f0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ========================================
+   도구 모음 (Toolbar)
+======================================== */
+.toolbar {
+    display: flex;
+    padding: 12px 15px;
+    background: linear-gradient(to right, #333, #444);
+    color: white;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid #555;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.toolbar-group:last-child {
+    border-right: none;
+}
+
+/* ========================================
+   버튼 스타일
+======================================== */
+.toolbar button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toolbar button:hover {
+    background-color: #666;
+    transform: translateY(-1px);
+}
+
+.toolbar button:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.toolbar button.active {
+    background-color: #7c3aed;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3);
+}
+
+/* 특정 버튼 색상 */
+#pen-tool {
+    background-color: #6366f1;
+}
+
+#eraser-tool {
+    background-color: #64748b;
+}
+
+#clear-canvas {
+    background-color: #ef4444;
+}
+
+#remove-blur-button {
+    background-color: #8b5cf6;
+}
+
+#fullscreen-button {
+    background-color: #059669;
+}
+
+.button-icon {
+    font-size: 14px;
+    margin-right: 3px;
+}
+
+/* ========================================
+   색상 선택기
+======================================== */
+.color-picker-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.color-picker {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   크기 슬라이더
+======================================== */
+.size-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.size-slider {
+    width: 100px;
+    height: 6px;
+    border-radius: 3px;
+    background: #777;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.size-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #7c3aed;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.size-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #7c3aed;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   오디오 플레이어
+======================================== */
+.audio-player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    transition: opacity 0.3s;
+}
+
+.audio-player.disabled {
+    opacity: 0.35;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.play-button {
+    width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background-color: #7c3aed !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.time-display {
+    font-size: 14px;
+    color: #f0f0f0;
+    min-width: 90px;
+    text-align: center;
+}
+
+.progress-container {
+    position: relative;
+    height: 6px;
+    background-color: #555;
+    border-radius: 3px;
+    width: 120px;
+    cursor: pointer;
+}
+
+.progress-bar {
+    position: absolute;
+    height: 100%;
+    background-color: #7c3aed;
+    border-radius: 3px;
+    width: 50%;
+}
+
+.progress-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.volume-button {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 5px !important;
+}
+
+/* ========================================
+   페이지 네비게이션
+======================================== */
+.page-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.page-navigation input {
+    width: 50px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.page-navigation button {
+    padding: 5px 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.page-navigation button:hover {
+    background-color: #45a049;
+}
+
+/* ========================================
+   책 컨테이너
+======================================== */
+.book-container {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#flipbook {
+    width: 90%;
+    height: 100%;
+    position: relative;
+}
+
+/* ========================================
+   페이지 스타일
+======================================== */
+.page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: visible !important;
+}
+
+/* 페이지 그림자 효과 */
+.page.left::after,
+.page.right::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.page.left::after {
+    right: 0;
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.03),
+        rgba(0, 0, 0, 0.25)
+    ) !important;
+}
+
+.page.right::after {
+    left: 0;
+    background: linear-gradient(
+        to left,
+        rgba(0, 0, 0, 0.03),
+        rgba(0, 0, 0, 0.25)
+    ) !important;
+}
+
+.page img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 블러 효과 */
+.page img.blurred {
+    filter: blur(8px);
+    transition: filter 0.3s ease;
+    cursor: pointer;
+}
+
+.page img.blurred:hover {
+    filter: blur(0);
+}
+
+/* ========================================
+   그리기 캔버스
+======================================== */
+.drawing-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    touch-action: none;
+}
+
+/* ========================================
+   네비게이션 버튼
+======================================== */
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 20;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.prev-button {
+    left: 20px;
+}
+
+.next-button {
+    right: 20px;
+}
+
+/* ========================================
+   페이지 인디케이터
+======================================== */
+.page-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    z-index: 20;
+}
+
+/* ========================================
+   동영상 링크 버튼
+======================================== */
+.video-link-button {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: #e91e63;
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+}
+
+.video-link-button:hover {
+    background-color: #c2185b;
+}
+
+/* ========================================
+   화면 회전 안내
+======================================== */
+.rotation-notice {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #2d4b4d;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 20px;
+}
+
+/* ========================================
+   전체 화면 모드
+======================================== */
+:fullscreen {
+    background-color: #000;
+}
+
+:fullscreen .toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+:fullscreen .book-container {
+    height: calc(100% - 60px);
+}
+
+/* ========================================
+   유틸리티 클래스
+======================================== */
+.center-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ========================================
+   모바일 반응형 - 세로 모드
+======================================== */
+@media screen and (max-width: 920px) and (orientation: portrait) {
+    .rotation-notice {
+        display: flex;
+    }
+    
+    .book-container,
+    .toolbar {
+        display: none;
+    }
+}
+
+/* ========================================
+   모바일 반응형 - 가로 모드
+======================================== */
+@media (max-width: 1024px) and (orientation: landscape) {
+    body {
+        flex-direction: column;
+    }
+    
+    #fullscreen-button {
+        visibility: hidden;
+    }
+    
+    .toolbar {
+        padding: 2px 6px;
+        gap: 3px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: flex-start;
+    }
+    
+    .page.left::after,
+    .page.right::after {
+        width: 10px;
+    }
+    
+    .toolbar-group {
+        flex-shrink: 0;
+        padding: 2px 4px;
+        gap: 4px;
+        margin-bottom: 0;
+    }
+    
+    .toolbar button {
+        padding: 5px 4px;
+        font-size: 11px;
+    }
+    
+    .size-slider-container {
+        flex-direction: row;
+    }
+    
+    .size-slider {
+        width: 40px;
+    }
+    
+    .audio-player {
+        flex-wrap: nowrap;
+        width: auto;
+        padding: 3px 8px;
+    }
+    
+    .progress-container {
+        width: 60px;
+    }
+    
+    .time-display {
+        font-size: 12px;
+        min-width: 70px;
+    }
+    
+    .book-container {
+        height: calc(65vh - 50px);
+        padding: 3px;
+    }
+    
+    #flipbook {
+        width: 80vw;
+        height: 40vh;
+        max-width: 100%;
+        max-height: calc(85vh - 60px);
+        margin-top: -35px;
+    }
+    
+    .page {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+    }
+    
+    .page img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .drawing-canvas {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .nav-button {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .prev-button {
+        left: 5px;
+    }
+    
+    .next-button {
+        right: 5px;
+    }
+    
+    .page-indicator {
+        bottom: 10px;
+        padding: 3px 10px;
+        font-size: 12px;
+    }
+    
+    .video-link-button {
+        padding: 4px 6px;
+        font-size: 12px;
+    }
+}

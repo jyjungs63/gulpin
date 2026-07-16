@@ -1,0 +1,309 @@
+        :root {
+            --kg-bg: #f3f6fb;
+            --kg-panel: #ffffff;
+            --kg-line: #d9e2ef;
+            --kg-text: #1f2937;
+            --kg-muted: #6b7280;
+            --kg-primary: #2563eb;
+        }
+
+        body.kgarden-page {
+            background: var(--kg-bg) !important;
+            color: var(--kg-text);
+        }
+
+        .kgarden-shell {
+            max-width: 1560px;
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        .kgarden-heading {
+            margin-bottom: 14px;
+        }
+
+        .kgarden-heading h5 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .kgarden-heading .breadcrumb {
+            margin-bottom: 0;
+            background: transparent;
+            font-size: 14px;
+            justify-content: flex-end;
+        }
+
+        .kgarden-card {
+            border: 1px solid var(--kg-line);
+            border-radius: 16px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            background: var(--kg-panel);
+            margin-bottom: 18px;
+        }
+
+        .kgarden-toolbar {
+            background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%) !important;
+            border-bottom: 1px solid var(--kg-line);
+            padding: 18px;
+        }
+
+        .kgarden-body {
+            background: var(--kg-panel) !important;
+            padding: 18px;
+        }
+
+        .kgarden-form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: end;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .kgarden-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 100px;
+        }
+
+        .kgarden-field-wide {
+            min-width: 260px;
+            flex: 1;
+        }
+
+        .kgarden-field label {
+            margin: 0;
+            color: var(--kg-muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .kgarden-field input,
+        .kgarden-field select {
+            width: 100%;
+            height: 38px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 7px 8px;
+            font-size: 13px;
+            background-color: #fff;
+        }
+
+        .kgarden-btn {
+            height: 38px;
+            border-radius: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .kgarden-tabs {
+            display: flex;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .kgarden-tabs .nav-link {
+            border: 1px solid var(--kg-line);
+            border-radius: 10px;
+            color: var(--kg-text);
+            font-weight: 700;
+            padding: 8px 14px;
+        }
+
+        .kgarden-tabs .nav-link.active {
+            background: var(--kg-primary);
+            border-color: var(--kg-primary);
+            color: #fff;
+        }
+
+        .kgarden-section-title {
+            margin: 16px 0 10px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .kgarden-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .kgarden-table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--kg-line);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .kgarden-table-wrap .tabulator {
+            border: 0;
+            font-size: 14px;
+        }
+
+        .kgarden-table-wrap .tabulator-header,
+        .kgarden-table-wrap .tabulator-col {
+            background: #f8fafc;
+        }
+
+        #pdfDiv {
+            width: 100%;
+            height: 900px;
+            border: 0;
+        }
+
+        #porTable {
+            width: 100%;
+            border: 1px solid black;
+            background: #fff;
+        }
+
+        #porTable th {
+            height: 50px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        th.col1 {
+            width: 10%;
+        }
+
+        th.col2 {
+            width: 305;
+        }
+
+        th.col3 {
+            width: 15%;
+        }
+
+        th.col4 {
+            width: 35%;
+        }
+
+        th.col5 {
+            width: 10%;
+        }
+
+        .nb {
+            border: none;
+            /* Remove borders from table cells */
+
+            text-align: center;
+        }
+
+        #monthPicker, #monthPickerEnd {
+            width: 100px !important;
+        }
+
+        #idOrderForm {
+            flex-wrap: nowrap;
+        }
+
+        #idOrderForm .kgarden-field {
+            min-width: 0;
+            flex: 1 1 0;
+        }
+
+        #idOrderForm .kgarden-field select,
+        #idOrderForm .kgarden-field input {
+            width: 100%;
+        }
+
+        #idOrderForm .kgarden-btn {
+            flex: 0 0 auto;
+        }
+
+        @media (max-width: 767px) {
+            .kgarden-shell {
+                padding: 8px;
+            }
+
+            .kgarden-heading .row {
+                gap: 8px;
+            }
+
+            .kgarden-heading h5 {
+                font-size: 17px;
+            }
+
+            .kgarden-heading .breadcrumb {
+                float: none !important;
+                justify-content: flex-end;
+            }
+
+            .kgarden-toolbar,
+            .kgarden-body {
+                padding: 10px;
+            }
+
+            .kgarden-card {
+                border-radius: 10px;
+            }
+
+            .kgarden-field,
+            .kgarden-field-wide {
+                width: 100%;
+                min-width: 0;
+            }
+
+            #idOrderForm {
+                flex-wrap: wrap;
+            }
+
+            #idOrderForm .kgarden-field {
+                flex: 1 1 calc(50% - 10px);
+                min-width: 0;
+            }
+
+            #idOrderForm .kgarden-field select,
+            #idOrderForm .kgarden-field input {
+                width: 100%;
+                min-width: 0;
+            }
+
+            #idOrderForm #idCbmOrderSearch,
+            #idOrderForm #idYearFilter,
+            #idOrderForm #idPorList,
+            #idOrderForm #idPorBranch,
+            #idOrderForm #idParcel,
+            #idOrderForm #idInvoieNo,
+            #idOrderForm #idRefund,
+            #idOrderForm #idOrderStatus {
+                width: 100%;
+            }
+
+            #idOrderForm .kgarden-btn {
+                flex: 1 1 calc(50% - 10px);
+                font-size: 13px;
+            }
+
+            #monthPicker, #monthPickerEnd {
+                width: 100% !important;
+            }
+
+            .kgarden-tabs .nav-link {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+
+            .kgarden-section-title {
+                font-size: 14px;
+            }
+
+            #pdfDiv {
+                height: 500px;
+            }
+        }

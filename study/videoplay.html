@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChaitalkKid Secure Video</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+  <script src="../js/common.js"></script>
+  <!-- <script src="videoplay.js"></script> -->
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: black;
+    }
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .play-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 40px;
+      font-size: 18px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.7);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .repeat-control {
+      position: absolute;
+      top: calc(50% + 75px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 5px;
+      z-index: 10;
+      font-size: 14px;
+    }
+    .repeat-control select {
+      width: 72px;
+      padding: 6px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 4px;
+      color: #111827;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+
+  <video id="fullscreenVideo"
+         muted
+         playsinline
+         controls
+         controlsList="nodownload"
+         oncontextmenu="return false">
+    Your browser does not support the video tag.
+  </video>
+
+  <button class="play-button" id="playButton">Play with Sound</button>
+  <label class="repeat-control" id="repeatControl">
+    반복
+    <select id="repeatCount">
+      <option value="1" selected>1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="10">10</option>
+    </select>
+    회
+  </label>
+
+  <script>
+    const video = document.getElementById('fullscreenVideo');
+    const playButton = document.getElementById('playButton');
+    const repeatControl = document.getElementById('repeatControl');
+    const repeatCountInput = document.getElementById('repeatCount');
+    let maxPlayCount = getRepeatCount();
+    let playCount = 1;
+    if (!repeatCountInput.querySelector(`option[value="${maxPlayCount}"]`)) {
+      repeatCountInput.add(new Option(maxPlayCount, maxPlayCount));
+    }
+    repeatCountInput.value = maxPlayCount;
+    if (getUser() == "" || getUser() == undefined)
+        window.location.href = "../index.php";
+
+    // 🎯 영상 소스 추출 (sessionStorage 우선, URL 파라미터 fallback)
+    function getVideoSourceFromURL() {
+      const version = new Date().getTime();
+      const src = sessionStorage.getItem('videoSrc')
+                  || new URLSearchParams(window.location.search).get('src');
+      sessionStorage.removeItem('videoSrc');
+      return src //+ `?v=${version}`;
+    }
+
+    function getRepeatCount() {
+      const value = sessionStorage.getItem('videoRepeat')
+                    || new URLSearchParams(window.location.search).get('repeat')
+                    || '1';
+      sessionStorage.removeItem('videoRepeat');
+
+      const count = parseInt(value, 10);
+      return Number.isFinite(count) && count > 0 ? count : 1;
+    }
+
+    // 🔊 버튼 클릭 시 음소거 해제 및 전체화면 재생
+    playButton.addEventListener('click', () => {
+      maxPlayCount = getRepeatCountFromInput();
+      playCount = 1;
+      video.muted = false;
+      video.play();
+      playButton.style.display = 'none';
+      repeatControl.style.display = 'none';
+      goFullScreen();
+    });
+
+    repeatCountInput.addEventListener('change', () => {
+      maxPlayCount = getRepeatCountFromInput();
+    });
+
+    // 자동 재생 (mute 상태)
+    document.addEventListener("DOMContentLoaded", () => {
+      const videoSrc = "https://www.chaitalkkid.co.kr/assets/img/online_study_room/" + getVideoSourceFromURL();  // https://www.chaitalkkid.co.kr/assets/img/online_study_room/
+      if (videoSrc) {
+        video.src = videoSrc;
+        video.play().catch(err => {
+          console.warn("자동 재생 실패 (사용자 상호작용 필요):", err);
+        });
+      } else {
+        console.error("URL 파라미터에서 비디오 소스를 찾을 수 없습니다.");
+      }
+    });
+
+    // 클릭 시 재생/일시정지
+    video.addEventListener("click", () => {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+
+    video.addEventListener("ended", () => {
+      if (playCount >= maxPlayCount) return;
+
+      playCount += 1;
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    });
+
+    function getRepeatCountFromInput() {
+      const count = parseInt(repeatCountInput.value, 10);
+      return Number.isFinite(count) && count > 0 ? count : 1;
+    }
+
+    // 전체화면 진입
+    function goFullScreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen(); // Safari
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen(); // IE11
+      }
+    }
+
+    // 기본 다운로드 방지
+    video.addEventListener("contextmenu", e => e.preventDefault());
+
+    // 키보드 재생/일시정지 및 탐색
+    document.addEventListener("keydown", (e) => {
+      if (['INPUT', 'TEXTAREA', 'VIDEO'].includes(e.target.tagName)) return;
+      if (e.key === " " || e.key === "k") {
+        e.preventDefault();
+        if (video.paused) { video.play(); } else { video.pause(); }
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        video.currentTime = Math.min(video.currentTime + 5, video.duration);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        video.currentTime = Math.max(video.currentTime - 5, 0);
+      }
+    });
+
+    // 20초 시청 기록 ─ 실제 재생 누적 시간 기준
+    (function() {
+        const uid      = sessionStorage.getItem('videoUid');
+        const step     = sessionStorage.getItem('videoStep');
+        const vvol     = sessionStorage.getItem('videoVol');
+        const uid_user = sessionStorage.getItem('record');
+        sessionStorage.removeItem('videoUid');
+        sessionStorage.removeItem('videoStep');
+        sessionStorage.removeItem('videoVol');
+        sessionStorage.removeItem('videoUser');
+        if (!uid || !uid_user) return;
+
+        let playedMs = 0, lastTs = null, recorded = false;
+
+        video.addEventListener('play',  () => { lastTs = Date.now(); });
+        video.addEventListener('pause', () => {
+            if (lastTs) { playedMs += Date.now() - lastTs; lastTs = null; }
+        });
+        video.addEventListener('timeupdate', () => {
+            if (recorded || !lastTs) return;
+            const total = playedMs + (Date.now() - lastTs);
+            if (total >= 20000) {
+                recorded = true;
+                fetch('api.php?mode=record', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: uid_user, step: step, volume: vvol, uid: uid })
+                }).catch(() => {});
+            }
+        });
+    })();
+
+    // F12, Ctrl+U 등 개발자 도구 접근 차단
+    // document.addEventListener("keydown", (e) => {
+    //   if (
+    //     e.key === "F12" ||
+    //     (e.ctrlKey && ["u", "s", "p"].includes(e.key.toLowerCase()))
+    //   ) {
+    //     e.preventDefault();
+    //   }
+    // });
+
+    // 콘솔 접근 차단 (기초적인 보호)
+    Object.defineProperty(window, "console", {
+      get: function () {
+        throw new Error("개발자 도구 접근이 차단되었습니다.");
+      }
+    });
+  </script>
+</body>
+</html>
