@@ -124,40 +124,6 @@
     <script src="book-config.js"></script> -->
 
     <!-- 1. 먼저 book-config 로드 from DB -->
-    <script>
-        (function restoreEbookParameters() {
-            const url = new URL(window.location.href);
-            const storedValue = sessionStorage.getItem('ebookBook');
-
-            // 기존 URL 방식이 전달된 경우 해당 book을 기준값으로 유지한다.
-            if (url.searchParams.has('book')) {
-                sessionStorage.setItem('ebookBook', url.searchParams.get('book'));
-                return;
-            }
-
-            if (!storedValue) return;
-
-            // assignbook()은 "?book=...&pdf=..." 형태를 저장할 수 있고,
-            // 이전 호출부는 book 값만 저장할 수도 있으므로 두 형식을 모두 지원한다.
-            if (storedValue.startsWith('?') || storedValue.includes('=')) {
-                const storedParams = new URLSearchParams(storedValue.replace(/^\?/, ''));
-
-                storedParams.forEach(function(value, key) {
-                    if (!url.searchParams.has(key)) {
-                        url.searchParams.set(key, value);
-                    }
-                });
-            } else {
-                url.searchParams.set('book', storedValue);
-            }
-
-            const book = url.searchParams.get('book');
-            if (book) {
-                sessionStorage.setItem('ebookBook', book);
-                history.replaceState(null, '', url.pathname + url.search + url.hash);
-            }
-        })();
-    </script>
     <script src="book-config.php"></script>
 
 

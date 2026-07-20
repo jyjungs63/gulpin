@@ -28,6 +28,8 @@ header("Expires: 0"); // Proxies
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <title>지사 및 원관리</title>
+    <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/role-nav.js" defer></script>
     <style>
         .gp-visitor-strip{background:#1f5233; color:#eafff0; font-size:.78rem; padding:6px 20px; display:flex; justify-content:flex-end; align-items:center; gap:10px;}
         .gp-visitor-strip .pill{background:rgba(255,255,255,.15); border-radius:999px; padding:3px 12px; font-weight:700;}
@@ -273,21 +275,7 @@ header("Expires: 0"); // Proxies
 </head>
 
 <body class="kgarden-page">
-
-    <div class="gp-visitor-strip">
-        <img class="gp-strip-logo" src="https://www.chaitalkkid.co.kr/gulpin/portal_image/gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-        <span class="pill">글핀</span><span id="gpWelcome">방문자님 환영합니다</span>
-    </div>
-    <header class="gp-site-header">
-        <a class="gp-home-link" href="../welcome.php">🏠 Home</a>
-        <button class="gp-burger" onclick="document.getElementById('gpMainNav').classList.toggle('open')">☰</button>
-        <nav class="gp-main-nav" id="gpMainNav">
-            <a href="../welcome.php">글핀이란?</a>
-            <a href="../welcome.php">글핀 중국어</a>
-            <a href="../welcome.php">상담·신청</a>
-            <a href="../welcome.php">글핀 가맹점 모집</a>
-        </nav>
-    </header>
+    <header id="roleNav"></header>
 
     <div class="kgarden-shell">
         <section class="kgarden-heading">

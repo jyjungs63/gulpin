@@ -54,13 +54,15 @@ function execDaumPostcode(zip = "idZip", addrs = "idAddr") {
 }
 
 function getServerUrl() {
-  const host = window.location.host;
+  const commonScript = Array.from(document.scripts).find((script) =>
+    /\/js\/common\.js(?:[?#]|$)/.test(script.src)
+  );
 
-  if (host.includes("chaitalkkid")) return "https://chaitalkkid.co.kr/Server/";
-  // if (host.includes("chaitalkkid")) return "https://chaitalkkid.co.kr/Server/";
-  if (host.includes("eplat")) return "https://eplat.co.kr/Server/";
+  if (commonScript) {
+    return new URL("../Server/", commonScript.src).href;
+  }
 
-  return `${window.location.protocol}//${host}/Server/`;
+  return new URL("/Server/", window.location.origin).href;
 }
 
 function getServerDbType() {

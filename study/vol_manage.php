@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>사용자 통합 관리 - 필터 기능 추가</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/role-nav.js" defer></script>
     <style>
         :root {
             --primary: #4a90e2;
@@ -20,12 +22,13 @@
             font-family: 'Noto Sans KR', sans-serif;
             background: var(--bg);
             min-height: 100vh;
-            padding: 30px 20px;
+            padding: 0;
         }
 
         .page-wrapper {
             max-width: 1100px;
             margin: 0 auto;
+            padding: 30px 20px;
             display: flex;
             flex-direction: column;
             gap: 28px;
@@ -404,6 +407,7 @@
     </style>
 </head>
 <body>
+<header id="roleNav"></header>
 
 <div class="page-wrapper">
 

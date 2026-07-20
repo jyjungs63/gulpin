@@ -6,260 +6,7 @@
 <title>글핀 | 초등 문해력 골든타임 완성 학습 프로그램</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --green-900:#1f5233;
-    --green-700:#2e7d46;
-    --green-600:#3da35d;
-    --green-100:#e3f3e6;
-    --cream:#ffffff;
-    --muted:#7c8577;
-    --cyan:#4fc3e8;
-    --orange:#f2994a;
-    --radius:18px;
-    --shadow: 0 10px 30px rgba(31,82,51,.14);
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{font-family:'Noto Sans KR', sans-serif; color:#26301f; background:var(--cream); line-height:1.5; overflow-x:hidden;}
-  a{text-decoration:none;color:inherit;}
-  button{font-family:inherit;cursor:pointer;border:none;background:none;}
-
-  /* fallback tile shown only if a real image 404s */
-  .imgbox{position:relative; width:100%; height:100%; overflow:hidden;}
-  .imgbox img{display:block; width:100%; height:100%; object-fit:cover;}
-  .imgbox .fallback{display:none; position:absolute; inset:0; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--green-100),#fdf1da); color:var(--muted); font-size:.78rem; font-weight:700; text-align:center; padding:10px; flex-direction:column; gap:6px;}
-  .imgbox img.err{display:none;}
-  .imgbox img.err + .fallback{display:flex;}
-
-  .page{display:none;}
-  .page.active{display:block; animation:fadeIn .35s ease;}
-  #page-gp.active{display:flex; flex-direction:column; min-height:100vh; animation:fadeIn .35s ease;}
-  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
-
-  .visitor-strip{background:var(--green-900); color:#eafff0; font-size:.78rem; padding:6px 20px; display:flex; align-items:center; gap:10px;}
-  .visitor-strip .strip-logo{height:24px; display:block; margin-right:auto;filter: brightness(0) invert(1) grayscale(100%) contrast(90%);}
-  .visitor-strip .pill{background:rgba(255,255,255,.15); border-radius:999px; padding:3px 12px; font-weight:700;}
-  .home-link{display:flex; align-items:center; gap:6px; color:#fff; font-weight:700; font-size:.95rem; cursor:pointer; text-decoration:none;}
-  .home-link:hover{opacity:.85;}
-  .back-icon-link{position:relative; width:40px; height:40px; justify-content:center; border-radius:50%; font-size:1.45rem;}
-  .back-icon-link::after{content:attr(data-tooltip); position:absolute; top:calc(100% + 9px); left:0; width:max-content; max-width:220px; padding:7px 11px; border-radius:8px; background:rgba(31,45,36,.94); color:#fff; font-size:.76rem; font-weight:700; opacity:0; visibility:hidden; transform:translateY(-4px); transition:opacity .18s ease,transform .18s ease,visibility .18s ease; pointer-events:none; z-index:80;}
-  .back-icon-link:hover::after,.back-icon-link:focus-visible::after{opacity:1; visibility:visible; transform:translateY(0);}
-
-  header.site-header{background:linear-gradient(180deg,var(--green-600),var(--green-700)); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 4px 18px rgba(0,0,0,.08);}
-  .logo-img{height:34px; display:block;}
-  .logo-fallback{color:#fff; font-family:'Jua'; font-size:1.4rem; display:none;}
-  nav.main-nav{display:flex; gap:28px; align-items:center;}
-  nav.main-nav button{color:rgba(255,255,255,.55); font-weight:700; font-size:.95rem; transition:color .2s ease;}
-  nav.main-nav button.on{color:#fff;}
-  .header-simple{background:#fff; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee;}
-  .header-simple[hidden]{display:none;}
-  .header-simple nav{display:flex; gap:16px; font-weight:700; color:#8a9184; font-size:.82rem; flex-wrap:wrap;}
-  .header-simple nav a{cursor:pointer;}
-  .site-header .header-simple{margin-left:auto; padding:0; border:0; background:transparent;}
-  .site-header .header-simple nav{gap:28px; font-size:.95rem;}
-  .site-header .header-simple nav a{color:rgba(255,255,255,.7);}
-  .site-header .header-simple nav a:last-child{color:#fff !important;}
-  nav.main-nav[hidden]{display:none;}
-  .burger{display:none; color:#fff; font-size:1.5rem;}
-
-  @media(max-width:840px){
-    nav.main-nav{position:fixed; top:0; right:-100%; height:100%; width:70%; max-width:300px; background:var(--green-700); flex-direction:column; padding:90px 30px; gap:26px; transition:right .3s ease; z-index:60;}
-    nav.main-nav.open{right:0;}
-    .burger{display:block;}
-    header.site-header{padding:12px 16px;}
-  }
-
-  .carousel-wrap{position:relative; padding:34px 60px 10px; background:var(--cream); max-width:80%; margin:0 auto;}
-  .carousel-viewport{overflow:hidden; border-radius:var(--radius);}
-  .carousel-track{display:flex; gap:18px; transition:transform .5s cubic-bezier(.4,0,.2,1);}
-  .slide{flex:0 0 calc((100% - 36px)/3); border-radius:var(--radius); overflow:hidden; aspect-ratio:1/1; cursor:pointer; box-shadow:var(--shadow); transition:transform .25s ease;}
-  .slide:hover{transform:translateY(-4px);}
-  .car-arrow{position:absolute; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%; background:#fff; box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:var(--green-700); z-index:5;}
-  .car-arrow.prev{left:14px;} .car-arrow.next{right:14px;}
-  .car-arrow:disabled{opacity:.3; cursor:default;}
-  .car-controls{display:flex; align-items:center; justify-content:center; gap:12px; margin-top:16px;}
-  .dot{font-weight:700; font-size:.85rem; color:var(--muted); padding:4px 10px; border-radius:999px;}
-  .dot.on{background:var(--green-600); color:#fff;}
-  .play-toggle{width:30px;height:30px;border-radius:50%; background:#fff; box-shadow:var(--shadow); display:flex;align-items:center;justify-content:center; font-size:.8rem; color:var(--green-700);}
-
-  .icon-row{display:flex; justify-content:center; flex-wrap:wrap; gap:30px; padding:38px 20px 50px;}
-  .icon-btn{display:flex; flex-direction:column; align-items:center; gap:8px; width:100px;}
-  .icon-box{width:74px;height:74px;border-radius:18px; overflow:hidden; transition:transform .2s ease; display:block;}
-  .icon-btn.on .icon-box{transform:translateY(-3px); box-shadow:0 6px 16px rgba(61,163,93,.3);}
-  .icon-btn span{font-size:.8rem; font-weight:700; color:var(--muted); text-align:center;}
-  .icon-btn.on span{color:var(--green-700);}
-
-  .review-showcase{padding:8px 0 54px; overflow:hidden; background:linear-gradient(180deg,#fff 0%,#f7fbf7 100%);}
-  .review-heading{text-align:center; padding:0 20px 22px;}
-  .review-eyebrow{margin:0 0 5px; color:var(--green-600); font-size:.78rem; font-weight:800;}
-  .review-heading h2{margin:0; font-family:'Jua'; font-size:1.65rem; color:#26301f;}
-  .review-heading h2 span{color:var(--green-600);}
-  .review-heading p:last-child{margin:7px 0 0; color:var(--muted); font-size:.82rem;}
-  .review-viewport{width:100%; overflow:hidden; padding:24px 0 30px; touch-action:pan-y;}
-  .review-track{display:flex; align-items:center; gap:14px; transition:transform .65s cubic-bezier(.22,.61,.36,1); will-change:transform;}
-  .review-card{flex:0 0 76vw; max-width:360px; min-height:245px; padding:14px; border:1px solid #e2e9e0; border-radius:16px; background:#fff; box-shadow:0 6px 20px rgba(31,82,51,.08); opacity:.52; transform:scale(.9); transition:opacity .45s ease,transform .45s ease,box-shadow .45s ease; display:flex; flex-direction:column; overflow:hidden;}
-  .review-card.active{opacity:1; transform:scale(1.06); border-color:var(--green-600); box-shadow:0 16px 34px rgba(31,82,51,.19);}
-  .review-stars{color:#f2a93b; letter-spacing:2px; font-size:.85rem;}
-  .review-image{width:calc(100% + 28px); height:150px; margin:-14px -14px 14px; object-fit:cover; background:var(--green-100);}
-  .review-card h3{margin:11px 0 8px; font-size:1.02rem; color:#26301f;}
-  .review-card p{margin:0 0 18px; color:#5f685a; font-size:.84rem; line-height:1.65;}
-  .review-meta{margin-top:auto; padding-top:12px; border-top:1px solid #eef1ed; display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:.74rem; font-weight:700;}
-  .review-controls{display:flex; justify-content:center; align-items:center; gap:12px;}
-  .review-arrow{width:44px; height:44px; border-radius:50%; background:#fff; color:var(--green-700); box-shadow:var(--shadow); font-size:1.1rem;}
-  .review-status{min-width:52px; text-align:center; color:var(--muted); font-size:.78rem; font-weight:700;}
-  .review-empty{text-align:center; width:100%; color:var(--muted); padding:30px 20px;}
-
-  @media(min-width:640px){
-    .review-showcase{padding-bottom:64px;}
-    .review-heading h2{font-size:2rem;}
-    .review-track{gap:20px;}
-    .review-card{flex-basis:320px; min-height:260px; padding:18px;}
-    .review-image{width:calc(100% + 36px); height:165px; margin:-18px -18px 16px;}
-  }
-
-  .kakao-btn{position:absolute; right:60px; bottom:-26px; z-index:20; width:58px; border-radius:50%; box-shadow:0 8px 24px rgba(0,0,0,.18); overflow:hidden;}
-  .kakao-btn img{width:100%; display:block;}
-  .talk-fab{position:fixed; right:20px; bottom:20px; z-index:60; width:64px; border-radius:50%; box-shadow:0 8px 24px rgba(0,0,0,.22); overflow:hidden;}
-  .talk-fab img{width:100%; display:block;}
-
-  .banner-hero{margin:24px; border-radius:22px; overflow:hidden; box-shadow:var(--shadow);}
-  .banner-hero img{width:100%; display:block;}
-  .video-learning-menu{margin:0 24px 32px; padding:26px; border-radius:22px; background:#fff8dc; box-shadow:var(--shadow); text-align:center;}
-  .video-learning-menu h3{margin:0 0 16px; font-family:'Jua'; font-size:1.35rem; color:var(--green-900);}
-  .learning-levels,.learning-units{display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap;}
-  .learning-level-btn{min-width:120px; padding:11px 20px; border-radius:999px; background:#fff; color:#777; box-shadow:0 4px 12px rgba(0,0,0,.12); font-weight:800;}
-  .learning-unit-btn{width:44px; height:44px; border-radius:50%; background:#fff; color:#888; box-shadow:0 4px 12px rgba(0,0,0,.12); font-weight:800;}
-  .learning-level-btn.active,.learning-unit-btn.active{background:#188441; color:#fff;}
-  .learning-course-grid{display:grid; grid-template-columns:repeat(4,minmax(180px,1fr)); gap:20px; max-width:1200px; margin:24px auto 0;}
-  .learning-course-card{padding:18px; border-radius:26px; background:#fff; box-shadow:0 6px 16px rgba(0,0,0,.18);}
-  .learning-course-title{padding:10px; margin-bottom:14px; border-radius:999px; background:#60bf4c; color:#fff; font-weight:900;}
-  .learning-course-title.level-2{background:#f2a916;}
-  .learning-action-btn{display:block; width:100%; margin-top:10px; padding:11px 14px; border-radius:999px; background:#fff; color:#555; box-shadow:0 2px 7px rgba(0,0,0,.13); font-weight:700;}
-  .learning-action-btn:hover{background:#f4f8f3; transform:scale(1.02);}
-  .learning-video{display:none; max-width:900px; margin:24px auto 0; padding:16px; border-radius:20px; background:#fff; box-shadow:var(--shadow);}
-  .learning-video.active{display:block;}
-  .learning-video-header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:12px;}
-  .learning-video-title{margin:0; font-weight:800; color:var(--green-900);}
-  .learning-video-close{flex:0 0 36px; width:36px; height:36px; border-radius:50%; background:#eef4ed; color:var(--green-900); font-size:1.3rem; font-weight:900; line-height:1;}
-  .learning-video-close:hover{background:var(--green-600); color:#fff;}
-  .learning-video video{display:block; width:100%; border-radius:14px; background:#000;}
-  .embedded-learning-hero{height:auto !important; min-height:760px; padding:260px 5% 36px; background-size:cover; background-position:center top; background-repeat:no-repeat;}
-  .embedded-learning-hero .video-learning-menu{width:100%; margin:0; background:transparent; box-shadow:none; backdrop-filter:none; transform:translateY(50px);}
-  @media(max-width:900px){.learning-course-grid{grid-template-columns:repeat(2,minmax(150px,1fr));}}
-  @media(max-width:520px){.video-learning-menu{margin:0 12px 24px;padding:18px 12px}.learning-course-grid{grid-template-columns:1fr}.learning-level-btn{min-width:90px}.embedded-learning-hero{min-height:680px;padding:170px 3% 24px}.embedded-learning-hero .video-learning-menu{margin:0}}
-  .back-btn{display:inline-flex; align-items:center; gap:6px; margin:20px 24px 0; font-weight:800; color:var(--green-700); font-size:.95rem;}
-
-  .gp-hero{margin:0 24px 16px; border-radius:24px; overflow:hidden; box-shadow:var(--shadow);}
-  .gp-hero-full{margin:0 0 16px; width:100%; border-radius:0; box-shadow:none;}
-  .gp-hero-full .imgbox{background:var(--cream);}
-  .gp-hero-full .imgbox img{object-fit:contain;}
-  .steps{display:flex; flex-wrap:wrap; background:#fff; border-radius:18px; box-shadow:var(--shadow); overflow:hidden; margin:0 24px 16px;}
-  .step{flex:1 1 200px; padding:20px 18px; border-right:1px solid #f0f0eb; cursor:pointer; transition:background .2s ease;}
-  .step:last-child{border-right:none;}
-  .step:hover{background:var(--green-100);}
-  .step .num{color:var(--green-600); font-weight:900; font-size:.78rem;}
-  .step h4{margin:6px 0; font-size:1rem;}
-  .step p{margin:0; font-size:.76rem; color:var(--muted);}
-  .gp-pillbar{margin:auto 24px 24px; background:#fdf6e3; border-radius:999px; box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center; gap:14px; padding:12px 24px; flex-wrap:wrap;}
-  .gp-pillbar .logo-img{height:28px;}
-  .pill-link{background:var(--green-600); color:#fff; font-weight:700; font-size:.85rem; padding:9px 18px; border-radius:999px;}
-  .pill-link:hover{background:var(--green-700);}
-
-  .mj-hero{margin:0; overflow:hidden;}
-  .mj-online-box img{width:100%; height:90%;}
-  .mj-tabs{display:flex; justify-content:center; gap:16px; margin:-30px 0 20px; position:relative; z-index:5; flex-wrap:wrap;}
-  .mj-tab-btn{width:180px; border-radius:999px; overflow:hidden; box-shadow:var(--shadow); opacity:.7; transition:all .2s ease; border:3px solid transparent;}
-  .mj-tab-btn.on{opacity:1; transform:translateY(-2px);}
-  .mj-tab-btn[data-t="0"].on{border-color:var(--cyan);}
-  .mj-tab-btn[data-t="1"].on{border-color:var(--green-600);}
-  .mj-tab-btn[data-t="2"].on{border-color:var(--orange);}
-  .mj-header{background:linear-gradient(180deg,var(--green-600),var(--green-700)); padding:14px 28px; display:flex; align-items:center; justify-content:space-between;}
-  .mj-header-nav{display:flex; gap:22px; font-weight:700; color:#eafff0; font-size:.9rem;}
-  .mj-header-nav a{cursor:pointer;}
-
-  .class-photo{margin:24px 24px 0; border-radius:22px; overflow:hidden; box-shadow:var(--shadow); background:var(--cream);}
-  .class-body{padding:24px 28px 8px; text-align:center;}
-  .class-title{font-family:'Jua'; font-size:1.6rem; color:#26301f; margin:0 0 10px;}
-  .class-title span{color:var(--green-600);}
-  .class-sub{color:var(--muted); font-size:.92rem; line-height:1.6; margin:0 0 22px;}
-  .class-features{display:flex; justify-content:center; flex-wrap:wrap; gap:22px; max-width:760px; margin:0 auto;}
-  .feature{display:flex; flex-direction:column; align-items:center; gap:8px; width:140px;}
-  .f-icon{font-size:1.8rem; width:56px; height:56px; border-radius:50%; background:var(--green-100); display:flex; align-items:center; justify-content:center;}
-
-  .class-wrap{max-width:70%; margin:0 auto; padding:0 12px 40px;}
-  @media(max-width:640px){ .class-wrap{max-width:94%;} }
-  .cls-section{margin:44px 0 0;}
-  .cls-h2{font-family:'Jua'; font-size:1.25rem; color:#26301f; text-align:center; margin:0 0 6px;}
-  .cls-h2 span{color:var(--green-600);}
-  .cls-h2-sub{text-align:center; color:var(--muted); font-size:.85rem; margin:0 0 22px;}
-
-  .cls-process{display:flex; flex-wrap:wrap; justify-content:center; gap:18px;}
-  .cls-process-step{flex:1 1 180px; max-width:220px; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:22px 16px; text-align:center; position:relative;}
-  .cls-process-step .cls-step-num{width:30px; height:30px; border-radius:50%; background:var(--green-600); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:.85rem;}
-  .cls-process-step h4{margin:0 0 6px; font-size:.98rem; color:#26301f;}
-  .cls-process-step p{margin:0; font-size:.8rem; color:var(--muted); line-height:1.5;}
-  .cls-arrow{align-self:center; color:var(--green-600); font-size:1.4rem; font-weight:700;}
-
-  .cls-schedule{width:100%; border-collapse:collapse; background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);}
-  .cls-schedule th, .cls-schedule td{padding:12px 10px; text-align:center; font-size:.85rem; border-bottom:1px solid #f0f0eb;}
-  .cls-schedule th{background:var(--green-600); color:#fff; font-weight:700;}
-  .cls-schedule tr:last-child td{border-bottom:none;}
-  .cls-schedule td:first-child{font-weight:700; color:#26301f; background:#fbf8ef;}
-
-  .cls-level-cards{display:flex; flex-wrap:wrap; gap:16px; justify-content:center;}
-  .cls-level-card{flex:1 1 220px; max-width:260px; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; border-top:6px solid var(--green-600);}
-  .cls-level-card h4{margin:0 0 8px; font-size:1rem; color:#26301f;}
-  .cls-level-card p{margin:0; font-size:.82rem; color:var(--muted); line-height:1.6;}
-
-  .cls-teacher-cards{display:flex; flex-wrap:wrap; gap:18px; justify-content:center;}
-  .cls-teacher-card{flex:1 1 180px; max-width:200px; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:22px 14px; text-align:center;}
-  .cls-teacher-avatar{width:64px; height:64px; border-radius:50%; background:var(--green-100); display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 10px;}
-  .cls-teacher-card h4{margin:0 0 4px; font-size:.95rem; color:#26301f;}
-  .cls-teacher-card p{margin:0; font-size:.78rem; color:var(--muted);}
-
-  .cls-review-cards{display:flex; flex-wrap:wrap; gap:16px; justify-content:center;}
-  .cls-review-card{flex:1 1 260px; max-width:320px; background:#fdf6e3; border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);}
-  .cls-review-stars{color:#f5a623; font-size:.9rem; margin-bottom:8px;}
-  .cls-review-card p{margin:0 0 10px; font-size:.85rem; color:#26301f; line-height:1.6;}
-  .cls-review-card span{font-size:.78rem; color:var(--muted); font-weight:700;}
-
-  .cls-faq{max-width:640px; margin:0 auto;}
-  .cls-faq details{background:#fff; border-radius:14px; box-shadow:var(--shadow); margin-bottom:10px; padding:14px 18px;}
-  .cls-faq summary{cursor:pointer; font-weight:700; color:#26301f; font-size:.9rem; list-style:none;}
-  .cls-faq summary::-webkit-details-marker{display:none;}
-  .cls-faq summary::before{content:'Q. '; color:var(--green-600);}
-  .cls-faq p{margin:10px 0 0; font-size:.83rem; color:var(--muted); line-height:1.6;}
-
-  .cls-cta{display:flex; flex-wrap:wrap; justify-content:center; gap:14px;}
-  .cls-cta-btn{border:none; border-radius:999px; padding:14px 28px; font-weight:800; font-size:.92rem; cursor:pointer;}
-  .cls-cta-btn.primary{background:var(--green-600); color:#fff;}
-  .cls-cta-btn.secondary{background:#fff; color:var(--green-600); border:2px solid var(--green-600);}
-  .feature p{margin:0; font-size:.82rem; font-weight:700; color:#26301f; text-align:center; line-height:1.4;}
-
-  footer{text-align:center; padding:30px 20px 50px; color:var(--muted); font-size:.8rem;}
-
-  .login-overlay{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.45);}
-  .login-overlay.open{display:flex;}
-  .login-dialog{width:min(420px,100%); overflow:hidden; border-radius:20px; background:#fff; box-shadow:0 18px 50px rgba(0,0,0,.25);}
-  .login-header{position:relative; padding:22px; color:#fff; text-align:center; background:linear-gradient(135deg,#667eea,#764ba2);}
-  .login-header h3{margin:0; font-size:1.35rem;}
-  .login-close{position:absolute; top:10px; right:12px; padding:8px; color:#fff; font-size:1.4rem; line-height:1;}
-  .login-body{padding:26px 24px;}
-  .login-field{margin-bottom:16px;}
-  .login-field label{display:block; margin-bottom:7px; font-size:.9rem; font-weight:700; color:#333;}
-  .login-field input{width:100%; min-height:44px; padding:10px 12px; border:2px solid #e0e0e0; border-radius:10px; font:inherit;}
-  .login-field input:focus{outline:none; border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,.1);}
-  .login-error{display:none; margin:0 0 12px; color:#dc3545; font-size:.85rem;}
-  .login-submit{width:100%; min-height:46px; border-radius:10px; color:#fff; font-size:1rem; font-weight:700; background:linear-gradient(135deg,#667eea,#764ba2);}
-  .login-submit:disabled{opacity:.65; cursor:wait;}
-
-  @media(max-width:840px){
-    .carousel-wrap{padding:20px 46px 6px;}
-    .slide{flex:0 0 100%; aspect-ratio:1/1;}
-    .kakao-btn{right:46px;}
-  }
-</style>
+<link rel="stylesheet" href="welcome.css?v=<?= filemtime('welcome.css') ?>">
 <script src="js/common.js?v=<?= filemtime('js/common.js') ?>"></script>
 </head>
 <body>
@@ -275,7 +22,6 @@
   </div>
 
   <header class="site-header">
-    <!-- <a class="home-link" onclick="history.back()">🏠 Home</a> -->
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
     <button class="burger" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
     <nav class="main-nav" id="mainNav">
@@ -380,13 +126,6 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
-    <button class="burger" onclick="document.getElementById('gpNav').classList.toggle('open')">☰</button>
-    <nav class="main-nav" id="gpNav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
   </header>
   <div class="header-simple" id="gpUtilityMenu">
     <div></div>
@@ -444,19 +183,11 @@
     <span class="pill">글핀</span><span>한자파닉스</span>
   </div>
   <header class="site-header">
-    <!-- <a class="home-link" onclick="goTo('page-main')">🏠 Home</a> -->
-    <button class="home-link back-icon-link" type="button" aria-label="글핀 페이지로 돌아가기" data-tooltip="글핀 페이지로 돌아가기" onclick="goTo('page-gp')">↩</button>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
+    <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
   </header>
-  <!-- <button class="back-btn" onclick="goTo('page-gp')">← 글핀 페이지로</button> -->
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/hp_online.png');" role="img" aria-label="그림으로 배우는 한자파닉스">
-      <section class="video-learning-menu" aria-label="한자파닉스 동영상 학습"></section>
+      <section class="video-learning-menu" data-program="hj-phonics" aria-label="한자파닉스 동영상 학습"></section>
     </div>
   </div>
 </div>
@@ -468,19 +199,11 @@
     <span class="pill">글핀</span><span>어휘잼</span>
   </div>
   <header class="site-header">
-    <!-- <a class="home-link" onclick="goTo('page-main')">🏠 Home</a> -->
-    <button class="home-link back-icon-link" type="button" aria-label="글핀 페이지로 돌아가기" data-tooltip="글핀 페이지로 돌아가기" onclick="goTo('page-gp')">↩</button>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
+    <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
   </header>
-  <!-- <button class="back-btn" onclick="goTo('page-gp')">← 글핀 페이지로</button> -->
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/wj_online.png');" role="img" aria-label="우리 아이의 공부 자신감, 어휘잼">
-      <section class="video-learning-menu" aria-label="어휘잼 동영상 학습"></section>
+      <section class="video-learning-menu" data-program="word-jam" aria-label="어휘잼 동영상 학습"></section>
     </div>
   </div>
 </div>
@@ -492,19 +215,11 @@
     <span class="pill">글핀</span><span>한자로 어휘를 사고한다</span>
   </div>
   <header class="site-header">
-    <!-- <a class="home-link" onclick="goTo('page-main')">🏠 Home</a> -->
-    <button class="home-link back-icon-link" type="button" aria-label="글핀 페이지로 돌아가기" data-tooltip="글핀 페이지로 돌아가기" onclick="goTo('page-gp')">↩</button>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
+    <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
   </header>
-  <!-- <button class="back-btn" onclick="goTo('page-gp')">← 글핀 페이지로</button> -->
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/hj_vocab.png');" role="img" aria-label="한자로 어휘를 사고한다">
-      <section class="video-learning-menu" aria-label="한자로 어휘를 사고한다 동영상 학습"></section>
+      <section class="video-learning-menu" data-program="legacy-hj" aria-label="한자로 어휘를 사고한다 동영상 학습"></section>
     </div>
   </div>
 </div>
@@ -516,19 +231,11 @@
     <span class="pill">글핀</span><span>급수파자한자</span>
   </div>
   <header class="site-header">
-    <!-- <a class="home-link" onclick="goTo('page-main')">🏠 Home</a> -->
-    <button class="home-link back-icon-link" type="button" aria-label="글핀 페이지로 돌아가기" data-tooltip="글핀 페이지로 돌아가기" onclick="goTo('page-gp')">↩</button>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
+    <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
   </header>
-  <!-- <button class="back-btn" onclick="goTo('page-gp')">← 글핀 페이지로</button> -->
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/gs_online.png');" role="img" aria-label="한자기반 어휘사고력, 급수파자한자">
-      <section class="video-learning-menu" aria-label="급수파자한자 동영상 학습"></section>
+      <section class="video-learning-menu" data-program="gs-paja" aria-label="급수파자한자 동영상 학습"></section>
     </div>
   </div>
 </div>
@@ -540,19 +247,11 @@
     <span class="pill">글핀</span><span>어휘력의 신</span>
   </div>
   <header class="site-header">
-    <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
-    
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
+    <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
   </header>
-  <!-- <button class="back-btn" onclick="goTo('page-gp')">← 글핀 페이지로</button> -->
   <div class="banner-hero" style="background:#1c2b4a;">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/ws_online.png');" role="img" aria-label="어휘력의 신을 깨우다">
-      <section class="video-learning-menu" aria-label="어휘력의 신 동영상 학습"></section>
+      <section class="video-learning-menu" data-program="voca-genius" aria-label="어휘력의 신 동영상 학습"></section>
     </div>
   </div>
 </div>
@@ -565,14 +264,7 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
   </header>
-  <!-- <button class="back-btn" onclick="goTo('page-main')">← 메인으로</button> -->
 
   <div class="mj-hero">
     <div class="imgbox mj-online-box" style="aspect-ratio:16/6;">
@@ -602,12 +294,6 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼글잼으로</button>
   <div class="mj-hero">
@@ -625,12 +311,6 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼글잼으로</button>
   <div class="mj-hero">
@@ -648,12 +328,6 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼글잼으로</button>
   <div class="mj-hero">
@@ -672,12 +346,6 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
-    <nav class="main-nav">
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀이란?</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-main')">글핀 중국어</button>
-      <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
-    </nav>
   </header>
 
   <div class="class-photo">
@@ -687,7 +355,6 @@
     </div>
   </div>
 
-  <!-- <button class="back-btn" onclick="goTo('page-main')" style="margin:16px 24px 0;">← 메인으로</button> -->
 
   <div class="class-wrap">
     <div class="class-body">
@@ -782,22 +449,53 @@
     img.src = src(img.getAttribute('data-src'));
   });
 
-  const learningUnits={A:'unit_a',B:'unit_b',C:'unit_c',D:'unit_d',E:'unit_e'};
-  const learningActions=[{id:'study',name:'학습 영상'},{id:'voca',name:'어휘 영상'},{id:'song',name:'한자송'}];
-  const learningIntroActions={
-    A:[{id:'number',name:'숫자학습영상'}],
-    B:[{id:'study',name:'주제별 부수 학습영상'},{id:'song1',name:'한자송1'},{id:'song2',name:'한자송2'}],
-    C:[{id:'study',name:'주제별 부수 학습영상'},{id:'song1',name:'한자송1'},{id:'song2',name:'한자송2'}],
-    D:[{id:'study',name:'주제별 부수 학습영상'},{id:'song1',name:'한자송1'},{id:'song2',name:'한자송2'},{id:'song3',name:'한자송3'}],
-    E:[]
+  const learningPrograms={
+    'hj-phonics':{
+      levels:0,
+      units:()=>4,
+      files:()=>['song-01.mp4','study-01.mp4','game-01.mp4','game-02.mp4','game-03.mp4']
+    },
+    'word-jam':{
+      levels:7,
+      units:()=>4,
+      files:()=>['study-01.mp4','study-02.mp4','study-03.mp4']
+    },
+    'gs-paja':{
+      levels:2,
+      units:()=>5,
+      files:()=>['game-01.mp4','game-02.mp4','hanja-song.mp4','study-01.mp4','voca-song.mp4']
+    },
+    'voca-genius':{
+      levels:2,
+      units:level=>level===1?5:6,
+      files:(level,unit)=>level===1&&unit===4
+        ? ['song-01.mp4','song-02.mp4','song-03.mp4','study.mp4']
+        : ['song.mp4','study.mp4','voca.mp4']
+    },
+    'legacy-hj':{
+      levels:7,
+      units:()=>4,
+      files:()=>['study-01.mp4','study-02.mp4','study-03.mp4','game-01.mp4','game-02.mp4']
+      }
+  };
+
+  const learningFileLabels={
+    'game-01.mp4':'게임 영상 1','game-02.mp4':'게임 영상 2','game-03.mp4':'게임 영상 3',
+    'study-01.mp4':'학습 영상 1','study-02.mp4':'학습 영상 2','study-03.mp4':'학습 영상 3',
+    'song.mp4':'한자송','study.mp4':'학습 영상','voca.mp4':'어휘 영상',
+    'song-01.mp4':'한자송 1','song-02.mp4':'한자송 2','song-03.mp4':'한자송 3'
   };
 
   function initVideoLearningMenu(menu){
-    const state={level:'all',unit:'A'};
+    if(menu.dataset.initialized) return;
+    const program=learningPrograms[menu.dataset.program];
+    if(!program) return;
+    const state={program,programId:menu.dataset.program,level:1,unit:1};
+    menu.dataset.initialized='true';
     menu.innerHTML=`
       <h3>동영상 학습</h3>
       <div class="learning-levels"></div>
-      <div class="learning-units"><span>호수:</span></div>
+      <div class="learning-units"></div>
       <div class="learning-video">
         <div class="learning-video-header">
           <p class="learning-video-title">동영상 재생</p>
@@ -808,64 +506,70 @@
       <div class="learning-course-grid"></div>`;
 
     const levelWrap=menu.querySelector('.learning-levels');
-    [['all','전체'],['1-level','1단계'],['2-level','2단계']].forEach(([value,label])=>{
+    for(let level=1;level<=program.levels;level++){
       const button=document.createElement('button');
       button.className='learning-level-btn';
-      button.textContent=label;
-      button.addEventListener('click',()=>{state.level=value;renderLearningMenu(menu,state);});
+      button.dataset.level=level;
+      button.textContent=`${level}단계`;
+      button.addEventListener('click',()=>{state.level=level;state.unit=1;renderLearningMenu(menu,state);});
       levelWrap.appendChild(button);
-    });
-
-    const unitWrap=menu.querySelector('.learning-units');
-    Object.keys(learningUnits).forEach(unit=>{
-      const button=document.createElement('button');
-      button.className='learning-unit-btn';
-      button.textContent=`${unit}호`;
-      button.addEventListener('click',()=>{state.unit=unit;renderLearningMenu(menu,state);});
-      unitWrap.appendChild(button);
-    });
+    }
     menu.querySelector('.learning-video-close').addEventListener('click',()=>closeLearningVideo(menu));
     renderLearningMenu(menu,state);
   }
 
   function renderLearningMenu(menu,state){
-    menu.querySelectorAll('.learning-level-btn').forEach((button,index)=>button.classList.toggle('active',['all','1-level','2-level'][index]===state.level));
-    menu.querySelectorAll('.learning-unit-btn').forEach(button=>button.classList.toggle('active',button.textContent.startsWith(state.unit)));
+    menu.querySelectorAll('.learning-level-btn').forEach(button=>button.classList.toggle('active',Number(button.dataset.level)===state.level));
+    const unitWrap=menu.querySelector('.learning-units');
+    unitWrap.innerHTML='<span>단원:</span>';
+    for(let unit=1;unit<=state.program.units(state.level);unit++){
+      const button=document.createElement('button');
+      button.className=`learning-unit-btn${unit===state.unit?' active':''}`;
+      button.textContent=String(unit).padStart(2,'0');
+      button.addEventListener('click',()=>{state.unit=unit;renderLearningMenu(menu,state);});
+      unitWrap.appendChild(button);
+    }
     const grid=menu.querySelector('.learning-course-grid');
     grid.innerHTML='';
-    const levels=state.level==='all'?['1-level','2-level']:[state.level];
+    const levelFolder=`level-${String(state.level).padStart(2,'0')}`;
+    const unitFolder=`unit-${String(state.unit).padStart(2,'0')}`;
+    const card=document.createElement('article');
+    card.className='learning-course-card';
+    card.innerHTML=`<div class="learning-course-title ${state.level===2?'level-2':''}">${levelFolder} / ${unitFolder}</div>`;
 
-    const addCard=(level,title,courseId,actions)=>{
-      const card=document.createElement('article');
-      card.className='learning-course-card';
-      card.innerHTML=`<div class="learning-course-title ${level==='2-level'?'level-2':''}">${title}</div>`;
-      actions.forEach(action=>{
+    if(state.program.legacy){
+      for(let course=1;course<=3;course++) state.program.files().forEach(file=>{
         const button=document.createElement('button');
         button.className='learning-action-btn';
-        button.textContent=action.name;
-        button.addEventListener('click',()=>playLearningVideo(menu,state,level,courseId,action,title));
+        button.textContent=`${course}강 ${file==='study'?'학습 영상':file==='voca'?'어휘 영상':'한자송'}`;
+        button.addEventListener('click',()=>playLearningVideo(menu,state,`${course}g_${file}.mp4`,button.textContent));
         card.appendChild(button);
       });
-      grid.appendChild(card);
-    };
-
-    levels.forEach(level=>{
-      const levelNumber=level==='1-level'?'1':'2';
-      const count=state.unit==='E'?(level==='1-level'?4:5):3;
-      for(let index=1;index<=count;index++) addCard(level,`${levelNumber}-${state.unit}${index}`,`${index}g`,learningActions);
-      if(level==='1-level'&&learningIntroActions[state.unit].length) addCard(level,'알아보기','4g',learningIntroActions[state.unit]);
-    });
+    }else{
+      state.program.files(state.level,state.unit).forEach(file=>{
+        const button=document.createElement('button');
+        button.className='learning-action-btn';
+        button.textContent=learningFileLabels[file]||file;
+        button.addEventListener('click',()=>playLearningVideo(menu,state,file,button.textContent));
+        card.appendChild(button);
+      });
+    }
+    grid.appendChild(card);
   }
 
-  function playLearningVideo(menu,state,level,courseId,action,courseTitle){
+  function playLearningVideo(menu,state,file,label){
     if(!gpLoginInfo){
       handleGpLoginMenu();
       return;
     }
     const videoBox=menu.querySelector('.learning-video');
     const video=videoBox.querySelector('video');
-    videoBox.querySelector('.learning-video-title').textContent=`${level==='1-level'?'1단계':'2단계'} ${state.unit}호 - ${courseTitle} ${action.name}`;
-    video.querySelector('source').src=`/assets/simple/videos/${level}/${learningUnits[state.unit]}/${courseId}_${action.id}.mp4`;
+    videoBox.querySelector('.learning-video-title').textContent=`${state.level}단계 ${state.unit}단원 - ${label}`;
+    const level=String(state.level).padStart(2,'0');
+    const unit=String(state.unit).padStart(2,'0');
+    video.querySelector('source').src=state.program.legacy
+      ? `/assets/simple/videos/${state.level}-level/unit_${String.fromCharCode(96+state.unit)}/${file}`
+      : `/assets/gulpin/programs/${state.programId}/level-${level}/unit-${unit}/videos/${file}`;
     video.load();
     videoBox.classList.add('active');
     videoBox.scrollIntoView({behavior:'smooth',block:'center'});
@@ -880,20 +584,17 @@
     videoBox.classList.remove('active');
   }
 
-  document.querySelectorAll('.video-learning-menu').forEach(initVideoLearningMenu);
-
   function goTo(id){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('nav.main-nav').forEach(nav=>nav.hidden = false);
-    window.scrollTo(0, 0);
     const page = document.getElementById(id);
+    if(!page) return;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    window.scrollTo(0, 0);
     page.classList.add('active');
+    page.querySelectorAll('.video-learning-menu').forEach(initVideoLearningMenu);
     const utilityMenu = document.getElementById('gpUtilityMenu');
     utilityMenu.hidden = id === 'page-main';
     if(!utilityMenu.hidden){
       const header = page.querySelector('.site-header');
-      const pageNav = header.querySelector('nav.main-nav');
-      if(pageNav) pageNav.hidden = true;
       header.append(utilityMenu);
     }
     const nav = document.getElementById('mainNav'); if(nav) nav.classList.remove('open');

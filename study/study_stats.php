@@ -16,6 +16,8 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
+    <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/role-nav.js" defer></script>
     <style>
         body { background: #f4f6f9; }
         .page-title { font-size: 1.4rem; font-weight: 700; color: #2c3e50; }
@@ -60,6 +62,7 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
     </style>
 </head>
 <body>
+<header id="roleNav"></header>
 <div class="container-fluid py-5 px-5">
 
     <!-- 헤더 -->

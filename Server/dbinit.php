@@ -4,7 +4,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $location = "localhost";
 $host = $_SERVER['HTTP_HOST'] ?? '';
-$isLocal = stripos($host, 'localhost') !== false || strpos($host, '10.15') !== false;
+$isLocal = stripos($host, 'localhost') !== false || strpos($host, '10.15') !== false || strpos($host, "jyjungs1963") !== false;;
 
 try {
     if ($isLocal) {
@@ -25,7 +25,16 @@ try {
     ensureShoppingTables($conn);
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);
-    echo json_encode(array("result:" => $e->getMessage()));
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(array(
+        'error' => 'database_connection_failed',
+        'message' => $e->getMessage(),
+        'code' => $e->getCode(),
+        'database' => array(
+            'host' => $dbHost,
+            'name' => $dbName
+        )
+    ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
