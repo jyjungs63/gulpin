@@ -713,10 +713,11 @@
 
     function buildEbookLink(weekNumber) {
       var level = currentLevel.toLowerCase();
+      const prt = level === 't' ? 'PRINT_ENABLED=true' : 'PRINT_ENABLED=false';
       var bookKey = (level === '0')
-        ? 'step_' + level + '.3_Fchar.v' + weekNumber
-        : 'step_' + level + '.v' + weekNumber;
-      bindNavLink(els.ebookLink, '../ebook/index.php', 'ebookBook', 'gulpin.' + bookKey);
+        ? '?book=local.step_' + level + '.3_Fchar.v' + weekNumber + '&' + prt
+        : '?book=local.step_' + level + '.v' + weekNumber + '&' + prt;
+      bindNavLink(els.ebookLink, '../ebook/index.php', 'ebookBook', bookKey);
       // bindNavLink(els.ebookLink, '../ebook_new_chaitalk/ebook.html', 'ebookBook', bookKey);
     }
 

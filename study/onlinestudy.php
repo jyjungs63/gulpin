@@ -22,7 +22,7 @@ header("Expires: 0");
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="mp4list.js?v=<?= filemtime('mp4list.js') ?>"></script>
-    <script src="../common.js?v=<?= filemtime('../common.js') ?>"></script>
+    <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
 
     <!-- ── CSS ── -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" />
@@ -894,13 +894,13 @@ header("Expires: 0");
         // }
         function assignbook(week) {
             let stp1 = stp.toLowerCase();
-            const ebookUrl = "../ebook/index.php";
-            let prt = stp1 == 't' ? 'PRINT_ENABLED=true' : 'PRINT_ENABLED=false';
-            setEbookLink("#w0_1", ebookUrl, `?book=local.step_${stp1}_Wbook.v${week}&${prt}`);
-            setEbookLink("#w0_2", ebookUrl, `?book=local.step_${stp1}_Sbook.v${week}&${prt}`);
+            const ebookUrl = "../ebook_new_chaitalk/ebook.html";
+
+            setEbookLink("#w0_1", ebookUrl, `step_${stp1}_Wbook.v${week}`);
+            setEbookLink("#w0_2", ebookUrl, `step_${stp1}_Sbook.v${week}`);
             const bookKey = stp1 == "0"
-                ? `?book=local.step_${stp1}_Fchar.v${week}&${prt}`
-                : `?book=local.step_${stp1}.v${week}&${prt}`;
+                ? `step_${stp1}_Fchar.v${week}`
+                : `step_${stp1}.v${week}`;
             setEbookLink("#w1_3", ebookUrl, bookKey);
         }
 

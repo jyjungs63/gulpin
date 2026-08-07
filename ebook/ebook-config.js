@@ -20,18 +20,27 @@ let videoLinks = {};
 let audio;
 let bookInfo = null;
 let pdfObjectUrls = [];
-const PRINT_ENABLED = new URLSearchParams(window.location.search)
+function getEbookQueryParams() {
+    return new URLSearchParams(window.location.search || sessionStorage.getItem('ebookQueryString') || '');
+}
+
+const PRINT_ENABLED = getEbookQueryParams()
     .get("PRINT_ENABLED")?.toLowerCase() !== "false";
 
 // ✨ displayMode는 데이터베이스에서 동적으로 로드됨
 let displayMode = "single"; // 기본값
+
+function getDisplayModeFromQuery() {
+    const requestedMode = (getEbookQueryParams().get('displayMode') || '').toLowerCase();
+    return requestedMode === 'single' || requestedMode === 'double' ? requestedMode : null;
+}
 
 // ========================================
 // URL에서 책 타입 추출 함수
 // ========================================
 function getBookTypeFromURL() {
     try {
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = getEbookQueryParams();
         const bookParam = sessionStorage.getItem('ebookBook') || urlParams.get('book');
         
         if (!bookParam) {
@@ -333,7 +342,12 @@ async function init() {
         // ========================================
         const typeCode = getBookTypeFromURL();
         
-        if (typeCode) {
+        const queryDisplayMode = getDisplayModeFromQuery();
+
+        if (queryDisplayMode) {
+            displayMode = queryDisplayMode;
+            console.log('✅ query parameter displayMode 적용:', displayMode);
+        } else if (typeCode) {
             await loadDisplayModeFromDB(typeCode);
             console.log('✅ displayMode 설정 완료:', displayMode);
         } else {
@@ -359,7 +373,7 @@ async function init() {
         images  = [];
         imgpath = dir;
         videoLinks = {};
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = getEbookQueryParams();
         const requestedPdf = (urlParams.get('pdf') || '').trim();
 
         if (requestedPdf && (!/^[^/\\]+\.pdf$/i.test(requestedPdf) || requestedPdf.includes('..'))) {

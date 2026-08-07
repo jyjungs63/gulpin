@@ -4,7 +4,7 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 require_once dirname(__DIR__) . '/db.php';
 
-function json_response(array $data, int $status = 200): never
+function json_response(array $data, int $status = 200)
 {
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -23,8 +23,12 @@ try {
         }
         $sql .= ' ORDER BY id DESC';
         $reviews = $db->query($sql)->fetchAll();
+        $reviewBaseUrl = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
         foreach ($reviews as &$review) {
-            $review['image_url'] = $review['image_path'] ?: null;
+            $imageRelativePath = preg_replace('#^reviews/#', '', ltrim((string) $review['image_path'], '/'));
+            $review['image_url'] = $review['image_path']
+                ? $reviewBaseUrl . '/' . $imageRelativePath
+                : null;
         }
         unset($review);
         json_response(['success' => true, 'reviews' => $reviews]);
@@ -86,12 +90,12 @@ try {
             $statement = $db->prepare(
                 'UPDATE reviews SET title = ?, content = ?, author = ?, student_grade = ?, rating = ?, image_path = ?, is_visible = ? WHERE id = ?'
             );
-            $statement->execute([...$values, $id]);
+            $statement->execute(array_merge($values, [$id]));
             if ($newImagePath && $existingImagePath) {
                 $fullPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $existingImagePath);
                 $uploadRoot = realpath(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'reviews');
                 $resolvedFile = realpath($fullPath);
-                if ($uploadRoot && $resolvedFile && str_starts_with($resolvedFile, $uploadRoot . DIRECTORY_SEPARATOR)) {
+                if ($uploadRoot && $resolvedFile && strpos($resolvedFile, $uploadRoot . DIRECTORY_SEPARATOR) === 0) {
                     unlink($resolvedFile);
                 }
             }
@@ -119,7 +123,7 @@ try {
             $fullPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $imagePath);
             $uploadRoot = realpath(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'reviews');
             $resolvedFile = realpath($fullPath);
-            if ($uploadRoot && $resolvedFile && str_starts_with($resolvedFile, $uploadRoot . DIRECTORY_SEPARATOR)) {
+            if ($uploadRoot && $resolvedFile && strpos($resolvedFile, $uploadRoot . DIRECTORY_SEPARATOR) === 0) {
                 unlink($resolvedFile);
             }
         }

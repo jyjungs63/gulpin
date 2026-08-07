@@ -132,6 +132,7 @@
             // 기존 URL 방식이 전달된 경우 해당 book을 기준값으로 유지한다.
             if (url.searchParams.has('book')) {
                 sessionStorage.setItem('ebookBook', url.searchParams.get('book'));
+                sessionStorage.setItem('ebookQueryString', url.search);
                 return;
             }
 
@@ -154,7 +155,8 @@
             const book = url.searchParams.get('book');
             if (book) {
                 sessionStorage.setItem('ebookBook', book);
-                history.replaceState(null, '', url.pathname + url.search + url.hash);
+                sessionStorage.setItem('ebookQueryString', url.search);
+                console.log(url.search);
             }
         })();
     </script>

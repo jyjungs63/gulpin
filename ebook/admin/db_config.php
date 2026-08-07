@@ -16,15 +16,17 @@ $isLocal  = (strpos($fullURL, "localhost") !== false)
 // 데이터베이스 설정
 define('DB_HOST', 'localhost');
 define('DB_CHARSET', 'utf8mb4');
-define('DB_NAME', 'happyzip1');
+
 if ($isLocal) {
+    define('DB_NAME', 'happyzip1');
     define('DB_USER', 'root');                   // 데이터베이스 사용자명
     define('DB_PASS', 'manager');                // 데이터베이스 비밀번호 (XAMPP 기본값은 빈 문자열) 
 }
 else {
     // 운영 서버 데이터베이스 설정
-    define('DB_USER', 'happyzip1');
-    define('DB_PASS', 'skl329350281@');
+    define('DB_NAME', 'happyzip3');
+    define('DB_USER', 'happyzip3');
+    define('DB_PASS', 'skl32935028@');
 }
 
 
@@ -46,7 +48,48 @@ class Database {
             
             $this->conn = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch(PDOException $e) {
-            die("데이터베이스 연결 실패: " . $e->getMessage());
+            $errorInfo = is_array($e->errorInfo) ? $e->errorInfo : [];
+            $details = [
+                '데이터베이스 연결 실패',
+                'Connect string: new PDO("' . $dsn . '", "' . DB_USER . '", "********")',
+                'Environment: ' . ($GLOBALS['isLocal'] ? 'local' : 'production'),
+                'PHP version: ' . PHP_VERSION,
+                'PDO drivers: ' . implode(', ', PDO::getAvailableDrivers()),
+                'Exception: ' . get_class($e),
+                'Code: ' . $e->getCode(),
+                'Message: ' . $e->getMessage(),
+                'SQLSTATE: ' . ($errorInfo[0] ?? '없음'),
+                'Driver code: ' . ($errorInfo[1] ?? '없음'),
+                'Driver message: ' . ($errorInfo[2] ?? '없음'),
+                'Location: ' . $e->getFile() . ':' . $e->getLine(),
+            ];
+            $message = implode("\n", $details);
+
+            error_log($message);
+            http_response_code(500);
+            if (!headers_sent()) {
+                header('Content-Type: application/json; charset=utf-8');
+            }
+            echo json_encode([
+                'success' => false,
+                'error' => $message,
+                'connection' => [
+                    'dsn' => $dsn,
+                    'user' => DB_USER,
+                    'password' => '********',
+                ],
+                'exception' => [
+                    'class' => get_class($e),
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'sqlstate' => $errorInfo[0] ?? null,
+                    'driver_code' => $errorInfo[1] ?? null,
+                    'driver_message' => $errorInfo[2] ?? null,
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ],
+            ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+            exit;
         }
     }
     

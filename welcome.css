@@ -1286,7 +1286,8 @@ nav.main-nav button.on {
   overflow: hidden;
   border-radius: 20px;
   background: #fff;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, .25);
+  border: 1px solid #b9dfc6;
+  box-shadow: 0 18px 50px rgba(25, 92, 52, .25);
 }
 
 .login-header {
@@ -1294,7 +1295,7 @@ nav.main-nav button.on {
   padding: 22px;
   color: #fff;
   text-align: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #339b5b, #247a45);
 }
 
 .login-header h3 {
@@ -1325,7 +1326,7 @@ nav.main-nav button.on {
   margin-bottom: 7px;
   font-size: .9rem;
   font-weight: 700;
-  color: #333;
+  color: #245f3a;
 }
 
 .login-field input {
@@ -1339,8 +1340,8 @@ nav.main-nav button.on {
 
 .login-field input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, .1);
+  border-color: #339b5b;
+  box-shadow: 0 0 0 3px rgba(51, 155, 91, .14);
 }
 
 .login-error {
@@ -1357,7 +1358,11 @@ nav.main-nav button.on {
   color: #fff;
   font-size: 1rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #339b5b, #247a45);
+}
+
+.login-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2d8d51, #1f6d3d);
 }
 
 .login-submit:disabled {

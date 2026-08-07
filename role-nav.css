@@ -4,7 +4,7 @@
   z-index: 2000;
   min-height: 62px;
   padding: 0 28px;
-  background: #0D2B6B;
+  background: #339B5B;
   box-shadow: 0 2px 10px rgba(0, 0, 0, .25);
   color: #fff;
   font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
@@ -27,7 +27,6 @@
 }
 
 .role-nav__home { color: #fff; white-space: nowrap; }
-.role-nav__home span { color: #F47920; }
 .role-nav__welcome { margin-left: auto; color: rgba(255, 255, 255, .7); font-size: .82rem; white-space: nowrap; }
 .role-nav__menu { display: flex; align-items: center; gap: 6px; }
 .role-nav__menu a { padding: 8px 14px; border-radius: 22px; }
@@ -46,7 +45,7 @@
     left: 0;
     right: 0;
     padding: 14px 20px 20px;
-    background: #0D2B6B;
+    background: #339B5B;
     flex-direction: column;
     align-items: stretch;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .25);

@@ -111,7 +111,10 @@
             display: flex; gap: 10px; justify-content: flex-end; margin-top: 30px;
         }
 
-        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .alert {
+            padding: 15px; border-radius: 6px; margin-bottom: 20px;
+            white-space: pre-wrap; overflow-wrap: anywhere;
+        }
         .alert-success { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
         .alert-error   { background: #fed7d7; color: #742a2a; border: 1px solid #fc8181; }
 
