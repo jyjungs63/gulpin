@@ -6,6 +6,7 @@
 <title>글핀 | 초등 문해력 골든타임 완성 학습 프로그램</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="welcome.css?v=<?= filemtime('welcome.css') ?>">
 <link rel="stylesheet" href="role-nav.css?v=<?= filemtime('role-nav.css') ?>">
 <script src="js/common.js?v=<?= filemtime('js/common.js') ?>"></script>
@@ -13,7 +14,7 @@
 </head>
 <body>
 
-<script src="js/welcome-images.js"></script>
+<script src="js/welcome-images.js?v=<?= filemtime('js/welcome-images.js') ?>"></script>
 
 <!-- ============================================================ MAIN PAGE ============================================================ -->
 <div id="page-main" class="page active">
@@ -27,10 +28,12 @@
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
     <button class="burger" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
     <nav class="main-nav" id="mainNav">
+      <button class="menu-close" type="button" aria-label="메뉴 닫기" onclick="document.getElementById('mainNav').classList.remove('open')">×</button>
       <button class="nav-toggle" onclick="toggleNav(this)">글핀이란?</button>
       <button class="nav-toggle" onclick="toggleNav(this)">글핀 중국어</button>
       <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
       <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
+      <button class="home-logout" id="homeLogout" type="button" onclick="handleGpLoginMenu()" hidden>로그아웃</button>
     </nav>
   </header>
 
@@ -40,19 +43,19 @@
     <button class="car-arrow next" id="nextBtn" onclick="slide(1)">›</button>
     <div class="carousel-viewport">
       <div class="carousel-track" id="track">
-        <div class="slide" onclick="goTo('page-gp')">
+        <div class="slide" onclick="goToAfterLogin('page-gp')">
           <div class="imgbox">
             <img data-src="gp_partner_bn.png" alt="글에 어휘의 핀을 꽂다 - 가맹점 전용" onerror="onImgErr(this)">
             <div class="fallback">📖<br>gp_partner_bn.png<br>가맹점 전용</div>
           </div>
         </div>
-        <div class="slide" onclick="goTo('page-mj')">
+        <div class="slide" onclick="goToAfterLogin('page-mj')">
           <div class="imgbox">
-            <img data-src="mjm_kinder_bn.png" alt="말잼글잼 - 유치원 전용" onerror="onImgErr(this)">
-            <div class="fallback">🐢<br>mjm_kinder_bn.png<br>유치원 전용</div>
+            <img data-src="mj_online_3.png" alt="말잼별글잼별 - 유치원 전용" onerror="onImgErr(this)">
+            <div class="fallback">🐢<br>mj_online_3.png<br>유치원 전용</div>
           </div>
         </div>
-        <div class="slide" onclick="goTo('page-class')">
+        <div class="slide" onclick="goToAfterLogin('page-class')">
           <div class="imgbox">
             <img data-src="bn_online_class.png" alt="온라인 화상수업" onerror="onImgErr(this)">
             <div class="fallback">💻<br>bn_online_class.png<br>온라인 화상수업</div>
@@ -75,6 +78,20 @@
     <button class="kakao-btn" onclick="openKakao()">
       <img data-src="btn_kakao.png" alt="카카오톡 상담·문의" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;background:#f9e000;border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.6rem;color:#391b1b;&quot;>TALK</div>';">
     </button>
+    <div class="main-social-links" aria-label="글핀 소셜 미디어">
+      <a class="social-link instagram" href="https://www.instagram.com/geulpin82" target="_blank" rel="noopener noreferrer" aria-label="인스타그램 새 창에서 열기" title="Instagram">
+        <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+      </a>
+      <a class="social-link youtube" href="https://www.youtube.com/@geulpin" target="_blank" rel="noopener noreferrer" aria-label="유튜브 새 창에서 열기" title="YouTube">
+        <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+      </a>
+      <!-- <a class="social-link facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="페이스북 새 창에서 열기" title="Facebook">
+        <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+      </a> -->
+      <a class="social-link naver" href="https://blog.naver.com/geulpin82" target="_blank" rel="noopener noreferrer" aria-label="네이버 새 창에서 열기" title="Naver">
+        <span aria-hidden="true">N</span>
+      </a>
+    </div>
   </div>
 
   <!-- Icons: swap to *_click.png on hover, navigate on click -->
@@ -84,8 +101,8 @@
       <span>글핀 가맹점</span>
     </button>
     <button class="icon-btn" data-base="icon_child" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="goTo('page-mj')">
-      <span class="icon-box"><div class="imgbox"><img data-src="icon_child.png" alt="말잼글잼" onerror="onImgErr(this)"><div class="fallback">🧒</div></div></span>
-      <span>말잼글잼</span>
+      <span class="icon-box"><div class="imgbox"><img data-src="icon_child.png" alt="말잼별글잼별" onerror="onImgErr(this)"><div class="fallback">🧒</div></div></span>
+      <span>말잼별 글잼별</span>
     </button>
     <button class="icon-btn" data-base="icon_monitor" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="goTo('page-class')">
       <span class="icon-box"><div class="imgbox"><img data-src="icon_monitor.png" alt="온라인 화상 수업" onerror="onImgErr(this)"><div class="fallback">🖥️</div></div></span>
@@ -95,7 +112,7 @@
       <span class="icon-box"><div class="imgbox"><img data-src="icon_school.png" alt="방과후 한자" onerror="onImgErr(this)"><div class="fallback">🏫</div></div></span>
       <span>방과후 한자</span>
     </button>
-    <button class="icon-btn" data-base="icon_check" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="alert('문해력 테스트 페이지는 준비 중입니다.')">
+    <button class="icon-btn" data-base="icon_check" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="goToAfterLogin('word-test')">
       <span class="icon-box"><div class="imgbox"><img data-src="icon_check.png" alt="문해력 테스트" onerror="onImgErr(this)"><div class="fallback">📝</div></div></span>
       <span>문해력 테스트</span>
     </button>
@@ -120,6 +137,14 @@
   <footer></footer>
 </div>
 
+<!-- ============================================================ 문해력 진단 테스트 ============================================================ -->
+<div id="word-test" class="page">
+  <header class="site-header">
+    <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+  </header>
+  <iframe class="word-test-frame" src="WordTest.html" title="문해력 진단 테스트"></iframe>
+</div>
+
 <!-- ============================================================ 글핀 페이지 ============================================================ -->
 <div id="page-gp" class="page">
   <div class="visitor-strip">
@@ -128,6 +153,7 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <button class="gp-utility-toggle" type="button" aria-label="관리 메뉴 열기" aria-expanded="false" onclick="toggleGpUtilityMenu(this)">☰ 메뉴</button>
   </header>
   <div class="header-simple" id="gpUtilityMenu">
     <div></div>
@@ -135,8 +161,11 @@
   </div>
 
   <div class="gp-hero gp-hero-full">
-    <div class="imgbox" style="aspect-ratio:160/49;">
-      <img data-src="gp_online.png" alt="초등 문해력 골든타임 완성 학습 프로그램, 글핀" onerror="onImgErr(this)">
+    <div class="imgbox gp-hero-imagebox">
+      <picture>
+        <source media="(max-width: 840px)" srcset="assets/banner/gp_online_mobile.png">
+        <img data-src="gp_online.png" alt="초등 문해력 골든타임 완성 학습 프로그램, 글핀" onerror="onImgErr(this)">
+      </picture>
       <div class="fallback">초등 문해력 골든타임 완성 학습 프로그램, 글핀<br>(gp_online.png)</div>
     </div>
   </div>
@@ -254,34 +283,35 @@
   </div>
 </div>
 
-<!-- ============================================================ 말잼글잼 페이지 ============================================================ -->
+<!-- ============================================================ 말잼별글잼별 페이지 ============================================================ -->
 <div id="page-mj" class="page">
-  <div id="roleNav" data-base-path=""></div>
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-    <span class="pill">말잼글잼</span><span>방문자님 환영합니다</span>
+    <span class="pill">말잼별글잼별</span><span>방문자님 환영합니다</span>
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
   </header>
 
   <div class="mj-hero">
-    <div class="imgbox mj-online-box" style="aspect-ratio:16/6;">
-      <img data-src="mj_online.png" alt="말잼글잼 - 지구팡의 대모험" onerror="onImgErr(this)">
-      <div class="fallback">🐢 말잼글잼 - 지구팡의 대모험 🐢<br>(mj_online.png)</div>
+    <div class="imgbox mj-online-box">
+      <picture>
+        <source media="(max-width: 840px)" srcset="assets/banner/mj_online_2_mobile.png">
+        <img data-src="mj_online_2.png" alt="말잼별글잼별 - 지구팡의 대모험" onerror="onImgErr(this)">
+      </picture>
+      <div class="fallback">🐢 말잼별글잼별 - 지구팡의 대모험 🐢<br>(mj_online_2.png)</div>
     </div>
-  </div>
-
-  <div class="mj-tabs">
-    <button class="mj-tab-btn on" data-t="0" onclick="goTo('page-jj')">
-      <div class="imgbox" style="aspect-ratio:3/1;"><img data-src="btn_jj_online_01.png" alt="0 잼잼" onerror="onImgErr(this)"><div class="fallback" style="font-size:.9rem;">0 잼잼</div></div>
-    </button>
-    <button class="mj-tab-btn" data-t="1" onclick="goTo('page-mjplay')">
-      <div class="imgbox" style="aspect-ratio:3/1;"><img data-src="btn_mj_online_02.png" alt="1 말잼" onerror="onImgErr(this)"><div class="fallback" style="font-size:.9rem;">1 말잼</div></div>
-    </button>
-    <button class="mj-tab-btn" data-t="2" onclick="goTo('page-gj')">
-      <div class="imgbox" style="aspect-ratio:3/1;"><img data-src="btn_gj_online_03.png" alt="2 글잼" onerror="onImgErr(this)"><div class="fallback" style="font-size:.9rem;">2 글잼</div></div>
-    </button>
+    <div class="mj-tabs">
+      <button class="mj-tab-btn on" data-t="0" onclick="goTo('page-jj')">
+        <span class="mj-tab-face"><span class="mj-tab-number">0</span><span class="mj-tab-label">잼잼별</span></span>
+      </button>
+      <button class="mj-tab-btn" data-t="1" onclick="goTo('page-mjplay')">
+        <span class="mj-tab-face"><span class="mj-tab-number">1</span><span class="mj-tab-label">말잼별</span></span>
+      </button>
+      <button class="mj-tab-btn" data-t="2" onclick="goTo('page-gj')">
+        <span class="mj-tab-face"><span class="mj-tab-number">2</span><span class="mj-tab-label">글잼별</span></span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -289,52 +319,82 @@
 <div id="page-jj" class="page">
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-    <span class="pill">말잼글잼</span><span>잼잼</span>
+    <span class="pill">말잼별글잼별</span><span>잼잼별</span>
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
   </header>
-  <button class="back-btn" onclick="goTo('page-mj')">← 말잼글잼으로</button>
-  <div class="mj-hero">
-    <div class="imgbox" style="aspect-ratio:16/9;">
-      <img data-src="jj_main.png" alt="잼잼" onerror="onImgErr(this)">
-      <div class="fallback">🐢 잼잼 🐢<br>(jj_main.png)</div>
+  <button class="back-btn" onclick="goTo('page-mj')">← 말잼별 글잼별으로</button>
+  <section class="star-learning-panel" style="--star-bg:url('assets/banner/jj_main_2.png')" aria-label="잼잼별 영상 학습">
+    <div class="star-levels" aria-label="잼잼별 단계 선택"></div>
+    <div class="star-learning-actions">
+      <!-- <h3>level-01 / unit-01</h3> -->
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상1.mp4')">학습영상1</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상2.mp4')">학습영상2</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/어휘송.mp4')">어휘송</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/한자송.mp4')">한자송</button>
+      <a class="star-game-link" href="game/memory-game/index.html" target="_blank" rel="noopener">게임1</a>
+      <a class="star-game-link" href="game/matching-game/index.php" target="_blank" rel="noopener">게임2</a>
     </div>
-  </div>
+    <div class="learning-video star-video-popup" role="dialog" aria-modal="true" aria-label="잼잼별 영상 재생">
+      <div class="learning-video-header"><p class="learning-video-title">동영상 재생</p><button class="learning-video-close" type="button" aria-label="동영상 닫기" onclick="closeStarVideo(this)">×</button></div>
+      <video controls controlsList="nodownload" disablePictureInPicture playsinline><source type="video/mp4"></video>
+    </div>
+  </section>
 </div>
 
 <div id="page-mjplay" class="page">
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-    <span class="pill">말잼글잼</span><span>말잼</span>
+    <span class="pill">말잼별글잼별</span><span>말잼</span>
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
   </header>
-  <button class="back-btn" onclick="goTo('page-mj')">← 말잼글잼으로</button>
-  <div class="mj-hero">
-    <div class="imgbox" style="aspect-ratio:16/9;">
-      <img data-src="mj_main.png" alt="말잼" onerror="onImgErr(this)">
-      <div class="fallback">🐢 말잼 🐢<br>(mj_main.png)</div>
+  <button class="back-btn" onclick="goTo('page-mj')">← 말잼별글잼별으로</button>
+  <section class="star-learning-panel" style="--star-bg:url('assets/banner/mj_main_2.png')" aria-label="말잼별 영상 학습">
+    <div class="star-levels" aria-label="말잼별 단계 선택"></div>
+    <div class="star-learning-actions">
+      <!-- <h3>level-01 / unit-01</h3> -->
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상1.mp4')">학습영상1</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상2.mp4')">학습영상2</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/어휘송.mp4')">어휘송</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/한자송.mp4')">한자송</button>
+      <a class="star-game-link" href="game/memory-game/index.html" target="_blank" rel="noopener">게임1</a>
+      <a class="star-game-link" href="game/matching-game/index.php" target="_blank" rel="noopener">게임2</a>
     </div>
-  </div>
+    <div class="learning-video star-video-popup" role="dialog" aria-modal="true" aria-label="말잼별 영상 재생">
+      <div class="learning-video-header"><p class="learning-video-title">동영상 재생</p><button class="learning-video-close" type="button" aria-label="동영상 닫기" onclick="closeStarVideo(this)">×</button></div>
+      <video controls controlsList="nodownload" disablePictureInPicture playsinline><source type="video/mp4"></video>
+    </div>
+  </section>
 </div>
 
 <div id="page-gj" class="page">
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-    <span class="pill">말잼글잼</span><span>글잼</span>
+    <span class="pill">말잼별글잼별</span><span>글잼</span>
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
   </header>
-  <button class="back-btn" onclick="goTo('page-mj')">← 말잼글잼으로</button>
-  <div class="mj-hero">
-    <div class="imgbox" style="aspect-ratio:16/9;">
-      <img data-src="gj_bg_03.png" alt="글잼" onerror="onImgErr(this)">
-      <div class="fallback">🐢 글잼 🐢<br>(gj_bg_03.png)</div>
+  <button class="back-btn" onclick="goTo('page-mj')">← 말잼별글잼별으로</button>
+  <section class="star-learning-panel" style="--star-bg:url('assets/banner/gj_bg_04.png')" aria-label="글잼별 영상 학습">
+    <div class="star-levels" aria-label="글잼별 단계 선택"></div>
+    <div class="star-learning-actions">
+      <!-- <h3>level-01 / unit-01</h3> -->
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상1.mp4')">학습영상1</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상2.mp4')">학습영상2</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/어휘송.mp4')">어휘송</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/한자송.mp4')">한자송</button>
+      <a class="star-game-link" href="game/memory-game/index.html" target="_blank" rel="noopener">게임1</a>
+      <a class="star-game-link" href="game/matching-game/index.php" target="_blank" rel="noopener">게임2</a>
     </div>
-  </div>
+    <div class="learning-video star-video-popup" role="dialog" aria-modal="true" aria-label="글잼별 영상 재생">
+      <div class="learning-video-header"><p class="learning-video-title">동영상 재생</p><button class="learning-video-close" type="button" aria-label="동영상 닫기" onclick="closeStarVideo(this)">×</button></div>
+      <video controls controlsList="nodownload" disablePictureInPicture playsinline><source type="video/mp4"></video>
+    </div>
+  </section>
 </div>
 
 <!-- ============================================================ 온라인 화상수업 페이지 ============================================================ -->
@@ -466,7 +526,7 @@
     },
     'voca-genius':{
       levels:2,
-      units:level=>level===1?5:6,
+      units:()=>4,
       files:(level,unit)=>level===1&&unit===4
         ? ['song-01.mp4','song-02.mp4','song-03.mp4','study.mp4']
         : ['song.mp4','study.mp4','voca.mp4']
@@ -481,6 +541,7 @@
   const learningFileLabels={
     'game-01.mp4':'게임 영상 1','game-02.mp4':'게임 영상 2','game-03.mp4':'게임 영상 3',
     'study-01.mp4':'학습 영상 1','study-02.mp4':'학습 영상 2','study-03.mp4':'학습 영상 3',
+    'hanja-song.mp4':'한자송','voca-song.mp4':'어휘영상',
     'song.mp4':'한자송','study.mp4':'학습 영상','voca.mp4':'어휘 영상',
     'song-01.mp4':'한자송 1','song-02.mp4':'한자송 2','song-03.mp4':'한자송 3'
   };
@@ -524,7 +585,9 @@
     for(let unit=1;unit<=state.program.units(state.level);unit++){
       const button=document.createElement('button');
       button.className=`learning-unit-btn${unit===state.unit?' active':''}`;
-      button.textContent=String(unit).padStart(2,'0');
+      button.textContent=state.programId==='hj-phonics'
+        ? String(unit)
+        : String.fromCharCode(64+unit);
       button.addEventListener('click',()=>{state.unit=unit;renderLearningMenu(menu,state);});
       unitWrap.appendChild(button);
     }
@@ -568,9 +631,10 @@
     const unit=String(state.unit).padStart(2,'0');
     video.querySelector('source').src=state.program.legacy
       ? `/assets/simple/videos/${state.level}-level/unit_${String.fromCharCode(96+state.unit)}/${file}`
-      : `/assets/gulpin/programs/${state.programId}/level-${level}/unit-${unit}/videos/${file}`;
+      : `assets/gulpin/programs/${state.programId}/level-${level}/unit-${unit}/videos/${file}`;
     video.load();
     videoBox.classList.add('active');
+    menu.classList.add('video-active');
     videoBox.scrollIntoView({behavior:'smooth',block:'center'});
   }
 
@@ -581,24 +645,109 @@
     video.querySelector('source').removeAttribute('src');
     video.load();
     videoBox.classList.remove('active');
+    menu.classList.remove('video-active');
   }
 
-  function goTo(id){
+  function initStarLevels(panel){
+    const levelWrap=panel.querySelector('.star-levels');
+    if(!levelWrap || levelWrap.children.length) return;
+    for(let level=1;level<=10;level++){
+      const button=document.createElement('button');
+      button.type='button';
+      button.className=`star-level-btn${level===1?' active':''}`;
+      button.textContent=`${level}단계`;
+      button.addEventListener('click',()=>{
+        levelWrap.querySelectorAll('.star-level-btn').forEach(item=>item.classList.toggle('active',item===button));
+      });
+      levelWrap.appendChild(button);
+    }
+  }
+
+  function playStarVideo(button, path){
+    const panel=button.closest('.star-learning-panel');
+    const videoBox=panel.querySelector('.learning-video');
+    const video=videoBox.querySelector('video');
+    const source=video.querySelector('source');
+    panel.querySelectorAll('.star-learning-actions button').forEach(item=>item.classList.toggle('active',item===button));
+    videoBox.querySelector('.learning-video-title').textContent=button.textContent.trim();
+    source.src=path;
+    video.load();
+    videoBox.classList.add('active');
+    video.play().catch(()=>{});
+  }
+
+  function closeStarVideo(closeButton){
+    const videoBox=closeButton.closest('.learning-video');
+    const video=videoBox.querySelector('video');
+    video.pause();
+    video.querySelector('source').removeAttribute('src');
+    video.load();
+    videoBox.classList.remove('active');
+  }
+
+  function stopAllMedia(){
+    document.querySelectorAll('video, audio').forEach(media=>{
+      media.pause();
+      media.currentTime=0;
+      media.removeAttribute('src');
+      media.querySelectorAll('source').forEach(source=>source.removeAttribute('src'));
+      media.load();
+    });
+    document.querySelectorAll('.learning-video.active').forEach(box=>box.classList.remove('active'));
+    document.querySelectorAll('.video-learning-menu.video-active').forEach(menu=>menu.classList.remove('video-active'));
+    document.querySelectorAll('.star-learning-actions button.active').forEach(button=>button.classList.remove('active'));
+  }
+
+  function goTo(id, updateHistory=true){
     const page = document.getElementById(id);
     if(!page) return;
+    stopAllMedia();
+    if(id === 'word-test' && !page.classList.contains('active')){
+      const wordTestFrame = page.querySelector('.word-test-frame');
+      if(wordTestFrame) wordTestFrame.src = 'WordTest.html';
+    }
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     window.scrollTo(0, 0);
     page.classList.add('active');
     page.querySelectorAll('.video-learning-menu').forEach(initVideoLearningMenu);
+    page.querySelectorAll('.star-learning-panel').forEach(initStarLevels);
     const utilityMenu = document.getElementById('gpUtilityMenu');
+    utilityMenu.classList.remove('open');
+    const utilityToggle = document.querySelector('.gp-utility-toggle');
+    if(utilityToggle){
+      utilityToggle.setAttribute('aria-expanded','false');
+      utilityToggle.setAttribute('aria-label','관리 메뉴 열기');
+      utilityToggle.textContent = '☰ 메뉴';
+    }
     utilityMenu.hidden = id === 'page-main';
     if(!utilityMenu.hidden){
       const header = page.querySelector('.site-header');
+      if(utilityToggle) header.append(utilityToggle);
       header.append(utilityMenu);
     }
     const nav = document.getElementById('mainNav'); if(nav) nav.classList.remove('open');
+    if(updateHistory && history.state?.gulpinPage !== id){
+      history.pushState({gulpinPage:id}, '', location.href);
+    }
   }
+
+  history.replaceState({gulpinPage:'page-main'}, '', location.href);
+
+  window.addEventListener('popstate', event=>{
+    const id = event.state?.gulpinPage || 'page-main';
+    goTo(document.getElementById(id) ? id : 'page-main', false);
+  });
+
+  window.addEventListener('pagehide', stopAllMedia);
+
   function toggleNav(btn){ btn.classList.toggle('on'); }
+  function toggleGpUtilityMenu(button){
+    const menu=document.getElementById('gpUtilityMenu');
+    const isOpen=menu.classList.toggle('open');
+    button.setAttribute('aria-expanded',String(isOpen));
+    button.setAttribute('aria-label',isOpen?'관리 메뉴 닫기':'관리 메뉴 열기');
+    button.textContent=isOpen?'× 닫기':'☰ 메뉴';
+  }
   function iconHover(btn, on){
     const base = btn.getAttribute('data-base');
     const img = btn.querySelector('img');
@@ -612,6 +761,7 @@
   const GP_LOGIN_ID_PATTERN = /^[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40}$/;
   let gpLoginInfo = null;
   let gpLoginSubmitting = false;
+  let gpLoginDestination = null;
 
   function getGpLoginInfo(){
     const info = getLocalStorage('infochaitalk');
@@ -628,8 +778,10 @@
   function renderGpLogin(){
     const welcome = document.getElementById('gpWelcome');
     const welcome2 = document.getElementById('gpWelcome2');
+    const homeLogout = document.getElementById('homeLogout');
     const utilityNav = document.getElementById('gpUtilityNav');
     utilityNav.replaceChildren();
+    homeLogout.hidden = !gpLoginInfo;
 
     const addUtilityMenu = (text, href, id)=>{
       const link = document.createElement('a');
@@ -683,13 +835,28 @@
       window.renderRoleNav?.();
       return;
     }
+    gpLoginDestination = null;
+    openGpLogin();
+  }
+
+  function openGpLogin(){
     document.getElementById('gpLoginModal').classList.add('open');
     document.body.style.overflow = 'hidden';
     setTimeout(()=>document.getElementById('gpEmail').focus(), 0);
   }
 
+  function goToAfterLogin(id){
+    if(gpLoginInfo){
+      goTo(id);
+      return;
+    }
+    gpLoginDestination = id;
+    openGpLogin();
+  }
+
   function closeGpLogin(event){
     if(event && event.target !== event.currentTarget) return;
+    gpLoginDestination = null;
     document.getElementById('gpLoginModal').classList.remove('open');
     document.body.style.overflow = '';
     document.getElementById('gpLoginError').style.display = 'none';
@@ -748,7 +915,10 @@
           passwordInput.value = '';
           renderGpLogin();
           window.renderRoleNav?.();
+          const destination = gpLoginDestination;
+          gpLoginDestination = null;
           closeGpLogin();
+          if(destination) goTo(destination);
         }else{
           showError('아이디 또는 비밀번호가 잘못되었습니다.');
         }

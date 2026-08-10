@@ -14,9 +14,9 @@ try {
         $dbName = getenv('DB_NAME') ?: 'happyzip1';
     } else {
         $dbHost = getenv('DB_HOST') ?: 'localhost';
-        $dbUser = getenv('DB_USER') ?: 'happyzip1';
-        $dbPass = getenv('DB_PASS') ?: 'skl329350281@';
-        $dbName = getenv('DB_NAME') ?: 'happyzip1';
+        $dbUser = getenv('DB_USER') ?: 'happyzip2';
+        $dbPass = getenv('DB_PASS') ?: 'skl32935028@';
+        $dbName = getenv('DB_NAME') ?: 'happyzip2';
         $location = "chaitalk";
     }
 

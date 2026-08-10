@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>글핀 초등 4학년 어휘·한자 문해력 진단 TEST A</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  background: #5b8def;
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+.back-link {
+  display:inline-block; margin-bottom:12px; padding:10px 18px; background:white; color:#3560c9;
+  border-radius:24px; text-decoration:none; font-weight:700; box-shadow:0 3px 8px rgba(0,0,0,.14);
+}
+.back-link:hover { background:#eaf1ff; }
+.header {
+  background: white; padding: 25px; border-radius: 15px 15px 0 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
+}
+.header h1 { color: #5b8def; font-size: 1.7rem; font-weight: bold; }
+.header p.sub { color: #666; margin-top: 6px; font-size: 0.95rem; }
+.button-group { display: flex; gap: 10px; align-items: center; justify-content:center; margin-top:14px; }
+.print-btn, .answer-key-btn {
+  padding: 12px 26px; border: 2px solid #5b8def; background: white; color: #5b8def;
+  border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 1rem;
+  transition: all .3s; display: flex; align-items: center; gap: 8px;
+}
+.print-btn:hover { background: #5b8def; color: white; }
+.answer-key-btn { border-color: #28a745; color: #28a745; }
+.answer-key-btn:hover { background: #28a745; color: white; }
+.test-paper { background: white; padding: 40px; min-height: 800px; border-radius: 0 0 15px 15px; border-top: 3px solid #5b8def;}
+.instructions {
+  background: #f0f6ff; border: 2px solid #b9d1ff; border-radius: 10px; padding: 20px; margin-bottom: 30px;
+}
+.instructions h3 { color: #5b8def; font-weight: 700; margin-bottom: 10px; font-size: 1.2rem; }
+.instructions p { font-size: 1.02rem; color: #333; line-height: 1.6; }
+.questions-grid { display: block; margin-bottom: 20px; }
+.questions-grid > * { margin-bottom: 15px; }
+.questions-grid > *:last-child { margin-bottom: 0; }
+.passage-group { border-left: 4px solid #5b8def; padding-left: 16px; }
+.passage-range-label { color:#5b8def; font-weight:700; font-size:0.98rem; margin-bottom:8px; }
+.passage-group .question-card { margin-bottom: 15px; }
+.passage-group .question-card:last-child { margin-bottom: 0; }
+.question-card {
+  background: #fafcff; border: 2px solid #b9d1ff; border-radius: 12px; padding: 16px; transition: all .3s;
+}
+.question-card:hover { border-color: #5b8def; box-shadow: 0 4px 12px rgba(91,141,239,0.15); }
+.question-card.wrong { border-color: #ff9800; background: #fff8f0; }
+.question-card.correct-card { border-color: #28a745; background: #f0fff4; opacity: .7; }
+.question-header { display:flex; align-items:flex-start; gap:8px; margin-bottom:10px; }
+.question-number { color:#5b8def; font-weight:700; font-size:1.05rem; flex-shrink:0; }
+.question-text { font-size:1.03rem; font-weight:600; color:#333; line-height:1.5; }
+.area-tag { display:inline-block; margin-left:6px; font-size:0.72rem; font-weight:700; color:#5b8def; background:#eaf1ff; padding:2px 8px; border-radius:10px; vertical-align:middle;}
+.passage-box {
+  background:#fff; border:1px dashed #9fb9ea; border-radius:8px; padding:10px 12px;
+  margin-bottom:10px; font-size:0.94rem; color:#444; line-height:1.55;
+}
+.passage-box table { width:100%; border-collapse:collapse; margin-top:8px; font-size:0.88rem; }
+.passage-box table th, .passage-box table td { border:1px solid #cfe0ff; padding:5px 6px; text-align:center; }
+.passage-box table th { background:#eaf1ff; }
+.passage-box strong { color:#1a56c4; font-weight:800; }
+.options { display:flex; flex-direction:column; gap:10px; margin-top: 10px; }
+.option-row {
+  display:flex; align-items:center; gap:10px; padding:11px 16px; background:white;
+  border:2px solid #b9d1ff; border-radius:8px; cursor:pointer;
+  font-size:0.96rem; font-weight:600; color:#333; transition: all .3s;
+}
+.option-row:hover { background:#eaf1ff; border-color:#5b8def; }
+.option-row input[type="radio"] { width:18px; height:18px; flex-shrink:0; accent-color:#5b8def; cursor:pointer; }
+.option-row .option-text { flex:1; }
+.option-row.selected { background:#eaf1ff; border-color:#5b8def; }
+.option-row.correct { background:#e9f8ef; border-color:#28a745; color:#1e7e34; }
+.option-row.incorrect { background:#fdecec; border-color:#dc3545; color:#b02a37; }
+.option-row.disabled { cursor:not-allowed; opacity:.85; }
+.option-row.disabled input[type="radio"] { cursor:not-allowed; }
+.hint-section {
+  margin-top:12px; padding:12px; background:#fff8e1; border:2px solid #ffc107; border-radius:8px; display:none;
+}
+.hint-section.show { display:block; }
+.hint-title { color:#f57c00; font-weight:700; margin-bottom:6px; font-size:1rem; }
+.hint-content { color:#333; line-height:1.55; font-size:0.95rem; }
+.hint-answer { color:#d32f2f; font-weight:700; margin-top:4px; }
+.hint-btn {
+  background:#ffc107; color:#333; border:none; padding:7px 18px; border-radius:6px; cursor:pointer;
+  font-size:0.9rem; font-weight:600; margin-top:10px; transition:all .3s;
+}
+.hint-btn:hover { background:#ffb300; }
+.action-buttons {
+  text-align:center; margin-top:30px; padding-top:30px; border-top:2px solid #eaf1ff;
+  display:flex; gap:15px; justify-content:center; flex-wrap:wrap;
+}
+.submit-btn {
+  background:#5b8def; color:white; border:none; padding:15px 50px; font-size:1.15rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s; box-shadow:0 4px 15px rgba(91,141,239,0.3);
+}
+.submit-btn:hover { background:#4676d8; transform:translateY(-2px); box-shadow:0 6px 20px rgba(91,141,239,0.4); }
+.reset-btn, .retry-btn {
+  background:#6c757d; color:white; border:none; padding:15px 40px; font-size:1.05rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s;
+}
+.reset-btn:hover, .retry-btn:hover { background:#5a6268; transform:translateY(-2px); }
+.retry-btn { background:#ff9800; }
+.retry-btn:hover { background:#f57c00; }
+.result {
+  margin-top:30px; padding:26px; background:#d4edda; border:3px solid #28a745; border-radius:15px;
+  text-align:center; display:none;
+}
+.result.show { display:block; }
+.result h3 { color:#28a745; font-size:1.6rem; margin-bottom:12px; }
+.result p { font-size:1.15rem; color:#155724; font-weight:600; }
+.diagnosis-card {
+  margin-top:22px; background:white; border:3px solid #5b8def; border-radius:14px; padding:22px;
+  text-align:left;
+}
+.diagnosis-title { font-size:1.25rem; font-weight:800; color:#333; margin-bottom:10px; }
+.diagnosis-desc { font-size:1rem; color:#444; line-height:1.65; margin-bottom:6px; }
+.area-report { margin-top:22px; background:white; border:3px solid #28a745; border-radius:14px; padding:22px; text-align:left; }
+.area-report-title { font-size:1.2rem; font-weight:800; color:#1e7e34; margin-bottom:14px; }
+.area-row { border-bottom:1px solid #eee; padding:12px 0; }
+.area-row:last-child { border-bottom:none; }
+.area-row-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.area-name { font-weight:700; color:#333; font-size:1.02rem; }
+.area-score { font-weight:700; color:#5b8def; }
+.area-score.low { color:#dc3545; }
+.area-bar-bg { background:#eee; border-radius:6px; height:10px; overflow:hidden; margin-bottom:8px; }
+.area-bar-fill { background:#5b8def; height:100%; border-radius:6px; }
+.area-bar-fill.low { background:#ff9800; }
+.area-comment { font-size:0.92rem; color:#555; line-height:1.55; background:#f8f9fa; padding:10px 12px; border-radius:8px; }
+.progress-info { text-align:center; margin-bottom:18px; font-size:1.05rem; color:#5b8def; font-weight:600; }
+.filter-buttons { text-align:center; margin-bottom:18px; display:none; }
+.filter-buttons.show { display:block; }
+.filter-btn {
+  background:white; color:#5b8def; border:2px solid #5b8def; padding:9px 22px; border-radius:20px;
+  cursor:pointer; font-size:0.95rem; font-weight:600; margin:0 5px; transition:all .3s;
+}
+.filter-btn.active { background:#5b8def; color:white; }
+.filter-btn:hover { background:#eaf1ff; }
+.filter-btn.active:hover { background:#4676d8; }
+@media (max-width:768px) {
+  .questions-grid { grid-template-columns:1fr; }
+  .header h1 { font-size:1.25rem; }
+  .test-paper { padding:20px; }
+}
+.answer-key-page { display:none; }
+.answer-key-page.show { display:block; }
+.answer-key-content { max-width:800px; margin:0 auto; padding:40px; }
+.answer-key-title { text-align:center; color:#5b8def; font-size:1.8rem; font-weight:bold; margin-bottom:30px; }
+.answer-key-section {
+  margin-bottom:35px; background:#f8f9fa; padding:22px; border-radius:12px; border:2px solid #5b8def;
+}
+.answer-key-section h3 {
+  color:#5b8def; font-size:1.3rem; margin-bottom:16px; border-bottom:2px solid #5b8def; padding-bottom:8px;
+}
+.answer-list { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.answer-item { display:flex; align-items:flex-start; padding:8px; background:white; border-radius:6px; gap:6px;}
+.answer-number { color:#5b8def; font-weight:bold; min-width:26px; }
+.answer-content { color:#333; font-weight:600; font-size:0.92rem; }
+@media print {
+  @page { margin:1cm; size:A4; }
+  body { background:white; padding:0; margin:0; }
+  .back-link { display:none !important; }
+  .container { max-width:100%; margin:0; }
+  .header { padding:10px 15px; margin-bottom:8px; box-shadow:none; border-radius:0; }
+  .header h1 { font-size:1.3rem; margin:0; }
+  .button-group { display:none !important; }
+  .submit-btn, .retry-btn, .reset-btn, .hint-btn { display:none !important; }
+  .filter-buttons { display:none !important; }
+  .result { display:none !important; }
+  .progress-info { display:none !important; }
+  .test-paper { padding:5px 10px; border-radius:0; }
+  .questions-grid { gap:8px; display:grid; grid-template-columns:repeat(2,1fr); }
+  .question-card { break-inside:avoid; page-break-inside:avoid; padding:10px; border:1px solid #b9d1ff; }
+  .hint-section { display:none !important; }
+  .answer-key-page.show { display:block !important; }
+  .answer-key-page button { display:none !important; }
+}
+</style>
+</head>
+<body>
+<a class="back-link" href="../WordTest.html">← 뒤로 가기</a>
+<div class="container">
+  <div class="header">
+    <h1>📖 글핀 어휘·한자 문해력 진단 TEST A</h1>
+    <p class="sub">초등 4학년 · 총 15문제 · 문제 순서는 매번 랜덤으로 출제됩니다.</p>
+  </div>
+
+  <div class="test-paper">
+    <div class="instructions">
+      <h3>📝 TEST A - 어휘·한자 문해력 진단 (초등 4학년)</h3>
+      <p>낱말의 뜻, 한자어의 의미, 글의 내용 확인, 문맥 속 어휘 추론, 원인과 결과 및 적용·비판적 사고를 평가하는 문제입니다. 지문을 꼼꼼히 읽고 알맞은 답을 골라 보세요.</p>
+    </div>
+    <div class="filter-buttons" id="filterA">
+      <button class="filter-btn active" onclick="filterQuestions('all')">전체</button>
+      <button class="filter-btn" onclick="filterQuestions('wrong')">틀린 문제만</button>
+    </div>
+    <div class="progress-info" id="progressA">0 / 15 문제 완료</div>
+    <div id="questions-A" class="questions-grid"></div>
+    <div class="action-buttons">
+      <button class="submit-btn" onclick="checkAnswers()">제출하기</button>
+      <button class="retry-btn" onclick="retryWrong()" style="display:none;">틀린 문제 다시 풀기</button>
+      <button class="reset-btn" onclick="resetTest()">전체 다시 풀기</button>
+    </div>
+    <div id="result-A" class="result"></div>
+  </div>
+</div>
+
+<script>
+const passages = {
+  p1: `도시 중심부가 주변 교외보다 더 높은 기온을 보이는 현상을 '열섬'이라고 합니다. 아스팔트와 콘크리트는 햇빛을 되돌려 보내는 비율인 반사율이 낮아 에너지를 많이 <strong>흡수</strong>합니다. 그리고 낮에 <strong>축적</strong>한 열을 밤에 천천히 방출합니다. 자동차와 냉방기에서 나오는 폐열도 도심의 기온을 높입니다.<br><br>밝은색 지붕은 햇빛을 더 많이 되돌려 보내고, 옥상 정원은 식물이 물을 증발시키는 과정에서 열을 사용하므로 온도 상승을 완화합니다. 그러나 건물 한 채만 바꾸어서는 효과가 제한적입니다. 도로 재료, 녹지, 건물 설계를 함께 개선해야 도시 전체의 열섬을 줄일 수 있습니다.`,
+  p2: `비가 적게 온 해, 산촌의 공동 저수지 수위가 크게 내려갔습니다. 각 농가가 자기 밭의 수확만 생각해 물을 많이 끌어가면 당장은 도움이 됩니다. 그러나 저수지가 <strong>고갈</strong>되어 마을 전체가 물 부족을 겪을 수 있습니다.<br><br>주민들은 강수량에 따라 농가별 취수량을 정하고, 각 농가의 사용량을 게시판에 공개하기로 했습니다. 생활용수를 먼저 확보하고 남는 물을 농업용수로 나누는 원칙도 세웠습니다. 이 규칙은 개인의 물 사용을 무조건 막으려는 것이 아니라, 공동 자원을 오래 지속해서 이용하기 위한 약속입니다.`,
+  p3: `사람은 이미 믿고 있는 생각과 맞는 정보는 쉽게 받아들이고, 반대되는 정보는 덜 중요하게 여기기도 합니다. 이를 '확증 편향'이라고 합니다.<br><br>인터넷의 추천 알고리즘은 사용자가 오래 본 글이나 영상을 바탕으로 비슷한 내용을 계속 보여 줍니다. 편리한 기능이지만, 한쪽 정보만 반복해서 만나면 <strong>편향</strong>이 더 강해질 수 있습니다.<br><br>이를 줄이려면 정보의 출처를 확인하고, 내 생각과 다른 근거도 일부러 찾아야 합니다. 또한 기사 속 사실과 글쓴이의 의견을 구별한 뒤, 여러 자료가 같은 내용을 뒷받침하는지 검증해야 합니다.`,
+  p4: `발효와 부패는 모두 미생물이 음식 속 유기물을 분해하면서 일어나는 변화입니다. 사람에게 도움이 되는 맛이나 성분이 만들어지면 발효라고 하고, 해로운 물질이나 불쾌한 냄새가 생기면 부패라고 합니다.<br><br>어떤 변화가 일어나는지는 미생물의 종류뿐 아니라 온도, 소금의 양, 산소의 유무에 따라 달라집니다. 냉장고는 낮은 온도로 미생물의 활동을 <strong>억제</strong>하지만 완전히 없애지는 못합니다. 따라서 냉장 보관한 음식도 오래 두면 상할 수 있습니다. 냄새가 괜찮다는 이유만으로 안전하다고 단정해서는 안 되며, 보관 기간과 음식의 상태를 함께 확인해야 합니다.`,
+  p5: `오래된 건물을 복원할 때 목표는 새 건물처럼 반듯하게 만드는 것이 아닙니다. 복원 전문가는 옛 설계도, 사진, 수리 기록, 목재와 안료에 남은 흔적을 서로 비교합니다. 자료가 서로 다르면 건물이 만들어진 시기와 가까운 기록이나 실제 재료에서 확인되는 흔적을 더 중요하게 봅니다.<br><br>근거가 충분하지 않은 부분은 마음대로 꾸미지 않고, 새로 보충한 부분에 표시를 남기기도 합니다. 그래야 원래 부분과 복원한 부분을 후대의 연구자가 구별할 수 있습니다.<br><br>이러한 원칙은 문화재의 <strong>진정성</strong>을 보존하고, 현재의 추정을 확정된 사실처럼 남기지 않기 위한 것입니다.
+  <table>
+    <tr><th>자료</th><th>내용</th></tr>
+    <tr><td>ㄱ</td><td>건물 완공 당시 기록: "동쪽 지붕에는 회청색 기와를 사용함."</td></tr>
+    <tr><td>ㄴ</td><td>완공 70년 뒤 방문객의 회상: "대문이 붉었던 것 같다."</td></tr>
+    <tr><td>ㄷ</td><td>현재 대문의 조사 결과: 최근의 붉은 칠 아래에서 오래된 푸른 안료층이 발견됨.</td></tr>
+  </table>`
+};
+
+const rawData = [
+  { q:"'인구(人口)'의 '인(人)'은 '사람'을 뜻합니다. 다음 중 '인(人)'이 같은 뜻으로 쓰인 낱말은 무엇일까요?", passage:null, area:"한자어 추론",
+    options:["인정","인상","인권","인쇄","인도"],
+    answer:"인권",
+    explain:"'인구'와 '인권'의 '인'은 모두 '사람'을 뜻합니다." },
+  { q:"다음 문장에서 빈칸에 들어갈 말로 가장 알맞은 것은 무엇일까요? [ 물이 수증기로 변하여 공기 중으로 흩어지는 현상을 ________이라고 한다. ]", passage:null, area:"문맥 어휘",
+    options:["응결","증발","용해","순환","승화"],
+    answer:"증발",
+    explain:"물이 수증기(기체)가 되어 공기 중으로 흩어지는 현상은 '증발'입니다." },
+  { q:"다음 글에서 '상호 의존'의 뜻으로 가장 알맞은 것은 무엇일까요?", passage:"우리나라는 다른 나라에 반도체를 수출하고, 국내에서 부족한 자원은 다른 나라에서 수입한다. 이처럼 오늘날 여러 나라는 필요한 물건과 자원을 서로 주고받으며 살아간다.", area:"문맥 어휘",
+    options:["한 나라가 필요한 모든 물건을 스스로 생산하는 것","여러 나라가 서로 필요한 것을 주고받으며 영향을 미치는 것","다른 나라와의 교류를 완전히 중단하는 것","한 나라가 다른 나라의 자원을 믿고 의지하는 것","다른 나라의 자원을 갖고와 재 가공하여 사용하는 것"],
+    answer:"여러 나라가 서로 필요한 것을 주고받으며 영향을 미치는 것",
+    explain:"'상호 의존'은 나라나 대상이 서로 필요한 것을 주고받으며 영향을 주고받는 관계입니다." },
+  { q:"다음 문장에서 빈칸에 들어갈 말로 가장 알맞은 것은 무엇일까요?", passage:"생태계에서 생물은 먹고 먹히는 관계뿐만 아니라 생활 공간과 물, 공기 등 주변의 여러 요소와 영향을 주고받는다. 이러한 여러 요소를 _______이라고 한다.", area:"문맥 어휘",
+    options:["식물","산림","토양","환경","자연"],
+    answer:"환경",
+    explain:"생물과 영향을 주고받는 생태계의 주변 요소(공기, 물, 공간 등)를 '환경'이라고 합니다." },
+  { q:"다음 중 '용해'가 일어난 것은 무엇일까요?", passage:null, area:"적용·비판",
+    options:["얼음이 녹아 물이 되었다.","소금이 물에 녹아 보이지 않게 되었다.","물이 끓어 수증기로 변했다.","수증기가 물방울로 변했다.","두 가지 이상을 섞는 것"],
+    answer:"소금이 물에 녹아 보이지 않게 되었다.",
+    explain:"'용해'는 한 물질이 다른 물질에 녹아 고르게 섞이는 현상으로, 소금이 물에 녹는 것이 알맞습니다. (얼음이 녹는 것은 '융해', 물이 끓는 것은 '증발'입니다.)" },
+  { q:"다음 문장에서 '완화'와 뜻이 가장 가까운 것은 무엇일까요? [ 정부는 교통 혼잡을 완화하기 위해 버스 운행 횟수를 늘렸다. ]", passage:null, area:"문맥 어휘",
+    options:["더욱 심하게 함","정도를 약하게 함","원인을 조사함","상태를 유지함","정확하게 측정함"],
+    answer:"정도를 약하게 함",
+    explain:"'완화'는 어떤 현상이나 문제의 정도를 약하게 하거나 누그러뜨리는 것을 뜻합니다." },
+  { q:"이 글의 내용과 일치하지 않는 것은 무엇인가요?", passage:passages.p1, area:"정보 확인",
+    options:["도시 중심부는 밤에도 주변 교외보다 더 따뜻할 수 있다.","밝은색 지붕은 어두운 아스팔트보다 햇빛 에너지를 더 많이 흡수한다.","아스팔트는 낮에 받은 열을 밤에 천천히 내보낸다.","자동차와 냉방기에서 나오는 폐열도 열섬의 원인이 될 수 있다.","도시 전체의 열섬을 줄이려면 여러 방법을 함께 사용해야 한다."],
+    answer:"밝은색 지붕은 어두운 아스팔트보다 햇빛 에너지를 더 많이 흡수한다.",
+    explain:"밝은색 지붕은 햇빛을 더 많이 되돌려 보내므로 어두운 아스팔트보다 에너지를 적게 흡수합니다." },
+  { q:"문맥으로 보아 '축적'의 뜻으로 가장 알맞은 것은 무엇인가요?", passage:passages.p1, area:"문맥 어휘",
+    options:["밖으로 밀어내는 것","서로의 차이를 비교하는 것","갑자기 사라지게 하는 것","조금씩 쌓아 모으는 것","여러 곳으로 나누어 보내는 것"],
+    answer:"조금씩 쌓아 모으는 것",
+    explain:"'축적'은 물질이나 에너지 등이 조금씩 쌓여 모이는 것을 뜻합니다." },
+  { q:"농가별 물 사용량을 공개하는 까닭으로 가장 알맞은 것은 무엇인가요?", passage:passages.p2, area:"추론·글 구조",
+    options:["비가 내린 날짜를 정확하게 기억하기 위해","마을에서 재배하는 작물의 종류를 비교하기 위해","물을 사용한 모든 농가를 처벌하기 위해","물을 적게 쓰는 농가만 마을에 남기기 위해","서로 규칙을 지키는지 확인하고 몰래 과도하게 사용하는 일을 막기 위해"],
+    answer:"서로 규칙을 지키는지 확인하고 몰래 과도하게 사용하는 일을 막기 위해",
+    explain:"사용량을 공개하면 주민들이 규칙을 지키는지 확인할 수 있고 몰래 과도하게 사용하는 행동도 줄일 수 있습니다." },
+  { q:"'고갈(枯渴)'의 의미로 가장 알맞은 것은 무엇인가요?", passage:passages.p2, area:"한자어 추론",
+    options:["저수지의 물이 전보다 깨끗해지다.","저수지의 물이 거의 다 없어지다.","저수지의 물이 더 빠르게 흐르다.","저수지의 물에 다른 물질이 섞이다.","저수지의 물을 농가별로 똑같이 나누다."],
+    answer:"저수지의 물이 거의 다 없어지다.",
+    explain:"'마르고 목마르다'라는 뜻에서 물이나 자원이 거의 다 없어지는 상태를 추론할 수 있습니다." },
+  { q:"이 글의 내용과 일치하지 않는 것은 무엇인가요?", passage:passages.p3, area:"정보 확인",
+    options:["사람은 자기 생각과 맞는 정보를 더 쉽게 받아들일 수 있다.","추천 알고리즘은 사용자가 본 내용을 바탕으로 비슷한 정보를 보여 준다.","한쪽 정보만 계속 보면 편향이 더 강해질 수 있다.","편향을 줄이려면 자기 생각과 반대되는 정보는 보지 않아야 한다.","기사에서는 사실과 글쓴이의 의견을 구별해 읽어야 한다."],
+    answer:"편향을 줄이려면 자기 생각과 반대되는 정보는 보지 않아야 한다.",
+    explain:"편향을 줄이기 위해서는 반대되는 정보도 찾아보아야 하므로 이 선택지는 글의 내용과 반대입니다." },
+  { q:"'판단이 편향(偏向)되었다'의 의미로 가장 알맞은 것은 무엇인가요?", passage:passages.p3, area:"한자어 추론",
+    options:["정보가 여러 사람에게 고르게 퍼졌다.","서로 다른 두 의견이 알맞게 합쳐졌다.","판단이 어느 한쪽으로 치우쳤다.","확실하지 않은 판단을 잠시 미루었다.","사실이 아닌 의견을 모두 삭제하였다."],
+    answer:"판단이 어느 한쪽으로 치우쳤다.",
+    explain:"'한쪽을 향하다'라는 한자의 뜻을 합치면 판단이 한쪽으로 치우쳤다는 뜻이 됩니다." },
+  { q:"이 글에서 설명한 발효와 부패의 관계로 가장 알맞은 것은 무엇인가요?", passage:passages.p4, area:"추론·글 구조",
+    options:["발효에는 미생물이 관여하지 않지만 부패에는 미생물이 관여한다.","부패는 산소가 있을 때에만 일어난다.","냉장고에 넣으면 발효와 부패가 모두 완전히 멈춘다.","냄새가 좋으면 발효이고 냄새가 나쁘면 언제나 부패이다.","둘 다 미생물에 의한 변화이지만 사람에게 유익한지 해로운지에 따라 구별된다."],
+    answer:"둘 다 미생물에 의한 변화이지만 사람에게 유익한지 해로운지에 따라 구별된다.",
+    explain:"발효와 부패는 모두 미생물에 의한 변화이지만 인간에게 유익한 결과인지 해로운 결과인지에 따라 구분합니다." },
+  { q:"문맥으로 보아 '억제'의 뜻으로 가장 알맞은 것은 무엇인가요?", passage:passages.p4, area:"문맥 어휘",
+    options:["활동을 더 활발하게 만드는 것","활동을 완전히 없애 버리는 것","활동하는 미생물의 종류를 바꾸는 것","활동이 심해지지 않도록 눌러 늦추는 것","활동하는 장소를 다른 곳으로 옮기는 것"],
+    answer:"활동이 심해지지 않도록 눌러 늦추는 것",
+    explain:"'억제'는 어떤 작용이 지나치게 활발해지지 않도록 눌러 줄이거나 늦추는 것입니다." },
+  { q:"다음 자료를 바탕으로 내린 판단으로 가장 알맞은 것은 무엇인가요?", passage:passages.p5, area:"적용·비판",
+    options:["현재 보이는 붉은색이 반드시 원래 대문의 색이다.","완공 70년 뒤의 기억이 당시 기록보다 더 정확하다.","ㄱ의 기록만으로 대문의 원래 색을 확정할 수 있다.","자료가 서로 다르면 가장 아름다운 색을 선택해야 한다.","방문객의 기억만으로 대문의 원래 색을 확정하지 말고, 재료의 흔적과 다른 기록을 더 조사해야 한다."],
+    answer:"방문객의 기억만으로 대문의 원래 색을 확정하지 말고, 재료의 흔적과 다른 기록을 더 조사해야 한다.",
+    explain:"ㄱ은 지붕에 대한 기록이므로 대문 색의 근거가 될 수 없고, 늦은 시기의 기억만으로도 확정할 수 없습니다. 추가 자료가 필요합니다." }
+];
+
+// 총점 진단 기준 (Ⅲ. 총점 진단 기준)
+const diagnosisBands = [
+  { min:13, max:15, title:'심화 독해형', desc:'낯선 어휘가 포함된 비문학에서도 내용, 추론, 적용을 안정적으로 수행합니다.' },
+  { min:10, max:12, title:'안정 독해형', desc:'학년 수준의 핵심 독해력이 안정적이며 일부 고난도 어휘·적용 문항 보완이 필요합니다.' },
+  { min:7,  max:9,  title:'부분 보완형', desc:'직접 제시된 정보는 이해하지만 문맥 어휘, 원인 추론, 적용에서 흔들릴 수 있습니다.' },
+  { min:4,  max:6,  title:'기초 연결형', desc:'낱문장은 읽지만 문장과 문장 사이의 관계를 연결하는 힘이 부족할 수 있습니다.' },
+  { min:0,  max:3,  title:'집중 지원형', desc:'어휘 이해와 핵심 정보 확인부터 단계적으로 지도할 필요가 있습니다.' }
+];
+function getDiagnosis(score){ return diagnosisBands.find(b => score >= b.min && score <= b.max); }
+
+// 영역별 상담 멘트 (낮은 경우)
+const areaComments = {
+  "정보 확인": "글을 읽기는 했지만 '모두', '일부', '반드시', '그러나'와 같은 조건을 놓치는 경향이 있습니다. 답을 고르기 전에 지문에서 근거가 되는 문장을 직접 표시하도록 지도하면 정확도가 높아질 수 있습니다.",
+  "문맥 어휘": "낱말을 모른다고 바로 포기하는 것이 아니라, 앞 문장과 뒷 문장을 이용해 뜻을 짐작하는 힘을 길러야 합니다. 낱말 자리에 보기의 표현을 바꾸어 넣어 문장이 자연스러운지 확인하는 연습이 도움이 됩니다.",
+  "한자어 추론": "한자를 많이 외우지 못해서라기보다 두 한자의 뜻을 합쳐 낯선 어휘를 추론하는 경험이 부족한 상태입니다. 예를 들어 '고갈'을 '마르다+목마르다'로 나누어 이해하면 어려운 교과 어휘도 훨씬 쉽게 받아들일 수 있습니다.",
+  "추론·글 구조": "글 속 사실은 찾지만 '왜 그런가', '무엇을 알 수 있는가'를 묻는 문제에서 어려움이 나타납니다. '때문에', '그러나', '따라서'와 같은 연결어를 중심으로 원인과 결과를 표시하는 연습이 필요합니다.",
+  "적용·비판": "지문 내용을 그대로 묻는 문제는 풀지만 새로운 사례에 적용하거나 근거의 신뢰성을 비교할 때 어려움이 있습니다. 답을 고른 뒤 '이 선택을 뒷받침하는 지문 근거가 무엇인지' 말하게 하면 사고력이 빠르게 좋아질 수 있습니다."
+};
+const areaGoodComments = {
+  "정보 확인": "지문의 조건과 세부 정보를 정확하게 짚어내고 있습니다. 이 힘을 계속 유지해 주세요.",
+  "문맥 어휘": "문맥을 이용해 낱말의 뜻을 스스로 짐작하는 힘이 잘 갖추어져 있습니다.",
+  "한자어 추론": "한자어의 구성 원리를 이용해 낯선 어휘의 뜻을 잘 추론하고 있습니다.",
+  "추론·글 구조": "글의 원인과 결과, 구조를 파악하는 논리적 사고력이 우수합니다.",
+  "적용·비판": "지문 내용을 새로운 상황에 적용하고 비판적으로 판단하는 능력이 뛰어납니다."
+};
+const AREA_ORDER = ["정보 확인","문맥 어휘","한자어 추론","추론·글 구조","적용·비판"];
+
+function circledNum(i) {
+  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+  return nums[i] || (i + 1) + '.';
+}
+function shuffleArray(array) {
+  const a = [...array];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const TOTAL = 15;
+let userAnswers = {};
+let questionStatus = {};
+let currentQuestions = [];
+let currentGroups = [];
+let currentFilter = 'all';
+
+function buildGroups(data) {
+  const groups = [];
+  const groupMap = new Map();
+  data.forEach(q => {
+    if (q.passage) {
+      if (!groupMap.has(q.passage)) {
+        const g = { passage: q.passage, questions: [] };
+        groupMap.set(q.passage, g);
+        groups.push(g);
+      }
+      groupMap.get(q.passage).questions.push(q);
+    } else {
+      groups.push({ passage: null, questions: [q] });
+    }
+  });
+  return groups;
+}
+
+function initTest() {
+  const groups = buildGroups(rawData);
+  currentGroups = shuffleArray(groups).map(g => ({ passage: g.passage, questions: shuffleArray(g.questions) }));
+  currentQuestions = [];
+  currentGroups.forEach(g => g.questions.forEach(q => currentQuestions.push(q)));
+  userAnswers = {};
+  questionStatus = {};
+  currentFilter = 'all';
+  renderQuestions();
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions-A');
+  container.innerHTML = '';
+  let idx = 0;
+  currentGroups.forEach(g => {
+    let target = container;
+    if (g.passage) {
+      const startNum = idx + 1;
+      const endNum = idx + g.questions.length;
+      const rangeLabel = g.questions.length > 1 ? `[${startNum}~${endNum}]` : `[${startNum}]`;
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'passage-group';
+      groupDiv.innerHTML = `<div class="passage-range-label">${rangeLabel} 다음 글을 읽고 물음에 답하세요.</div><div class="passage-box">${g.passage}</div>`;
+      container.appendChild(groupDiv);
+      target = groupDiv;
+    }
+    g.questions.forEach(q => {
+      const index = idx++;
+      const div = document.createElement('div');
+      div.className = 'question-card';
+      div.dataset.index = index;
+      div.dataset.status = questionStatus[index] || 'unanswered';
+
+      const opts = shuffleArray(q.options);
+
+      div.innerHTML = `
+        <div class="question-header">
+          <div class="question-number">${index + 1}.</div>
+          <div class="question-text">${q.q}</div>
+        </div>
+        <div class="options">
+          ${opts.map((opt, oi) => `
+            <label class="option-row" data-value="${opt.replace(/"/g,'&quot;')}">
+              <input type="radio" name="q-A-${index}" value="${opt.replace(/"/g,'&quot;')}" onchange="selectOption(${index}, this)">
+              <span class="option-text">${circledNum(oi)} ${opt}</span>
+            </label>`).join('')}
+        </div>
+        <div class="hint-section" id="hint-${index}">
+          <div class="hint-title">💡 힌트 (영역: ${q.area})</div>
+          <div class="hint-content">
+            <div><strong>설명:</strong> ${q.explain}</div>
+            <div class="hint-answer"><strong>정답:</strong> ${q.answer}</div>
+          </div>
+        </div>
+      `;
+      target.appendChild(div);
+    });
+  });
+  applyFilter();
+  updateProgress();
+}
+
+function selectOption(index, el) {
+  const card = el.closest('.question-card');
+  card.querySelectorAll('.option-row').forEach(o => o.classList.remove('selected'));
+  const row = el.closest('.option-row');
+  row.classList.add('selected');
+  userAnswers[index] = el.value;
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = Object.keys(userAnswers).filter(k => userAnswers[k]).length;
+  document.getElementById('progressA').textContent = `${answered} / ${TOTAL} 문제 완료`;
+}
+
+function checkAnswers() {
+  let correctCount = 0;
+  let wrongQuestions = [];
+  const areaStats = {};
+  AREA_ORDER.forEach(a => areaStats[a] = { correct:0, total:0 });
+
+  const cards = document.querySelectorAll('#questions-A .question-card');
+
+  cards.forEach((card, index) => {
+    const q = currentQuestions[index];
+    const correctAnswer = q.answer;
+    const userAnswer = userAnswers[index];
+    areaStats[q.area].total++;
+
+    if (questionStatus[index] === 'correct') {
+      correctCount++;
+      areaStats[q.area].correct++;
+      return;
+    }
+
+    const opts = card.querySelectorAll('.option-row');
+    opts.forEach(opt => {
+      opt.classList.add('disabled');
+      opt.querySelector('input[type="radio"]').disabled = true;
+      const optText = opt.dataset.value;
+      if (optText === correctAnswer) opt.classList.add('correct');
+      if (optText === userAnswer && userAnswer !== correctAnswer) opt.classList.add('incorrect');
+    });
+
+    if (userAnswer === correctAnswer) {
+      correctCount++;
+      areaStats[q.area].correct++;
+      questionStatus[index] = 'correct';
+      card.dataset.status = 'correct';
+      card.classList.add('correct-card');
+    } else {
+      questionStatus[index] = 'wrong';
+      card.dataset.status = 'wrong';
+      card.classList.add('wrong');
+      wrongQuestions.push(index);
+
+      const hintBtn = document.createElement('button');
+      hintBtn.className = 'hint-btn';
+      hintBtn.textContent = '💡 힌트 보기';
+      hintBtn.onclick = () => toggleHint(index);
+      card.appendChild(hintBtn);
+    }
+  });
+
+  const percentage = Math.round((correctCount / TOTAL) * 100);
+  const diag = getDiagnosis(correctCount);
+  const resultDiv = document.getElementById('result-A');
+
+  let areaHtml = '';
+  AREA_ORDER.forEach(area => {
+    const st = areaStats[area];
+    if (st.total === 0) return;
+    const rate = st.correct / st.total;
+    const isLow = rate < 0.6;
+    const pct = Math.round(rate * 100);
+    const comment = isLow ? areaComments[area] : areaGoodComments[area];
+    areaHtml += `
+      <div class="area-row">
+        <div class="area-row-head">
+          <span class="area-name">${area}</span>
+          <span class="area-score ${isLow ? 'low':''}">${st.correct} / ${st.total} (${pct}%)</span>
+        </div>
+        <div class="area-bar-bg"><div class="area-bar-fill ${isLow?'low':''}" style="width:${pct}%;"></div></div>
+        <div class="area-comment">${comment}</div>
+      </div>`;
+  });
+
+  resultDiv.innerHTML = `
+    <h3>🎉 결과</h3>
+    <p>맞힌 문제: ${correctCount} / ${TOTAL}</p>
+    <p>정답률: ${percentage}%</p>
+    <div class="diagnosis-card">
+      <div class="diagnosis-title">📊 총점 진단 : ${correctCount}점 · ${diag.title}</div>
+      <div class="diagnosis-desc">${diag.desc}</div>
+    </div>
+    <div class="area-report">
+      <div class="area-report-title">🗂️ 영역별 상담 결과</div>
+      ${areaHtml}
+    </div>
+  `;
+  resultDiv.classList.add('show');
+
+  event.target.style.display = 'none';
+
+  if (wrongQuestions.length > 0) {
+    document.querySelector('.retry-btn').style.display = 'inline-block';
+    document.getElementById('filterA').classList.add('show');
+  }
+}
+
+function toggleHint(index) {
+  const h = document.getElementById(`hint-${index}`);
+  h.classList.toggle('show');
+}
+
+function retryWrong() {
+  const cards = document.querySelectorAll('#questions-A .question-card');
+  cards.forEach((card, index) => {
+    if (questionStatus[index] === 'wrong') {
+      card.classList.remove('wrong');
+      const h = document.getElementById(`hint-${index}`);
+      if (h) h.classList.remove('show');
+      const hb = card.querySelector('.hint-btn');
+      if (hb) hb.remove();
+      const opts = card.querySelectorAll('.option-row');
+      opts.forEach(o => {
+        o.classList.remove('selected','correct','incorrect','disabled');
+        const input = o.querySelector('input[type="radio"]');
+        input.disabled = false;
+        input.checked = false;
+      });
+      userAnswers[index] = '';
+      questionStatus[index] = 'retry';
+    }
+  });
+
+  document.getElementById('result-A').classList.remove('show');
+  document.querySelector('.submit-btn').style.display = 'inline-block';
+  event.target.style.display = 'none';
+  filterQuestions('wrong');
+}
+
+function filterQuestions(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('#filterA .filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  const cards = document.querySelectorAll('#questions-A .question-card');
+  cards.forEach((card, index) => {
+    if (currentFilter === 'all') {
+      card.style.display = 'block';
+    } else {
+      card.style.display = (questionStatus[index] === 'wrong' || questionStatus[index] === 'retry') ? 'block' : 'none';
+    }
+  });
+  document.querySelectorAll('#questions-A .passage-group').forEach(group => {
+    const anyVisible = Array.from(group.querySelectorAll('.question-card')).some(c => c.style.display !== 'none');
+    group.style.display = anyVisible ? 'block' : 'none';
+  });
+}
+
+function resetTest() {
+  initTest();
+  const resultDiv = document.getElementById('result-A');
+  resultDiv.classList.remove('show');
+  resultDiv.innerHTML = '';
+  document.querySelector('.submit-btn').style.display = 'inline-block';
+  document.querySelector('.retry-btn').style.display = 'none';
+  const filterDiv = document.getElementById('filterA');
+  filterDiv.classList.remove('show');
+  const fbtns = filterDiv.querySelectorAll('.filter-btn');
+  fbtns.forEach(b => b.classList.remove('active'));
+  fbtns[0].classList.add('active');
+}
+
+window.onload = initTest;
+</script>
+</body>
+</html>

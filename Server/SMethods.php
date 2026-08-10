@@ -265,13 +265,19 @@ function SShowOrderList($data)
 
     global $conn;
 
-    //$sqlString = "SELECT p.*, u.name FROM chaitalk_porlist p chaitalk_user u where confirm = 0";
-    if ($id == "admin")
-        $sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id order by p.rdate ";
-    //$sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id and p.confirm = 0";
-    else
-        $sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id and  u.id = '{$id}' order by p.rdate";
-    //$sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id and p.confirm = 0 and u.id = '{$id}'";
+    $safeId = $conn->real_escape_string($id);
+    if ($id == "admin" || $id == "chaitalk") {
+        $sqlString = "SELECT p.*, COALESCE(u.owner, p.id) bname
+                      FROM chaitalk_porlist p
+                      LEFT JOIN chaitalk_user u ON u.id = p.id
+                      ORDER BY p.rdate";
+    } else {
+        $sqlString = "SELECT p.*, COALESCE(u.owner, p.id) bname
+                      FROM chaitalk_porlist p
+                      LEFT JOIN chaitalk_user u ON u.id = p.id
+                      WHERE p.id = '{$safeId}'
+                      ORDER BY p.rdate";
+    }
 
     $rows = array();
 

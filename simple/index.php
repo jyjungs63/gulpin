@@ -558,7 +558,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         <span id="idUserName">방문자님 환영합니다</span>
     </div>
     <header class="site-header">
-        <a class="home-link" href="../welcome.php">🏠 Home</a>
+        <a class="home-link" href="../index.php">🏠 Home</a>
         <nav class="utility-nav">
             <a id="simpleBoardMenu" href="../board/boardmgr.php" style="display:none;">게시판</a>
             <a id="simpleBranchMenu" href="../purchase/branchmgr.php" style="display:none;">지사관리</a>
@@ -670,7 +670,8 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         function restoreSimpleLogin(){
             const info = getLocalStorage('infochaitalk');
             const isCurrent = info && info.loginAt && Date.now() - Number(info.loginAt) <= 8 * 60 * 60 * 1000;
-            if(!isCurrent || (info.role !== '9' && info.role !== '7')) return;
+            const role = String(info?.role ?? '');
+            if(!isCurrent || (role !== '9' && role !== '7')) return;
 
             isLoggedIn = true;
             const loginBtn = document.querySelector('.utility-nav .right');
@@ -1027,7 +1028,6 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            restoreSimpleLogin();
             const video = document.getElementById('videoPlayer');
             video.addEventListener('contextmenu', e => e.preventDefault());
             video.addEventListener('keydown', e => {
@@ -1036,6 +1036,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
             selectLevel('all', true);
             selectUnit('A', true);
             disableAllButtons();
+            restoreSimpleLogin();
         });
     </script>
 </body>

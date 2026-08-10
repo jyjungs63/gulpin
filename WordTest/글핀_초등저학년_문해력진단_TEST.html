@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>글핀 초등 저학년 문해력 진단 TEST</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  background: #5b8def;
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+.back-link {
+  display:inline-block; margin-bottom:12px; padding:10px 18px; background:white; color:#3560c9;
+  border-radius:24px; text-decoration:none; font-weight:700; box-shadow:0 3px 8px rgba(0,0,0,.14);
+}
+.back-link:hover { background:#eaf1ff; }
+.header {
+  background: white; padding: 25px; border-radius: 15px 15px 0 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
+}
+.header h1 { color: #5b8def; font-size: 1.8rem; font-weight: bold; }
+.header p.sub { color: #666; margin-top: 6px; font-size: 0.95rem; }
+.print-btn, .answer-key-btn {
+  padding: 12px 26px; border: 2px solid #5b8def; background: white; color: #5b8def;
+  border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 1rem;
+  transition: all .3s; display: flex; align-items: center; gap: 8px;
+}
+.print-btn:hover { background: #5b8def; color: white; }
+.answer-key-btn { border-color: #28a745; color: #28a745; }
+.answer-key-btn:hover { background: #28a745; color: white; }
+.button-group { display: flex; gap: 10px; align-items: center; }
+.button-group::before { content:''; width:2px; height:30px; background:#ccc; margin:0 10px; }
+.type-selector {
+  background: white; padding: 20px; display: flex; gap: 10px; justify-content: center;
+  flex-wrap: wrap; border-bottom: 3px solid #5b8def;
+}
+.type-btn {
+  padding: 12px 30px; border: 2px solid #5b8def; background: white; color: #5b8def;
+  border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: all .3s;
+}
+.type-btn:hover { background: #eaf1ff; }
+.type-btn.active { background: #5b8def; color: white; transform: scale(1.05); }
+.test-paper { background: white; padding: 40px; min-height: 800px; border-radius: 0 0 15px 15px; }
+.test-section { display: none; }
+.test-section.active { display: block; }
+.instructions {
+  background: #f0f6ff; border: 2px solid #b9d1ff; border-radius: 10px; padding: 20px; margin-bottom: 30px;
+}
+.instructions h3 { color: #5b8def; font-weight: 700; margin-bottom: 10px; font-size: 1.2rem; }
+.instructions p { font-size: 1.02rem; color: #333; line-height: 1.6; }
+.questions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+.question-card {
+  background: #fafcff; border: 2px solid #b9d1ff; border-radius: 12px; padding: 16px; transition: all .3s;
+}
+.question-card:hover { border-color: #5b8def; box-shadow: 0 4px 12px rgba(91,141,239,0.15); }
+.question-card.wrong { border-color: #ff9800; background: #fff8f0; }
+.question-card.correct-card { border-color: #28a745; background: #f0fff4; opacity: .7; }
+.question-header { display:flex; align-items:flex-start; gap:8px; margin-bottom:10px; }
+.question-number { color:#5b8def; font-weight:700; font-size:1.05rem; flex-shrink:0; }
+.question-text { font-size:1.05rem; font-weight:600; color:#333; line-height:1.5; }
+.passage-box {
+  background:#fff; border:1px dashed #9fb9ea; border-radius:8px; padding:10px 12px;
+  margin-bottom:10px; font-size:0.98rem; color:#444; line-height:1.5;
+}
+.options { display:flex; flex-direction:column; gap:10px; margin-top: 10px; }
+.option-row {
+  display:flex; align-items:center; gap:10px; padding:11px 16px; background:white;
+  border:2px solid #b9d1ff; border-radius:8px; cursor:pointer;
+  font-size:0.98rem; font-weight:600; color:#333; transition: all .3s;
+}
+.option-row:hover { background:#eaf1ff; border-color:#5b8def; }
+.option-row input[type="radio"] { width:18px; height:18px; flex-shrink:0; accent-color:#5b8def; cursor:pointer; }
+.option-row .option-text { flex:1; }
+.option-row.selected { background:#eaf1ff; border-color:#5b8def; }
+.option-row.correct { background:#e9f8ef; border-color:#28a745; color:#1e7e34; }
+.option-row.incorrect { background:#fdecec; border-color:#dc3545; color:#b02a37; }
+.option-row.disabled { cursor:not-allowed; opacity:.85; }
+.option-row.disabled input[type="radio"] { cursor:not-allowed; }
+.hint-section {
+  margin-top:12px; padding:12px; background:#fff8e1; border:2px solid #ffc107; border-radius:8px; display:none;
+}
+.hint-section.show { display:block; }
+.hint-title { color:#f57c00; font-weight:700; margin-bottom:6px; font-size:1rem; }
+.hint-content { color:#333; line-height:1.55; font-size:0.95rem; }
+.hint-answer { color:#d32f2f; font-weight:700; margin-top:4px; }
+.hint-btn {
+  background:#ffc107; color:#333; border:none; padding:7px 18px; border-radius:6px; cursor:pointer;
+  font-size:0.9rem; font-weight:600; margin-top:10px; transition:all .3s;
+}
+.hint-btn:hover { background:#ffb300; }
+.action-buttons {
+  text-align:center; margin-top:30px; padding-top:30px; border-top:2px solid #eaf1ff;
+  display:flex; gap:15px; justify-content:center; flex-wrap:wrap;
+}
+.submit-btn {
+  background:#5b8def; color:white; border:none; padding:15px 50px; font-size:1.15rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s; box-shadow:0 4px 15px rgba(91,141,239,0.3);
+}
+.submit-btn:hover { background:#4676d8; transform:translateY(-2px); box-shadow:0 6px 20px rgba(91,141,239,0.4); }
+.reset-btn, .retry-btn {
+  background:#6c757d; color:white; border:none; padding:15px 40px; font-size:1.05rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s;
+}
+.reset-btn:hover, .retry-btn:hover { background:#5a6268; transform:translateY(-2px); }
+.retry-btn { background:#ff9800; }
+.retry-btn:hover { background:#f57c00; }
+.result {
+  margin-top:30px; padding:26px; background:#d4edda; border:3px solid #28a745; border-radius:15px;
+  text-align:center; display:none;
+}
+.result.show { display:block; }
+.result h3 { color:#28a745; font-size:1.6rem; margin-bottom:12px; }
+.result p { font-size:1.2rem; color:#155724; font-weight:600; }
+.diagnosis-card {
+  margin-top:22px; background:white; border:3px solid #5b8def; border-radius:14px; padding:22px;
+  text-align:left;
+}
+.diagnosis-title { font-size:1.3rem; font-weight:800; color:#333; margin-bottom:10px; }
+.diagnosis-desc { font-size:1rem; color:#444; line-height:1.65; margin-bottom:14px; }
+.diagnosis-recommend { display:flex; gap:8px; flex-wrap:wrap; }
+.rec-chip {
+  background:#eaf1ff; color:#3560c9; padding:7px 16px; border-radius:20px; font-weight:700; font-size:0.92rem;
+}
+.progress-info { text-align:center; margin-bottom:18px; font-size:1.05rem; color:#5b8def; font-weight:600; }
+.filter-buttons { text-align:center; margin-bottom:18px; display:none; }
+.filter-buttons.show { display:block; }
+.filter-btn {
+  background:white; color:#5b8def; border:2px solid #5b8def; padding:9px 22px; border-radius:20px;
+  cursor:pointer; font-size:0.95rem; font-weight:600; margin:0 5px; transition:all .3s;
+}
+.filter-btn.active { background:#5b8def; color:white; }
+.filter-btn:hover { background:#eaf1ff; }
+.filter-btn.active:hover { background:#4676d8; }
+@media (max-width:768px) {
+  .questions-grid { grid-template-columns:1fr; }
+  .header h1 { font-size:1.3rem; }
+  .test-paper { padding:20px; }
+}
+.answer-key-page { display:none; }
+.answer-key-page.show { display:block; }
+.answer-key-content { max-width:800px; margin:0 auto; padding:40px; }
+.answer-key-title { text-align:center; color:#5b8def; font-size:1.8rem; font-weight:bold; margin-bottom:30px; }
+.answer-key-section {
+  margin-bottom:35px; background:#f8f9fa; padding:22px; border-radius:12px; border:2px solid #5b8def;
+}
+.answer-key-section h3 {
+  color:#5b8def; font-size:1.3rem; margin-bottom:16px; border-bottom:2px solid #5b8def; padding-bottom:8px;
+}
+.answer-list { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.answer-item { display:flex; align-items:flex-start; padding:8px; background:white; border-radius:6px; gap:6px;}
+.answer-number { color:#5b8def; font-weight:bold; min-width:26px; }
+.answer-content { color:#333; font-weight:600; font-size:0.92rem; }
+@media print {
+  @page { margin:1cm; size:A4; }
+  body { background:white; padding:0; margin:0; }
+  .back-link { display:none !important; }
+  .container { max-width:100%; margin:0; }
+  .header { padding:10px 15px; margin-bottom:8px; box-shadow:none; border-radius:0; }
+  .header h1 { font-size:1.3rem; margin:0; }
+  .print-btn, .answer-key-btn { display:none !important; }
+  .type-selector { display:none !important; }
+  .submit-btn, .retry-btn, .reset-btn, .hint-btn { display:none !important; }
+  .filter-buttons { display:none !important; }
+  .result { display:none !important; }
+  .progress-info { display:none !important; }
+  .button-group { display:none !important; }
+  .test-paper { padding:5px 10px; border-radius:0; }
+  .test-section { display:block !important; page-break-after:always; }
+  .test-section:last-child { page-break-after:auto; }
+  body.print-current-only .test-section:not(.active) { display:none !important; }
+  body.print-current-only .test-section.active { page-break-after:auto !important; }
+  .questions-grid { gap:8px; display:grid; grid-template-columns:repeat(2,1fr); }
+  .question-card { break-inside:avoid; page-break-inside:avoid; padding:10px; border:1px solid #b9d1ff; }
+  .hint-section { display:none !important; }
+  .answer-key-page.show { display:block !important; }
+  .answer-key-page button { display:none !important; }
+}
+</style>
+</head>
+<body>
+<a class="back-link" href="../WordTest.html">← 뒤로 가기</a>
+<div class="container">
+  <div class="header">
+    <h1>📖 글핀 초등 저학년 문해력 진단 TEST</h1>
+    <p class="sub">유형별 10문제, 문제 순서는 매번 랜덤으로 출제됩니다.</p>
+  </div>
+
+  <div class="type-selector">
+    <button class="type-btn active" onclick="showTest('A')">A형</button>
+    <button class="type-btn" onclick="showTest('B')">B형</button>
+    <button class="type-btn" onclick="showTest('C')">C형</button>
+  </div>
+
+  <div class="test-paper">
+    <div id="A" class="test-section active">
+      <div class="instructions">
+        <h3>📝 A형 - 어휘·문해력 진단</h3>
+        <p>낱말의 뜻, 반대말, 한자어, 글의 흐름(원인과 결과)을 이해하는 문제입니다. 알맞은 답을 골라 보세요.</p>
+      </div>
+      <div class="filter-buttons" id="filterA">
+        <button class="filter-btn active" onclick="filterQuestions('A','all')">전체</button>
+        <button class="filter-btn" onclick="filterQuestions('A','wrong')">틀린 문제만</button>
+      </div>
+      <div class="progress-info" id="progressA">0 / 10 문제 완료</div>
+      <div id="questions-A" class="questions-grid"></div>
+      <div class="action-buttons">
+        <button class="submit-btn" onclick="checkAnswers('A')">제출하기</button>
+        <button class="retry-btn" onclick="retryWrong('A')" style="display:none;">틀린 문제 다시 풀기</button>
+        <button class="reset-btn" onclick="resetTest('A')">전체 다시 풀기</button>
+      </div>
+      <div id="result-A" class="result"></div>
+    </div>
+
+    <div id="B" class="test-section">
+      <div class="instructions">
+        <h3>✏️ B형 - 어휘·문해력 진단</h3>
+        <p>낱말의 뜻, 반대말, 한자어, 글의 흐름(원인과 결과)을 이해하는 문제입니다. 알맞은 답을 골라 보세요.</p>
+      </div>
+      <div class="filter-buttons" id="filterB">
+        <button class="filter-btn active" onclick="filterQuestions('B','all')">전체</button>
+        <button class="filter-btn" onclick="filterQuestions('B','wrong')">틀린 문제만</button>
+      </div>
+      <div class="progress-info" id="progressB">0 / 10 문제 완료</div>
+      <div id="questions-B" class="questions-grid"></div>
+      <div class="action-buttons">
+        <button class="submit-btn" onclick="checkAnswers('B')">제출하기</button>
+        <button class="retry-btn" onclick="retryWrong('B')" style="display:none;">틀린 문제 다시 풀기</button>
+        <button class="reset-btn" onclick="resetTest('B')">전체 다시 풀기</button>
+      </div>
+      <div id="result-B" class="result"></div>
+    </div>
+
+    <div id="C" class="test-section">
+      <div class="instructions">
+        <h3>🔍 C형 - 어휘·문해력 진단</h3>
+        <p>낱말의 뜻, 반대말, 한자어, 글의 흐름(원인과 결과)을 이해하는 문제입니다. 알맞은 답을 골라 보세요.</p>
+      </div>
+      <div class="filter-buttons" id="filterC">
+        <button class="filter-btn active" onclick="filterQuestions('C','all')">전체</button>
+        <button class="filter-btn" onclick="filterQuestions('C','wrong')">틀린 문제만</button>
+      </div>
+      <div class="progress-info" id="progressC">0 / 10 문제 완료</div>
+      <div id="questions-C" class="questions-grid"></div>
+      <div class="action-buttons">
+        <button class="submit-btn" onclick="checkAnswers('C')">제출하기</button>
+        <button class="retry-btn" onclick="retryWrong('C')" style="display:none;">틀린 문제 다시 풀기</button>
+        <button class="reset-btn" onclick="resetTest('C')">전체 다시 풀기</button>
+      </div>
+      <div id="result-C" class="result"></div>
+    </div>
+  </div>
+</div>
+
+<div class="answer-key-page" id="answerKeyPage">
+  <div class="answer-key-content">
+    <h1 class="answer-key-title">📖 글핀 문해력 진단 TEST - 정답표</h1>
+    <div class="answer-key-section">
+      <h3>📝 A형</h3>
+      <div class="answer-list" id="answerListA"></div>
+    </div>
+    <div class="answer-key-section">
+      <h3>✏️ B형</h3>
+      <div class="answer-list" id="answerListB"></div>
+    </div>
+    <div class="answer-key-section">
+      <h3>🔍 C형</h3>
+      <div class="answer-list" id="answerListC"></div>
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <button class="type-btn" onclick="closeAnswerKey()">돌아가기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const rawData = {"A": [{"q": "다음 중 '출발'의 반대말은 무엇일까요?", "passage": null, "options": ["이동", "도착", "여행", "방문"], "answer": "도착", "explain": "'출발'은 어떤 곳을 떠나는 것을 뜻하고, '도착'은 목적지에 다다르는 것을 뜻해요. 두 낱말은 서로 반대되는 뜻이에요."}, {"q": "다음 중 반대말이 바르게 연결된 것은?", "passage": null, "options": ["높다 - 낮다", "크다 - 넓다", "빠르다 - 달리다", "밝다 - 깨끗하다"], "answer": "높다 - 낮다", "explain": "'높다'의 반대말은 '낮다'예요. 나머지는 서로 반대되는 뜻의 낱말이 아니에요."}, {"q": "'배려'가 가장 잘 나타난 행동은 무엇일까요?", "passage": null, "options": ["친구들과 힘을 모아 교실을 청소했다.", "친구에게 내 차례를 먼저 내어 주었다.", "발표가 서툰 친구가 천천히 말할 수 있도록 기다려 주었다.", "속상해하는 친구에게 괜찮다고 위로해 주었다."], "answer": "발표가 서툰 친구가 천천히 말할 수 있도록 기다려 주었다.", "explain": "'배려'는 상대방의 입장이 되어 마음을 써 주는 것이에요. 친구가 편안히 발표하도록 기다려 주는 모습이 배려를 가장 잘 보여 줘요."}, {"q": "다음 문장에서 '예상'의 뜻으로 가장 알맞은 것은?", "passage": "아빠는 먹구름을 보고 비가 올 것이라고 예상했어요.", "options": ["미리 생각했다.", "크게 놀랐다.", "직접 보았다.", "함께 만들었다."], "answer": "미리 생각했다.", "explain": "'예상'은 어떤 일이 일어나기 전에 미리 짐작하여 생각하는 것을 뜻해요."}, {"q": "'분류'의 뜻으로 가장 알맞은 것은 무엇일까요?", "passage": null, "options": ["여러 가지를 하나로 섞는 것", "필요하지 않은 것을 버리는 것", "중요한 순서대로 읽는 것", "일정한 기준에 따라 나누는 것"], "answer": "일정한 기준에 따라 나누는 것", "explain": "'분류'는 어떤 기준을 정해서 비슷한 것끼리 나누는 것을 뜻해요."}, {"q": "'평균'이 가장 잘 쓰인 문장은 무엇일까요?", "passage": null, "options": ["가장 낮은 점수만 고른다.", "가장 높은 점수만 고른다.", "여러 사람의 점수를 모두 더해 사람 수로 나눈다.", "점수를 순서대로 적는다."], "answer": "여러 사람의 점수를 모두 더해 사람 수로 나눈다.", "explain": "'평균'은 여러 수를 더한 뒤 그 개수로 나누어 구하는 값이에요."}, {"q": "위 글에서 결과는 무엇일까요?", "passage": "지훈이는 식물을 햇빛이 잘 드는 곳으로 옮겼습니다. 며칠 뒤 식물이 더 건강하게 자랐습니다.", "options": ["식물을 옮겼다.", "햇빛이 비쳤다.", "며칠이 지났다.", "식물이 더 건강하게 자랐다."], "answer": "식물이 더 건강하게 자랐다.", "explain": "'결과'는 어떤 일이 일어난 뒤에 나타나는 일이에요. 식물을 옮긴 것은 원인이고, 건강하게 자란 것이 결과예요."}, {"q": "다음 중 '공통점'의 뜻으로 가장 알맞은 것은 무엇일까요?", "passage": null, "options": ["서로 다른 점", "함께 가지고 있는 같은 점", "가장 중요한 점", "먼저 찾아야 하는 점"], "answer": "함께 가지고 있는 같은 점", "explain": "'공통점'은 둘 이상의 대상이 함께 가지고 있는 같은 부분을 말해요."}, {"q": "다음 중 '조건'이 가장 잘 쓰인 문장은 무엇일까요?", "passage": null, "options": ["키가 120cm 이상이어야 놀이기구를 탈 수 있다.", "친구들과 놀이기구를 재미있게 탔다.", "놀이기구가 매우 빠르게 움직였다.", "놀이기구를 타고 집으로 돌아갔다."], "answer": "키가 120cm 이상이어야 놀이기구를 탈 수 있다.", "explain": "'조건'은 어떤 일을 하기 위해 반드시 갖추어야 하는 상황을 뜻해요."}, {"q": "'동(同)'은 '같다'라는 뜻입니다. 다음 중 '동(同)'의 뜻이 들어간 낱말은 무엇일까요?", "passage": null, "options": ["동물", "운동", "공동", "행동"], "answer": "공동", "explain": "'공동'은 여러 사람이 함께 하는 것을 뜻하며, 여기서 '동(同)'이 '같다'라는 뜻으로 쓰였어요. '동물·운동·행동'의 '동'은 다른 뜻의 한자예요."}], "B": [{"q": "'시작'과 뜻이 가장 반대되는 말은 무엇일까요?", "passage": null, "options": ["계속", "끝", "출발", "준비"], "answer": "끝", "explain": "'시작'의 반대말은 '끝'이에요. 어떤 일이 처음 일어나는 것과 마무리되는 것은 서로 반대되는 뜻이에요."}, {"q": "다음 중 반대말이 바르게 연결된 것은?", "passage": null, "options": ["길다 - 짧다", "뜨겁다 - 따뜻하다", "넓다 - 크다", "웃다 - 말하다"], "answer": "길다 - 짧다", "explain": "'길다'의 반대말은 '짧다'예요. 나머지는 반대말 관계가 아니에요."}, {"q": "다음 중 '양보'가 가장 잘 나타난 행동은 무엇일까요?", "passage": null, "options": ["친구가 무거운 가방을 들어 주었다.", "친구가 먼저 지나갈 수 있도록 길을 비켜 주었다.", "친구와 함께 청소를 했다.", "친구가 울자 함께 위로해 주었다."], "answer": "친구가 먼저 지나갈 수 있도록 길을 비켜 주었다.", "explain": "'양보'는 내가 가진 것이나 기회를 다른 사람에게 먼저 내어 주는 것이에요."}, {"q": "다음 중 분류가 가장 잘 쓰인 상황은?", "passage": null, "options": ["과일을 깨끗이 씻었다.", "사과와 배의 다른 점을 찾았다.", "친구와 함께 과일을 먹었다.", "과일과 채소를 종류에 따라 나누었다."], "answer": "과일과 채소를 종류에 따라 나누었다.", "explain": "'분류'는 일정한 기준에 따라 나누는 것이에요. 과일과 채소를 종류별로 나눈 것이 분류에 해당해요."}, {"q": "다음 중 점유(占有)가 가장 잘 쓰인 상황은?", "passage": null, "options": ["여러 팀이 시간을 나누어 운동장을 사용했다.", "한 팀이 운동장의 한쪽을 차지하여 계속 사용했다.", "학교가 다른 팀에게 운동장을 빌려주었다.", "학생들이 운동장을 깨끗하게 관리했다."], "answer": "한 팀이 운동장의 한쪽을 차지하여 계속 사용했다.", "explain": "'점유'는 어떤 장소나 물건을 차지하여 자기 것으로 두는 것을 뜻해요."}, {"q": "다음 문장에서 가장 알맞은 낱말은 무엇일까요?", "passage": "민수는 감기에 걸렸지만 며칠 쉬고 건강을 ________ 했다.", "options": ["유지", "관리", "회복", "보호"], "answer": "회복", "explain": "'회복'은 나빠졌던 상태가 다시 좋아지는 것을 뜻해요. 감기로 나빠졌던 건강이 다시 좋아졌으므로 '회복'이 알맞아요."}, {"q": "'공(公)'은 '공평하다', '공변되다'라는 뜻입니다. 다음 중 '공(公)'의 뜻이 들어 있는 낱말은?", "passage": null, "options": ["공기", "공복", "공원", "공백"], "answer": "공원", "explain": "'공원'은 누구나 공평하게 이용할 수 있는 공공의 장소라는 뜻에서 '공(公)'이 쓰였어요."}, {"q": "다음 중 '선점'이 가장 잘 쓰인 상황은 무엇일까요?", "passage": null, "options": ["새로 나온 장난감을 남보다 먼저 구입했다.", "친구들과 장난감을 함께 사용했다.", "장난감을 동생에게 빌려주었다.", "장난감을 모두 정리했다."], "answer": "새로 나온 장난감을 남보다 먼저 구입했다.", "explain": "'선점'은 남보다 먼저 차지하는 것을 뜻해요."}, {"q": "다음 중 '균일'의 뜻으로 가장 알맞은 것은 무엇일까요?", "passage": null, "options": ["모양이 계속 바뀐다.", "크기가 모두 다르다.", "크기와 모양이 거의 모두 같다.", "아무렇게나 섞여 있다."], "answer": "크기와 모양이 거의 모두 같다.", "explain": "'균일'은 여럿의 크기나 모양이 고르게 같은 것을 뜻해요."}, {"q": "글에서 '결과'는 무엇일까요?", "passage": "우리 반은 매일 아침 책을 10분씩 읽었습니다. 한 달 뒤에는 책 읽는 속도가 빨라졌습니다.", "options": ["매일 책을 읽었다.", "책 읽는 속도가 빨라졌다.", "한 달이 지났다.", "책을 10분 동안 읽었다."], "answer": "책 읽는 속도가 빨라졌다.", "explain": "매일 책을 읽은 것은 원인이고, 그 결과로 책 읽는 속도가 빨라진 거예요."}], "C": [{"q": "'오르다'의 반대말은 무엇일까요?", "passage": null, "options": ["올라가다", "내려가다", "뛰다", "걷다"], "answer": "내려가다", "explain": "'오르다'의 반대말은 '내려가다'예요."}, {"q": "다음 중 질서를 잘 지킨 모습은?", "passage": null, "options": ["복도에서 뛰어다녔다.", "친구를 밀치고 먼저 갔다.", "차례를 지켜 급식을 받았다.", "쓰레기를 바닥에 버렸다."], "answer": "차례를 지켜 급식을 받았다.", "explain": "'질서'는 정해진 차례나 규칙을 지키는 것을 뜻해요."}, {"q": "'도움'이 가장 잘 나타난 행동은 무엇일까요?", "passage": null, "options": ["친구가 무거운 상자를 혼자 들고 있어 함께 들어 주었다.", "친구 차례를 먼저 양보했다.", "친구들과 함께 운동장을 청소했다.", "친구를 위로해 주었다."], "answer": "친구가 무거운 상자를 혼자 들고 있어 함께 들어 주었다.", "explain": "'도움'은 어려움을 겪는 사람을 위해 힘을 보태 주는 것이에요."}, {"q": "다음 문장에서 가장 알맞은 낱말은 무엇일까요?", "passage": "친구들과 힘을 모아 무거운 책장을 함께 옮겼다. 우리는 서로 ________ 했다.", "options": ["경쟁", "양보", "협력", "선택"], "answer": "협력", "explain": "'협력'은 힘을 합쳐 함께 일하는 것을 뜻해요."}, {"q": "'분리'의 뜻으로 가장 알맞은 것은 무엇일까요?", "passage": null, "options": ["하나로 합치는 것", "서로 떼어 나누는 것", "크게 만드는 것", "서로 바꾸는 것"], "answer": "서로 떼어 나누는 것", "explain": "'분리'는 붙어 있던 것을 서로 떼어서 나누는 것을 뜻해요."}, {"q": "다음 문장에서 가장 알맞은 낱말은 무엇일까요?", "passage": "운동을 쉬고 나니 몸이 많이 ________ 되었다.", "options": ["예상", "점유", "경쟁", "회복"], "answer": "회복", "explain": "'회복'은 나빠졌던 상태가 다시 좋아지는 것을 뜻해요."}, {"q": "'신(信)'은 '믿다'라는 뜻입니다. 다음 중 '신(信)'의 뜻이 들어 있는 낱말은?", "passage": null, "options": ["신발", "신문", "신뢰", "신기"], "answer": "신뢰", "explain": "'신뢰'는 굳게 믿고 의지하는 것을 뜻하며, 여기서 '신(信)'이 '믿다'라는 뜻으로 쓰였어요."}, {"q": "다음 중 독점과 가장 가까운 뜻은?", "passage": null, "options": ["여러 사람이 함께 사용한다.", "한 사람이나 한 회사가 모두 차지한다.", "차례대로 나누어 가진다.", "필요한 만큼만 가진다."], "answer": "한 사람이나 한 회사가 모두 차지한다.", "explain": "'독점'은 혼자서 모두 차지하는 것을 뜻해요."}, {"q": "선생님이 한 행동은 무엇인가요?", "passage": "선생님은 친구들의 의견을 모두 들은 후 가장 알맞은 방법을 정했습니다.", "options": ["설명", "비교", "판단", "표현"], "answer": "판단", "explain": "여러 의견을 듣고 가장 알맞은 것을 정하는 것은 '판단'이에요."}, {"q": "다음 중 결과는?", "passage": "민지는 매일 줄넘기 연습을 했습니다. 한 달 뒤 학교 대표 선수가 되었습니다.", "options": ["매일 줄넘기를 연습했다.", "학교 대표 선수가 되었다.", "줄넘기를 샀다.", "운동화를 신었다."], "answer": "학교 대표 선수가 되었다.", "explain": "매일 연습한 것은 원인이고, 그 결과로 대표 선수가 된 거예요."}]};
+
+const diagnosisBands = [
+  { min:0, max:2, emoji:'🌱', title:'0~2개 맞음 · 어휘 씨앗 단계',
+    desc:'아직 글을 읽을 때 낱말의 뜻을 정확하게 이해하는 힘을 키워야 해요. 교과서를 읽어도 모르는 단어가 많으면 문장의 내용을 이해하기 어려워질 수 있어요. 지금이 문해력의 기초를 탄탄하게 다질 가장 좋은 시기예요!',
+    recommend:['기초 어휘','한자 어휘','문장 이해 훈련'] },
+  { min:3, max:5, emoji:'🌿', title:'3~5개 맞음 · 어휘 성장 단계',
+    desc:'기본 어휘는 알고 있지만 조금 어려운 교과서 어휘나 문장 속에서 뜻을 찾는 문제는 조금 더 연습이 필요해요. 국어뿐 아니라 사회·과학에서도 어휘 때문에 어려움을 느낄 수 있어요.',
+    recommend:['교과 어휘 확장','문해력 훈련','독해력 향상'] },
+  { min:6, max:8, emoji:'🌳', title:'6~8개 맞음 · 어휘 도약 단계',
+    desc:'기본적인 문해력은 잘 갖추고 있어요. 교과서에 자주 나오는 개념어와 추론 문제를 조금 더 연습하면 독해력이 크게 성장할 수 있어요.',
+    recommend:['교과 개념어 학습','추론 문제 연습','독해력 심화'] },
+  { min:9, max:10, emoji:'⭐', title:'9~10개 맞음 · 어휘 리더 단계',
+    desc:'어휘력이 매우 좋은 편이에요! 하지만 고학년이 되면 비문학, 사회, 과학, 논술에서는 더 어려운 교과 개념어가 계속 등장해요. 지금처럼 어휘력을 꾸준히 넓혀 간다면 독해력과 사고력이 더욱 성장할 수 있어요.',
+    recommend:['심화 어휘 확장','비문학 독해','논술 대비 어휘'] }
+];
+
+function getDiagnosis(score) {
+  return diagnosisBands.find(b => score >= b.min && score <= b.max);
+}
+
+function circledNum(i) {
+  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+  return nums[i] || (i + 1) + '.';
+}
+
+function shuffleArray(array) {
+  const a = [...array];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const TYPES = ['A','B','C'];
+let userAnswers = { A:{}, B:{}, C:{} };
+let questionStatus = { A:{}, B:{}, C:{} };
+let currentQuestions = { A:[], B:[], C:[] };
+let currentFilter = { A:'all', B:'all', C:'all' };
+
+function initTests() {
+  TYPES.forEach(t => {
+    currentQuestions[t] = shuffleArray(rawData[t]);
+    initType(t);
+  });
+}
+
+function initType(t) {
+  const container = document.getElementById('questions-' + t);
+  container.innerHTML = '';
+  currentQuestions[t].slice(0, 10).forEach((q, index) => {
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.dataset.index = index;
+    div.dataset.status = questionStatus[t][index] || 'unanswered';
+
+    const opts = shuffleArray(q.options);
+    const passageHtml = q.passage ? `<div class="passage-box">${q.passage}</div>` : '';
+
+    div.innerHTML = `
+      <div class="question-header">
+        <div class="question-number">${index + 1}.</div>
+        <div class="question-text">${q.q}</div>
+      </div>
+      ${passageHtml}
+      <div class="options">
+        ${opts.map((opt, oi) => `
+          <label class="option-row" data-value="${opt.replace(/"/g,'&quot;')}">
+            <input type="radio" name="q-${t}-${index}" value="${opt.replace(/"/g,'&quot;')}" onchange="selectOption('${t}', ${index}, this)">
+            <span class="option-text">${circledNum(oi)} ${opt}</span>
+          </label>`).join('')}
+      </div>
+      <div class="hint-section" id="hint-${t}-${index}">
+        <div class="hint-title">💡 힌트</div>
+        <div class="hint-content">
+          <div><strong>설명:</strong> ${q.explain}</div>
+          <div class="hint-answer"><strong>정답:</strong> ${q.answer}</div>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  applyFilter(t);
+}
+
+function showTest(t) {
+  document.querySelectorAll('.test-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function selectOption(t, index, el) {
+  const card = el.closest('.question-card');
+  card.querySelectorAll('.option-row').forEach(o => o.classList.remove('selected'));
+  const row = el.closest('.option-row');
+  row.classList.add('selected');
+  userAnswers[t][index] = el.value;
+  updateProgress(t);
+}
+
+function updateProgress(t) {
+  const total = 10;
+  const answered = Object.keys(userAnswers[t]).filter(k => userAnswers[t][k]).length;
+  document.getElementById('progress' + t).textContent = `${answered} / ${total} 문제 완료`;
+}
+
+function checkAnswers(t) {
+  let correctCount = 0;
+  const total = 10;
+  let wrongQuestions = [];
+  const cards = document.querySelectorAll('#questions-' + t + ' .question-card');
+
+  cards.forEach((card, index) => {
+    const correctAnswer = currentQuestions[t][index].answer;
+    const userAnswer = userAnswers[t][index];
+
+    if (questionStatus[t][index] === 'correct') {
+      correctCount++;
+      return;
+    }
+
+    const opts = card.querySelectorAll('.option-row');
+    opts.forEach(opt => {
+      opt.classList.add('disabled');
+      opt.querySelector('input[type="radio"]').disabled = true;
+      const optText = opt.dataset.value;
+      if (optText === correctAnswer) opt.classList.add('correct');
+      if (optText === userAnswer && userAnswer !== correctAnswer) opt.classList.add('incorrect');
+    });
+
+    if (userAnswer === correctAnswer) {
+      correctCount++;
+      questionStatus[t][index] = 'correct';
+      card.dataset.status = 'correct';
+      card.classList.add('correct-card');
+    } else {
+      questionStatus[t][index] = 'wrong';
+      card.dataset.status = 'wrong';
+      card.classList.add('wrong');
+      wrongQuestions.push(index);
+
+      const hintBtn = document.createElement('button');
+      hintBtn.className = 'hint-btn';
+      hintBtn.textContent = '💡 힌트 보기';
+      hintBtn.onclick = () => toggleHint(t, index);
+      card.appendChild(hintBtn);
+    }
+  });
+
+  const percentage = Math.round((correctCount / total) * 100);
+  const diag = getDiagnosis(correctCount);
+  const resultDiv = document.getElementById('result-' + t);
+  resultDiv.innerHTML = `
+    <h3>🎉 결과</h3>
+    <p>맞힌 문제: ${correctCount} / ${total}</p>
+    <p>정답률: ${percentage}%</p>
+    <div class="diagnosis-card">
+      <div class="diagnosis-title">${diag.emoji} ${diag.title}</div>
+      <div class="diagnosis-desc">${diag.desc}</div>
+      <div class="diagnosis-recommend">
+        <span style="font-weight:700;color:#333;margin-right:4px;">추천 학습:</span>
+        ${diag.recommend.map(r => `<span class="rec-chip">${r}</span>`).join('')}
+      </div>
+    </div>
+  `;
+  resultDiv.classList.add('show');
+
+  event.target.style.display = 'none';
+
+  if (wrongQuestions.length > 0) {
+    document.querySelector('#' + t + ' .retry-btn').style.display = 'inline-block';
+    document.getElementById('filter' + t).classList.add('show');
+  }
+}
+
+function toggleHint(t, index) {
+  const h = document.getElementById(`hint-${t}-${index}`);
+  h.classList.toggle('show');
+}
+
+function retryWrong(t) {
+  const cards = document.querySelectorAll('#questions-' + t + ' .question-card');
+  cards.forEach((card, index) => {
+    if (questionStatus[t][index] === 'wrong') {
+      card.classList.remove('wrong');
+      const h = document.getElementById(`hint-${t}-${index}`);
+      if (h) h.classList.remove('show');
+      const hb = card.querySelector('.hint-btn');
+      if (hb) hb.remove();
+      const opts = card.querySelectorAll('.option-row');
+      opts.forEach(o => {
+        o.classList.remove('selected','correct','incorrect','disabled');
+        const input = o.querySelector('input[type="radio"]');
+        input.disabled = false;
+        input.checked = false;
+      });
+      userAnswers[t][index] = '';
+      questionStatus[t][index] = 'retry';
+    }
+  });
+
+  document.getElementById('result-' + t).classList.remove('show');
+  document.querySelector('#' + t + ' .submit-btn').style.display = 'inline-block';
+  event.target.style.display = 'none';
+  filterQuestions(t, 'wrong');
+}
+
+function filterQuestions(t, filter) {
+  currentFilter[t] = filter;
+  document.querySelectorAll('#filter' + t + ' .filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyFilter(t);
+}
+
+function applyFilter(t) {
+  const cards = document.querySelectorAll('#questions-' + t + ' .question-card');
+  cards.forEach((card, index) => {
+    if (currentFilter[t] === 'all') {
+      card.style.display = 'block';
+    } else {
+      card.style.display = (questionStatus[t][index] === 'wrong' || questionStatus[t][index] === 'retry') ? 'block' : 'none';
+    }
+  });
+}
+
+function resetTest(t) {
+  userAnswers[t] = {};
+  questionStatus[t] = {};
+  currentFilter[t] = 'all';
+  currentQuestions[t] = shuffleArray(rawData[t]);
+  initType(t);
+
+  const resultDiv = document.getElementById('result-' + t);
+  resultDiv.classList.remove('show');
+  resultDiv.innerHTML = '';
+
+  document.querySelector('#' + t + ' .submit-btn').style.display = 'inline-block';
+  document.querySelector('#' + t + ' .retry-btn').style.display = 'none';
+
+  const filterDiv = document.getElementById('filter' + t);
+  filterDiv.classList.remove('show');
+  const fbtns = filterDiv.querySelectorAll('.filter-btn');
+  fbtns.forEach(b => b.classList.remove('active'));
+  fbtns[0].classList.add('active');
+
+  updateProgress(t);
+}
+
+function printPage() {
+  document.body.classList.remove('print-current-only');
+  window.print();
+}
+
+function printCurrentType() {
+  document.body.classList.add('print-current-only');
+  window.print();
+}
+
+window.addEventListener('afterprint', () => {
+  document.body.classList.remove('print-current-only');
+});
+
+function showAnswerKey() {
+  document.querySelector('.container').style.display = 'none';
+  document.getElementById('answerKeyPage').classList.add('show');
+  generateAnswerKey();
+}
+function closeAnswerKey() {
+  document.querySelector('.container').style.display = 'block';
+  document.getElementById('answerKeyPage').classList.remove('show');
+}
+function generateAnswerKey() {
+  TYPES.forEach(t => {
+    const list = document.getElementById('answerList' + t);
+    list.innerHTML = '';
+    currentQuestions[t].slice(0, 10).forEach((q, index) => {
+      const item = document.createElement('div');
+      item.className = 'answer-item';
+      const ansIdx = q.options.indexOf(q.answer);
+      const numLabel = circledNum(ansIdx);
+      item.innerHTML = `<span class="answer-number">${index + 1}.</span><span class="answer-content">${numLabel} ${q.answer}</span>`;
+      list.appendChild(item);
+    });
+  });
+}
+
+window.onload = initTests;
+</script>
+</body>
+</html>

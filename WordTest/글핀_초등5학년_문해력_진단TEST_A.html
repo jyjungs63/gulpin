@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>글핀 초등 5학년 어휘·한자 문해력 진단 TEST A</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  background: #5b8def;
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+.back-link {
+  display:inline-block; margin-bottom:12px; padding:10px 18px; background:white; color:#3560c9;
+  border-radius:24px; text-decoration:none; font-weight:700; box-shadow:0 3px 8px rgba(0,0,0,.14);
+}
+.back-link:hover { background:#eaf1ff; }
+.header {
+  background: white; padding: 25px; border-radius: 15px 15px 0 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
+}
+.header h1 { color: #5b8def; font-size: 1.7rem; font-weight: bold; }
+.header p.sub { color: #666; margin-top: 6px; font-size: 0.95rem; }
+.test-paper { background: white; padding: 40px; min-height: 800px; border-radius: 0 0 15px 15px; border-top: 3px solid #5b8def;}
+.instructions {
+  background: #f0f6ff; border: 2px solid #b9d1ff; border-radius: 10px; padding: 20px; margin-bottom: 30px;
+}
+.instructions h3 { color: #5b8def; font-weight: 700; margin-bottom: 10px; font-size: 1.2rem; }
+.instructions p { font-size: 1.02rem; color: #333; line-height: 1.6; }
+.instructions p.caution { color:#c0392b; font-weight:600; margin-top:8px; font-size:0.95rem; }
+.questions-grid { display: block; margin-bottom: 20px; }
+.questions-grid > * { margin-bottom: 15px; }
+.questions-grid > *:last-child { margin-bottom: 0; }
+.passage-group { border-left: 4px solid #5b8def; padding-left: 16px; }
+.passage-range-label { color:#5b8def; font-weight:700; font-size:0.98rem; margin-bottom:8px; }
+.passage-group .question-card { margin-bottom: 15px; }
+.passage-group .question-card:last-child { margin-bottom: 0; }
+.question-card {
+  background: #fafcff; border: 2px solid #b9d1ff; border-radius: 12px; padding: 16px; transition: all .3s;
+}
+.question-card:hover { border-color: #5b8def; box-shadow: 0 4px 12px rgba(91,141,239,0.15); }
+.question-card.wrong { border-color: #ff9800; background: #fff8f0; }
+.question-card.correct-card { border-color: #28a745; background: #f0fff4; opacity: .7; }
+.question-header { display:flex; align-items:flex-start; gap:8px; margin-bottom:10px; }
+.question-number { color:#5b8def; font-weight:700; font-size:1.05rem; flex-shrink:0; }
+.question-text { font-size:1.03rem; font-weight:600; color:#333; line-height:1.5; }
+.area-tag { display:inline-block; margin-left:6px; font-size:0.72rem; font-weight:700; color:#5b8def; background:#eaf1ff; padding:2px 8px; border-radius:10px; vertical-align:middle;}
+.passage-box {
+  background:#fff; border:1px dashed #9fb9ea; border-radius:8px; padding:10px 12px;
+  margin-bottom:10px; font-size:0.94rem; color:#444; line-height:1.55;
+}
+.passage-box table { width:100%; border-collapse:collapse; margin-top:8px; font-size:0.88rem; }
+.passage-box table th, .passage-box table td { border:1px solid #cfe0ff; padding:5px 6px; text-align:center; }
+.passage-box table th { background:#eaf1ff; }
+.passage-box strong { color:#1a56c4; font-weight:800; }
+.data-line { margin-top:8px; padding:8px 10px; background:#eef4ff; border-radius:6px; }
+.data-line b { color:#1a56c4; }
+.options { display:flex; flex-direction:column; gap:10px; margin-top: 10px; }
+.option-row {
+  display:flex; align-items:center; gap:10px; padding:11px 16px; background:white;
+  border:2px solid #b9d1ff; border-radius:8px; cursor:pointer;
+  font-size:0.96rem; font-weight:600; color:#333; transition: all .3s;
+}
+.option-row:hover { background:#eaf1ff; border-color:#5b8def; }
+.option-row input[type="radio"] { width:18px; height:18px; flex-shrink:0; accent-color:#5b8def; cursor:pointer; }
+.option-row .option-text { flex:1; }
+.option-row.selected { background:#eaf1ff; border-color:#5b8def; }
+.option-row.correct { background:#e9f8ef; border-color:#28a745; color:#1e7e34; }
+.option-row.incorrect { background:#fdecec; border-color:#dc3545; color:#b02a37; }
+.option-row.disabled { cursor:not-allowed; opacity:.85; }
+.option-row.disabled input[type="radio"] { cursor:not-allowed; }
+.hint-section {
+  margin-top:12px; padding:12px; background:#fff8e1; border:2px solid #ffc107; border-radius:8px; display:none;
+}
+.hint-section.show { display:block; }
+.hint-title { color:#f57c00; font-weight:700; margin-bottom:6px; font-size:1rem; }
+.hint-content { color:#333; line-height:1.55; font-size:0.95rem; }
+.hint-answer { color:#d32f2f; font-weight:700; margin-top:4px; }
+.hint-btn {
+  background:#ffc107; color:#333; border:none; padding:7px 18px; border-radius:6px; cursor:pointer;
+  font-size:0.9rem; font-weight:600; margin-top:10px; transition:all .3s;
+}
+.hint-btn:hover { background:#ffb300; }
+.action-buttons {
+  text-align:center; margin-top:30px; padding-top:30px; border-top:2px solid #eaf1ff;
+  display:flex; gap:15px; justify-content:center; flex-wrap:wrap;
+}
+.submit-btn {
+  background:#5b8def; color:white; border:none; padding:15px 50px; font-size:1.15rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s; box-shadow:0 4px 15px rgba(91,141,239,0.3);
+}
+.submit-btn:hover { background:#4676d8; transform:translateY(-2px); box-shadow:0 6px 20px rgba(91,141,239,0.4); }
+.reset-btn, .retry-btn {
+  background:#6c757d; color:white; border:none; padding:15px 40px; font-size:1.05rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s;
+}
+.reset-btn:hover, .retry-btn:hover { background:#5a6268; transform:translateY(-2px); }
+.retry-btn { background:#ff9800; }
+.retry-btn:hover { background:#f57c00; }
+.result {
+  margin-top:30px; padding:26px; background:#d4edda; border:3px solid #28a745; border-radius:15px;
+  text-align:center; display:none;
+}
+.result.show { display:block; }
+.result h3 { color:#28a745; font-size:1.6rem; margin-bottom:12px; }
+.result p { font-size:1.15rem; color:#155724; font-weight:600; }
+.diagnosis-card {
+  margin-top:22px; background:white; border:3px solid #5b8def; border-radius:14px; padding:22px;
+  text-align:left;
+}
+.diagnosis-title { font-size:1.25rem; font-weight:800; color:#333; margin-bottom:10px; }
+.diagnosis-desc { font-size:1rem; color:#444; line-height:1.65; margin-bottom:6px; }
+.diagnosis-note { font-size:0.88rem; color:#c0392b; margin-top:10px; font-weight:600; }
+.area-report { margin-top:22px; background:white; border:3px solid #28a745; border-radius:14px; padding:22px; text-align:left; }
+.area-report-title { font-size:1.2rem; font-weight:800; color:#1e7e34; margin-bottom:14px; }
+.area-row { border-bottom:1px solid #eee; padding:12px 0; }
+.area-row:last-child { border-bottom:none; }
+.area-row-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.area-name { font-weight:700; color:#333; font-size:1.02rem; }
+.area-score { font-weight:700; color:#5b8def; }
+.area-score.low { color:#dc3545; }
+.area-bar-bg { background:#eee; border-radius:6px; height:10px; overflow:hidden; margin-bottom:8px; }
+.area-bar-fill { background:#5b8def; height:100%; border-radius:6px; }
+.area-bar-fill.low { background:#ff9800; }
+.area-comment { font-size:0.92rem; color:#555; line-height:1.55; background:#f8f9fa; padding:10px 12px; border-radius:8px; }
+.progress-info { text-align:center; margin-bottom:18px; font-size:1.05rem; color:#5b8def; font-weight:600; }
+.filter-buttons { text-align:center; margin-bottom:18px; display:none; }
+.filter-buttons.show { display:block; }
+.filter-btn {
+  background:white; color:#5b8def; border:2px solid #5b8def; padding:9px 22px; border-radius:20px;
+  cursor:pointer; font-size:0.95rem; font-weight:600; margin:0 5px; transition:all .3s;
+}
+.filter-btn.active { background:#5b8def; color:white; }
+.filter-btn:hover { background:#eaf1ff; }
+.filter-btn.active:hover { background:#4676d8; }
+@media (max-width:768px) {
+  .questions-grid { grid-template-columns:1fr; }
+  .header h1 { font-size:1.25rem; }
+  .test-paper { padding:20px; }
+}
+@media print {
+  @page { margin:1cm; size:A4; }
+  body { background:white; padding:0; margin:0; }
+  .back-link { display:none !important; }
+  .container { max-width:100%; margin:0; }
+  .header { padding:10px 15px; margin-bottom:8px; box-shadow:none; border-radius:0; }
+  .header h1 { font-size:1.3rem; margin:0; }
+  .submit-btn, .retry-btn, .reset-btn, .hint-btn { display:none !important; }
+  .filter-buttons { display:none !important; }
+  .result { display:none !important; }
+  .progress-info { display:none !important; }
+  .test-paper { padding:5px 10px; border-radius:0; }
+  .questions-grid { gap:8px; display:grid; grid-template-columns:repeat(2,1fr); }
+  .question-card { break-inside:avoid; page-break-inside:avoid; padding:10px; border:1px solid #b9d1ff; }
+  .hint-section { display:none !important; }
+}
+</style>
+</head>
+<body>
+<a class="back-link" href="../WordTest.html">← 뒤로 가기</a>
+<div class="container">
+  <div class="header">
+    <h1>📖 글핀 어휘·한자 문해력 진단 TEST A</h1>
+    <p class="sub">초등 5학년 · 총 15문제 · 문제 순서는 매번 랜덤으로 출제됩니다.</p>
+  </div>
+
+  <div class="test-paper" id="testPaperView">
+    <div class="instructions">
+      <h3>📝 TEST A - 어휘·한자 문해력 진단 (초등 5학년)</h3>
+      <p>낱말의 뜻, 한자어의 의미, 문맥 속 어휘 추론, 원리 적용, 자료 해석과 비판적 사고를 평가하는 문제입니다. 글과 자료를 꼼꼼히 읽고 알맞은 답을 골라 보세요.</p>
+      <p class="caution">※ 이 평가는 일반적인 5학년 교과 문제보다 어휘·자료 해석의 난이도를 높인 고난도 진단평가입니다. 점수가 다소 낮게 나오더라도 문해력이 부족하다고 단정하지 마시고, 채점 후 안내되는 &lsquo;총점 진단 기준&rsquo;을 함께 참고해 주세요.</p>
+    </div>
+    <div class="filter-buttons" id="filterA">
+      <button class="filter-btn active" onclick="filterQuestions('all')">전체</button>
+      <button class="filter-btn" onclick="filterQuestions('wrong')">틀린 문제만</button>
+    </div>
+    <div class="progress-info" id="progressA">0 / 15 문제 완료</div>
+    <div id="questions-A" class="questions-grid"></div>
+    <div class="action-buttons">
+      <button class="submit-btn" onclick="checkAnswers()">제출하기</button>
+      <button class="retry-btn" onclick="retryWrong()" style="display:none;">틀린 문제 다시 풀기</button>
+      <button class="reset-btn" onclick="resetTest()">전체 다시 풀기</button>
+    </div>
+    <div id="result-A" class="result"></div>
+  </div>
+</div>
+
+<script>
+const passages = {
+  p1: `도시를 개발하면 주택과 도로가 늘어나 생활이 편리해질 수 있다. 그러나 경제적 효과만 강조하다 보면 개발 과정에서 발생할 환경 문제를 <strong>간과</strong>할 수 있다.`,
+  p3: `학급에서 체험 학습 장소를 정하기 위해 의견을 모았다. 처음에는 박물관, 과학관, 생태 공원 등 다양한 의견이 나왔지만, 각 장소의 장단점을 비교하고 토론하면서 의견이 점차 과학관으로 __________.`,
+  p4: `섬 지역에서는 육지보다 운송 시간이 오래 걸린다는 제약이 있지만, 지역의 자연환경을 활용하여 특색 있는 관광 산업을 발전시키기도 한다.`,
+  p5: `학교에서 모든 학생에게 똑같은 크기의 신발을 나누어 준다면 '똑같이 주었다'는 점에서는 평등해 보일 수 있다. 하지만 학생마다 발 크기가 다르므로 실제로는 불편을 겪는 학생이 생긴다. 따라서 지원 정책에서는 단순히 똑같이 나누는 것뿐만 아니라 각자의 상황과 필요를 고려하는 형평성도 중요하다.`,
+  p6: `도시의 녹지를 보존하려는 계획과 같은 지역에 대규모 주택을 건설하려는 계획이 서로 <strong>상충</strong>할 수 있다.`,
+  p789: `도시에서는 짧은 시간에 많은 비가 내릴 경우 도로가 침수되기도 합니다. 비의 양이 많은 것도 원인이지만, 도시의 지표가 아스팔트와 콘크리트로 덮여 있다는 점도 영향을 미칩니다. 흙이나 숲에서는 빗물의 일부가 땅속으로 침투하지만, 아스팔트에서는 빗물이 땅속으로 잘 스며들지 못하고 하수 시설로 빠르게 흘러갑니다.<br><br>이에 일부 도시에서는 빗물이 통과할 수 있는 포장재를 사용하고, 공원이나 작은 습지를 조성하고 있습니다. 이러한 공간은 빗물을 일시적으로 머금었다가 천천히 내보내므로 하수 시설에 한꺼번에 몰리는 물의 양을 줄이는 <strong>완충</strong> 역할을 합니다.<br><br>그러나 한 지역에서 이러한 시설을 설치한 뒤 침수 피해가 감소했다고 해서 그 효과를 곧바로 모든 도시에 일반화하기는 어렵습니다. 지역마다 강수량, 지형, 하수 시설의 수용 능력 등 여러 조건이 다르기 때문입니다.`,
+  p101112: `어떤 상품의 가격은 그 상품을 사려는 사람의 수요와 시장에 공급되는 양의 영향을 받습니다. 예를 들어 생산량이 크게 줄었는데 찾는 사람의 수가 그대로라면 가격이 오를 수 있습니다.<br><br>그러나 상품 가격이 올랐다는 사실만으로 생산자의 이익도 늘었다고 <strong>단정</strong>할 수는 없습니다. 가뭄으로 과일 생산량이 감소하여 판매 가격이 올랐다고 해 봅시다. 과일 한 상자를 판매하여 받는 돈은 늘었더라도 전체 판매량이 크게 감소하고, 농약이나 인건비 등의 생산 비용까지 상승했다면 농가의 실제 이익은 오히려 줄어들 수 있습니다.<br><br>따라서 하나의 경제 현상을 설명할 때에는 눈에 잘 띄는 한 가지 변화에만 주목해서는 안 됩니다. 여러 요인이 어떤 방식으로 영향을 주고받았는지를 함께 살펴야 보다 타당한 판단을 할 수 있습니다.`,
+  p1314: `한 연구 모둠은 "학교 주변의 나무가 여름철 기온을 낮추는 데 도움이 될 것이다."라는 가설을 세우고 자료를 조사했습니다.
+  <div class="data-line"><b>[자료 1]</b> 같은 날 오후 2시에 측정한 결과, 나무가 많은 A공원의 기온은 29.2℃였고 나무가 거의 없는 B주차장의 기온은 33.1℃였습니다.</div>
+  <div class="data-line"><b>[자료 2]</b> A공원은 강과 가까운 곳에 있으며 그늘이 많았습니다. 반면 B주차장은 넓은 아스팔트 도로와 여러 건물 사이에 있었습니다.</div>
+  <div class="data-line"><b>[자료 3]</b> 연구 모둠은 이후 한 달 동안 여러 장소에서 그늘이 있는 곳과 없는 곳의 기온을 반복하여 측정했습니다. 그 결과, 대부분의 날에 그늘이 있는 곳의 평균 기온이 더 낮았습니다.</div>
+  연구 모둠은 처음 조사한 A공원과 B주차장의 기온 차이를 오직 나무의 영향이라고 <strong>단정</strong>하는 것은 타당하지 않다고 판단했습니다. 두 장소는 나무의 수뿐만 아니라 주변의 물, 건물, 지표의 재질 등 여러 조건이 달랐기 때문입니다.`,
+  p15: `민준: "A공원이 3.9℃ 더 낮았으니 나무를 심으면 어느 지역에서나 정확히 3.9℃씩 기온이 내려가."<br>
+  서윤: "두 장소의 조건이 달랐으니 첫 번째 측정 결과는 자료로서 아무 의미가 없어."<br>
+  지호: "반복 조사에서도 그늘이 있는 곳의 기온이 대체로 낮았으므로 나무나 그늘이 낮은 기온과 관련이 있을 가능성은 커졌어. 하지만 다른 조건의 영향까지 살펴본 뒤 인과관계를 판단해야 해."<br>
+  하린: "여러 번 비슷한 결과가 나왔으니 나무가 기온을 낮추는 유일한 원인이라는 사실이 증명됐어."<br>
+  도윤: "기온에 영향을 줄 수 있는 다른 조건이 하나라도 존재하면 어떤 조사 결과도 믿을 수 없어."`
+};
+
+const rawData = [
+  { q:"다음 문장에서 밑줄 친 '간과하다'의 뜻으로 가장 알맞은 것은 무엇일까요?", passage:passages.p1, area:"어휘·한자어 추론",
+    options:["문제의 중요성을 알면서도 해결을 뒤로 미루다.","여러 문제 가운데 시급한 것을 먼저 처리하다.","충분히 살피지 못한 채 중요한 사실을 지나치다.","문제의 영향을 실제보다 작게 평가하다.","서로 다른 문제의 중요성을 비교하여 판단하다."],
+    answer:"충분히 살피지 못한 채 중요한 사실을 지나치다.",
+    explain:"간과는 중요한 사실이나 문제를 충분히 살피지 못하고 지나치는 것을 뜻합니다. '영향을 작게 평가하다'는 '과소평가'에 더 가깝습니다." },
+  { q:"다음 중 '상쇄(相殺)'가 가장 알맞게 쓰인 문장은 무엇일까요?", passage:null, area:"어휘·한자어 추론",
+    options:["농산물의 생산량이 감소했지만 가격이 올라 농가의 손실이 어느 정도 상쇄되었다.","여러 지역에서 수집한 자료를 지역별로 상쇄하여 정리하였다.","서로 다른 두 의견을 비교한 뒤 하나의 의견으로 상쇄하였다.","부족한 물자를 필요한 지역에 골고루 상쇄하였다.","사용하지 않는 시설을 철거하고 공원으로 상쇄하였다."],
+    answer:"농산물의 생산량이 감소했지만 가격이 올라 농가의 손실이 어느 정도 상쇄되었다.",
+    explain:"상쇄는 서로 반대되는 영향이 작용하여 효과나 손실이 줄어드는 것입니다. 생산량 감소로 생긴 손실 일부가 가격 상승으로 줄어든 상황이 알맞습니다." },
+  { q:"다음 문장의 빈칸에 들어갈 말로 가장 알맞은 것은 무엇일까요?", passage:passages.p3, area:"어휘·한자어 추론",
+    options:["분산되었다","조정되었다","전환되었다","축소되었다","수렴되었다"],
+    answer:"수렴되었다",
+    explain:"수렴은 여러 방향으로 흩어져 있던 의견이나 생각이 하나의 방향으로 모이는 것을 뜻합니다." },
+  { q:"다음 문장에서 '제약'의 의미로 가장 알맞은 것은 무엇일까요?", passage:passages.p4, area:"어휘·한자어 추론",
+    options:["계획을 실행한 뒤 새롭게 나타난 결과","행동이나 선택의 범위를 제한하는 조건","문제를 해결하기 위해 새롭게 정한 기준","여러 조건 가운데 우선하여 고려할 사항","어떤 행동이나 선택을 허용하지 않는 금지"],
+    answer:"행동이나 선택의 범위를 제한하는 조건",
+    explain:"제약은 행동이나 선택을 어렵게 하거나 그 범위를 제한하는 조건입니다. 행동 자체를 완전히 금지한다는 의미는 아닙니다." },
+  { q:"다음 글에서 '형평성'의 의미로 가장 알맞은 것은 무엇일까요?", passage:passages.p5, area:"어휘·한자어 추론",
+    options:["도움이 더 필요한 사람에게 모든 혜택을 집중하는 것","서로 다른 조건을 없애 모두를 같은 상태로 만드는 것","모든 사람에게 같은 양과 같은 방법으로 제공하는 것","개인의 상황과 조건을 고려하여 공정함을 이루는 것","가장 많은 사람이 원하는 방식에 따라 결정하는 것"],
+    answer:"개인의 상황과 조건을 고려하여 공정함을 이루는 것",
+    explain:"형평성은 사람마다 다른 상황과 조건을 고려하여 실질적인 공정함을 이루는 것입니다. 모두에게 무조건 똑같이 나누는 것과는 다릅니다." },
+  { q:"다음 문장에서 밑줄 친 '상충하다'와 가장 가까운 의미는 무엇일까요?", passage:passages.p6, area:"어휘·한자어 추론",
+    options:["한 계획을 먼저 실행한 뒤 다른 계획을 이어서 추진하다.","두 계획이 서로 영향을 주지 않고 따로 진행되다.","두 계획을 일부 수정하여 하나의 계획으로 합치다.","한 계획의 효과가 다른 계획의 효과를 더욱 높이다.","두 계획이 추구하는 방향이나 이해관계가 서로 맞지 않다."],
+    answer:"두 계획이 추구하는 방향이나 이해관계가 서로 맞지 않다.",
+    explain:"상충은 두 목표나 의견, 이해관계가 서로 맞지 않아 동시에 이루기 어려운 상태를 뜻합니다." },
+  { q:"윗글에서 말하는 '완충 역할'을 가장 정확하게 설명한 것은 무엇일까요?", passage:passages.p789, area:"원리 적용·추론",
+    options:["빗물을 일정한 공간에 모아 외부로 흐르지 않게 하는 역할","짧은 시간에 집중되는 빗물로 인한 부담을 줄이는 역할","빗물이 많이 발생하는 원인을 찾아 미리 제거하는 역할","하수 시설이 한 번에 처리할 수 있는 물의 양을 늘리는 역할","빗물이 흐르는 방향을 바꾸어 다른 지역으로 보내는 역할"],
+    answer:"짧은 시간에 집중되는 빗물로 인한 부담을 줄이는 역할",
+    explain:"완충은 충격이나 부담을 중간에서 줄이는 것입니다. 녹지와 습지는 빗물이 한꺼번에 하수 시설에 몰리는 부담을 줄입니다." },
+  { q:"다음 중 윗글에서 설명한 완충의 원리를 가장 적절하게 적용한 사례는 무엇일까요?", passage:passages.p789, area:"원리 적용·추론",
+    options:["학생들이 한꺼번에 급식실에 몰리지 않도록 학년별로 이용 시간을 나눈다.","급식실 이용 시간을 줄여 학생들이 더 빨리 식사를 마치도록 한다.","혼잡한 시간을 알아보기 위해 시간대별 이용 학생 수를 기록한다.","학생이 많아지는 시간에는 제공하는 급식 메뉴의 종류를 줄인다.","한 번에 이용할 수 있는 학생 수를 줄이고 나머지 학생은 이용하지 못하게 한다."],
+    answer:"학생들이 한꺼번에 급식실에 몰리지 않도록 학년별로 이용 시간을 나눈다.",
+    explain:"지문의 핵심 원리는 한꺼번에 집중되는 양을 분산하여 부담을 줄이는 것입니다. 학년별로 급식 시간을 나누는 사례가 이에 해당합니다." },
+  { q:"글쓴이가 침수 감소 효과를 모든 도시에 곧바로 '일반화하기 어렵다'고 판단한 까닭으로 가장 적절한 것은 무엇일까요?", passage:passages.p789, area:"비판적 사고",
+    options:["한 지역에서 실시한 조사는 여러 번 반복하더라도 근거로 활용하기 어렵기 때문이다.","같은 시설이라도 도시마다 서로 반대되는 결과가 나타난다고 밝혀졌기 때문이다.","지역의 조건이 서로 다르면 각 지역에서 얻은 자료를 비교하는 것 자체가 어렵기 때문이다.","한 지역에서 효과가 나타났더라도 결과에 영향을 주는 조건이 지역마다 다를 수 있기 때문이다.","침수는 주로 강수량의 영향을 받으므로 도시 시설의 효과는 고려할 필요가 없기 때문이다."],
+    answer:"한 지역에서 효과가 나타났더라도 결과에 영향을 주는 조건이 지역마다 다를 수 있기 때문이다.",
+    explain:"한 지역의 결과를 모든 지역에 적용하려면 조건이 비슷한지 확인해야 합니다. 지역마다 조건이 다른데 결과가 항상 같다고 판단하는 것은 지나친 일반화입니다." },
+  { q:"윗글을 바탕으로 한 판단으로 가장 타당한 것은 무엇일까요? [ 어느 해에 배 한 상자의 판매 가격이 전년보다 25% 올랐다. ]", passage:passages.p101112, area:"원리 적용·추론",
+    options:["가격이 상승했다는 것은 배에 대한 수요가 반드시 증가했다는 뜻이다.","판매 가격이 25% 올랐으므로 농가의 총수입도 25% 증가했다고 볼 수 있다.","가격 변화만으로 농가의 실제 이익이 증가했는지는 판단하기 어렵다.","생산 비용이 그대로였다면 농가의 실제 이익도 25% 증가했다고 볼 수 있다.","생산량 감소로 가격이 상승했다면 농가의 실제 이익은 감소했다고 볼 수 있다."],
+    answer:"가격 변화만으로 농가의 실제 이익이 증가했는지는 판단하기 어렵다.",
+    explain:"판매 가격만으로는 판매량과 생산 비용을 알 수 없으므로 농가의 실제 이익이 증가했는지 판단할 수 없습니다." },
+  { q:"다음 중 윗글의 '단정하다'와 가장 가까운 의미로 쓰인 문장은 무엇일까요?", passage:passages.p101112, area:"어휘·한자어 추론",
+    options:["예상과 다른 결과가 나타나 처음 세운 생각을 수정하였다.","여러 가능성을 비교한 뒤 각각의 장단점을 정리하였다.","충분한 자료가 더 필요하다고 보고 결론을 잠시 미루었다.","서로 다른 주장을 검토하여 공통되는 내용을 찾아냈다.","한 번의 결과만 보고 그 방법은 언제나 효과적이라고 결론지었다."],
+    answer:"한 번의 결과만 보고 그 방법은 언제나 효과적이라고 결론지었다.",
+    explain:"단정하다는 충분한 근거와 가능성을 살피지 않은 채 어떤 내용을 확실한 사실처럼 결론 내리는 것입니다." },
+  { q:"다음 자료를 바탕으로 내린 판단으로 가장 적절한 것은 무엇일까요? [ 지난해 한 상자에 20,000원이던 딸기가 올해 25,000원으로 올랐고, 판매량은 1,000상자에서 700상자로 줄었습니다. 또한 올해에는 비료비와 인건비가 상승했다는 사실이 확인되었습니다. ]", passage:passages.p101112, area:"자료 해석·근거 판단",
+    options:["판매 가격이 상승했으므로 농가의 순이익도 증가했다고 판단할 수 있다.","판매 금액과 생산 비용을 함께 확인해야 농가의 실제 이익 변화를 판단할 수 있다.","판매량이 감소했으므로 딸기에 대한 소비자의 수요가 감소했다고 판단할 수 있다.","생산 비용이 증가했으므로 판매 가격 상승은 생산 비용 때문이라고 판단할 수 있다.","가격은 오르고 판매량은 줄었으므로 두 변화 사이에는 관련이 없다고 판단할 수 있다."],
+    answer:"판매 금액과 생산 비용을 함께 확인해야 농가의 실제 이익 변화를 판단할 수 있다.",
+    explain:"판매 가격과 판매량뿐 아니라 생산 비용까지 확인해야 실제 순이익의 변화를 판단할 수 있습니다." },
+  { q:"연구 모둠이 [자료 2]를 살펴본 가장 중요한 이유는 무엇일까요?", passage:passages.p1314, area:"자료 해석·근거 판단",
+    options:["측정된 기온 차이에 나무 이외의 다른 요인이 영향을 미쳤는지 살펴보기 위해","A공원과 B주차장 가운데 어느 장소의 환경이 더 좋은지 비교하기 위해","나무가 많은 장소에서는 언제나 기온이 낮다는 사실을 확인하기 위해","강 주변의 모든 지역이 도심보다 시원한지 알아보기 위해","두 장소의 조건을 같게 하여 기온 차이를 다시 측정하기 위해"],
+    answer:"측정된 기온 차이에 나무 이외의 다른 요인이 영향을 미쳤는지 살펴보기 위해",
+    explain:"두 장소에는 나무뿐 아니라 강, 건물, 아스팔트 등 다른 조건도 있습니다. 이런 변인들이 기온에 영향을 미쳤을 가능성을 확인하는 문제입니다." },
+  { q:"[자료 3]을 추가로 조사한 결과, 연구 모둠이 내릴 수 있는 판단으로 가장 적절한 것은 무엇일까요?", passage:passages.p1314, area:"자료 해석·근거 판단",
+    options:["나무가 기온을 낮추는 가장 중요한 원인이라는 사실이 입증되었다.","처음 조사에서 확인하지 못했던 다른 모든 요인의 영향이 사라졌다고 볼 수 있다.","모든 지역에서 나무를 심으면 기온이 일정한 정도로 낮아진다고 볼 수 있다.","그늘이 있는 환경과 낮은 기온 사이에 관련성이 있다는 주장을 뒷받침하는 근거가 강화되었다.","A공원과 B주차장의 기온 차이가 오직 나무의 수 때문에 발생했다고 판단할 수 있다."],
+    answer:"그늘이 있는 환경과 낮은 기온 사이에 관련성이 있다는 주장을 뒷받침하는 근거가 강화되었다.",
+    explain:"여러 장소와 여러 날에 비슷한 결과가 반복되었으므로 '그늘과 낮은 기온 사이에 관련성이 있다'는 근거는 강화됩니다. 하지만 인과관계가 완전히 증명된 것은 아닙니다." },
+  { q:"다음 학생들의 판단 가운데 자료를 가장 신중하고 타당하게 해석한 학생은 누구일까요?", passage:passages.p15, area:"비판적 사고",
+    options:["민준","서윤","지호","하린","도윤"],
+    answer:"지호",
+    explain:"지호는 반복된 자료의 의미를 인정하면서도 다른 변인의 영향을 고려합니다. 즉 관련성과 인과관계를 구별하여 가장 신중하게 판단했습니다." }
+];
+
+// 총점 진단 기준
+const diagnosisBands = [
+  { min:13, max:15, title:'최상위 심화 독해형', desc:'낯선 고급 어휘를 문맥에서 추론하고, 여러 자료와 조건을 종합하여 결론의 타당성까지 판단할 수 있습니다.' },
+  { min:10, max:12, title:'상위 안정 독해형', desc:'고난도 비문학의 핵심 내용을 안정적으로 이해하며, 일부 최상위 어휘·자료 판단 문제에서만 어려움이 나타납니다.' },
+  { min:7,  max:9,  title:'발전 가능 독해형', desc:'중심 내용은 이해하지만 추상어, 원리 적용, 여러 조건을 동시에 고려하는 문제에서 흔들릴 수 있습니다.' },
+  { min:4,  max:6,  title:'어휘·추론 보완형', desc:'직접 제시된 정보는 부분적으로 이해하지만 낯선 교과 어휘와 문장 사이의 논리적 관계를 연결하는 연습이 필요합니다.' },
+  { min:0,  max:3,  title:'기초 문해력 지원형', desc:'고학년 비문학을 이해하기 위한 핵심 어휘와 문맥 추론 능력을 단계적으로 보완할 필요가 있습니다.' }
+];
+function getDiagnosis(score){ return diagnosisBands.find(b => score >= b.min && score <= b.max); }
+
+// 영역별 상담 멘트 (낮은 경우)
+const areaComments = {
+  "어휘·한자어 추론": "낯선 낱말을 만났을 때 바로 포기하거나 느낌으로 답을 고르기보다, 앞뒤 문장을 이용하여 의미를 추론하는 힘을 길러야 합니다. 한자의 기본 의미와 문맥을 함께 이용하여 처음 보는 낱말의 뜻을 추론하는 연습이 필요합니다.",
+  "원리 적용·추론": "글에 직접 적힌 사실은 찾지만, 그 원리를 새로운 상황에 적용하거나 '왜 이러한 결과가 나타났는지'를 판단하는 과정에서는 어려움이 나타날 수 있습니다. 핵심 원리를 한 문장으로 정리하고, 비슷한 사례를 스스로 만들어 보는 연습이 도움이 됩니다.",
+  "자료 해석·근거 판단": "자료에 제시된 숫자나 사실 하나만 보고 바로 결론을 내리는 경향이 있을 수 있습니다. 여러 자료가 각각 무엇을 보여 주는지 확인한 뒤, '이 자료만으로 어디까지 말할 수 있는가?'를 생각하는 연습이 필요합니다.",
+  "비판적 사고": "일부 사례를 모든 경우에 적용하거나, 제한된 자료만으로 결론을 확정하는 선택지에 흔들릴 수 있습니다. '항상, 반드시, 모두, 오직, 완전히'처럼 판단의 범위를 지나치게 넓히는 표현에 주의하는 연습이 필요합니다."
+};
+const areaGoodComments = {
+  "어휘·한자어 추론": "한자어와 문맥을 활용해 낯선 어휘의 뜻을 정확하게 추론하고 있습니다.",
+  "원리 적용·추론": "글의 핵심 원리를 새로운 상황에 적용하고 인과 관계를 파악하는 힘이 우수합니다.",
+  "자료 해석·근거 판단": "여러 자료를 종합하여 결론의 타당성을 신중하게 판단하는 능력이 뛰어납니다.",
+  "비판적 사고": "성급한 일반화에 흔들리지 않고 균형 잡힌 비판적 판단을 하고 있습니다."
+};
+const AREA_ORDER = ["어휘·한자어 추론","원리 적용·추론","자료 해석·근거 판단","비판적 사고"];
+
+function circledNum(i) {
+  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+  return nums[i] || (i + 1) + '.';
+}
+function shuffleArray(array) {
+  const a = [...array];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const TOTAL = 15;
+let userAnswers = {};
+let questionStatus = {};
+let currentQuestions = [];
+let currentGroups = [];
+let currentFilter = 'all';
+
+function buildGroups(data) {
+  const groups = [];
+  const groupMap = new Map();
+  data.forEach(q => {
+    if (q.passage) {
+      if (!groupMap.has(q.passage)) {
+        const g = { passage: q.passage, questions: [] };
+        groupMap.set(q.passage, g);
+        groups.push(g);
+      }
+      groupMap.get(q.passage).questions.push(q);
+    } else {
+      groups.push({ passage: null, questions: [q] });
+    }
+  });
+  return groups;
+}
+
+function initTest() {
+  const groups = buildGroups(rawData);
+  currentGroups = shuffleArray(groups).map(g => ({ passage: g.passage, questions: shuffleArray(g.questions) }));
+  currentQuestions = [];
+  currentGroups.forEach(g => g.questions.forEach(q => currentQuestions.push(q)));
+  userAnswers = {};
+  questionStatus = {};
+  currentFilter = 'all';
+  renderQuestions();
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions-A');
+  container.innerHTML = '';
+  let idx = 0;
+  currentGroups.forEach(g => {
+    let target = container;
+    if (g.passage) {
+      const startNum = idx + 1;
+      const endNum = idx + g.questions.length;
+      const rangeLabel = g.questions.length > 1 ? `[${startNum}~${endNum}]` : `[${startNum}]`;
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'passage-group';
+      groupDiv.innerHTML = `<div class="passage-range-label">${rangeLabel} 다음 글을 읽고 물음에 답하세요.</div><div class="passage-box">${g.passage}</div>`;
+      container.appendChild(groupDiv);
+      target = groupDiv;
+    }
+    g.questions.forEach(q => {
+      const index = idx++;
+      const div = document.createElement('div');
+      div.className = 'question-card';
+      div.dataset.index = index;
+      div.dataset.status = questionStatus[index] || 'unanswered';
+
+      const opts = shuffleArray(q.options);
+
+      div.innerHTML = `
+        <div class="question-header">
+          <div class="question-number">${index + 1}.</div>
+          <div class="question-text">${q.q}</div>
+        </div>
+        <div class="options">
+          ${opts.map((opt, oi) => `
+            <label class="option-row" data-value="${opt.replace(/"/g,'&quot;')}">
+              <input type="radio" name="q-A-${index}" value="${opt.replace(/"/g,'&quot;')}" onchange="selectOption(${index}, this)">
+              <span class="option-text">${circledNum(oi)} ${opt}</span>
+            </label>`).join('')}
+        </div>
+        <div class="hint-section" id="hint-${index}">
+          <div class="hint-title">💡 힌트 (영역: ${q.area})</div>
+          <div class="hint-content">
+            <div><strong>설명:</strong> ${q.explain}</div>
+            <div class="hint-answer"><strong>정답:</strong> ${q.answer}</div>
+          </div>
+        </div>
+      `;
+      target.appendChild(div);
+    });
+  });
+  applyFilter();
+  updateProgress();
+}
+
+function selectOption(index, el) {
+  const card = el.closest('.question-card');
+  card.querySelectorAll('.option-row').forEach(o => o.classList.remove('selected'));
+  const row = el.closest('.option-row');
+  row.classList.add('selected');
+  userAnswers[index] = el.value;
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = Object.keys(userAnswers).filter(k => userAnswers[k]).length;
+  document.getElementById('progressA').textContent = `${answered} / ${TOTAL} 문제 완료`;
+}
+
+function checkAnswers() {
+  let correctCount = 0;
+  let wrongQuestions = [];
+  const areaStats = {};
+  AREA_ORDER.forEach(a => areaStats[a] = { correct:0, total:0 });
+
+  const cards = document.querySelectorAll('#questions-A .question-card');
+
+  cards.forEach((card, index) => {
+    const q = currentQuestions[index];
+    const correctAnswer = q.answer;
+    const userAnswer = userAnswers[index];
+    areaStats[q.area].total++;
+
+    if (questionStatus[index] === 'correct') {
+      correctCount++;
+      areaStats[q.area].correct++;
+      return;
+    }
+
+    const opts = card.querySelectorAll('.option-row');
+    opts.forEach(opt => {
+      opt.classList.add('disabled');
+      opt.querySelector('input[type="radio"]').disabled = true;
+      const optText = opt.dataset.value;
+      if (optText === correctAnswer) opt.classList.add('correct');
+      if (optText === userAnswer && userAnswer !== correctAnswer) opt.classList.add('incorrect');
+    });
+
+    if (userAnswer === correctAnswer) {
+      correctCount++;
+      areaStats[q.area].correct++;
+      questionStatus[index] = 'correct';
+      card.dataset.status = 'correct';
+      card.classList.add('correct-card');
+    } else {
+      questionStatus[index] = 'wrong';
+      card.dataset.status = 'wrong';
+      card.classList.add('wrong');
+      wrongQuestions.push(index);
+
+      const hintBtn = document.createElement('button');
+      hintBtn.className = 'hint-btn';
+      hintBtn.textContent = '💡 힌트 보기';
+      hintBtn.onclick = () => toggleHint(index);
+      card.appendChild(hintBtn);
+    }
+  });
+
+  const percentage = Math.round((correctCount / TOTAL) * 100);
+  const diag = getDiagnosis(correctCount);
+  const resultDiv = document.getElementById('result-A');
+
+  let areaHtml = '';
+  AREA_ORDER.forEach(area => {
+    const st = areaStats[area];
+    if (st.total === 0) return;
+    const rate = st.correct / st.total;
+    const isLow = rate < 0.6;
+    const pct = Math.round(rate * 100);
+    const comment = isLow ? areaComments[area] : areaGoodComments[area];
+    areaHtml += `
+      <div class="area-row">
+        <div class="area-row-head">
+          <span class="area-name">${area}</span>
+          <span class="area-score ${isLow ? 'low':''}">${st.correct} / ${st.total} (${pct}%)</span>
+        </div>
+        <div class="area-bar-bg"><div class="area-bar-fill ${isLow?'low':''}" style="width:${pct}%;"></div></div>
+        <div class="area-comment">${comment}</div>
+      </div>`;
+  });
+
+  resultDiv.innerHTML = `
+    <h3>🎉 결과</h3>
+    <p>맞힌 문제: ${correctCount} / ${TOTAL}</p>
+    <p>정답률: ${percentage}%</p>
+    <div class="diagnosis-card">
+      <div class="diagnosis-title">📊 총점 진단 : ${correctCount}점 · ${diag.title}</div>
+      <div class="diagnosis-desc">${diag.desc}</div>
+      <div class="diagnosis-note">※ 이 평가는 고난도 진단평가이므로 10점 이상이면 낮은 문해력으로 해석해서는 안 됩니다.</div>
+    </div>
+    <div class="area-report">
+      <div class="area-report-title">🗂️ 영역별 상담 결과</div>
+      ${areaHtml}
+    </div>
+  `;
+  resultDiv.classList.add('show');
+
+  event.target.style.display = 'none';
+
+  if (wrongQuestions.length > 0) {
+    document.querySelector('.retry-btn').style.display = 'inline-block';
+    document.getElementById('filterA').classList.add('show');
+  }
+}
+
+function toggleHint(index) {
+  const h = document.getElementById(`hint-${index}`);
+  h.classList.toggle('show');
+}
+
+function retryWrong() {
+  const cards = document.querySelectorAll('#questions-A .question-card');
+  cards.forEach((card, index) => {
+    if (questionStatus[index] === 'wrong') {
+      card.classList.remove('wrong');
+      const h = document.getElementById(`hint-${index}`);
+      if (h) h.classList.remove('show');
+      const hb = card.querySelector('.hint-btn');
+      if (hb) hb.remove();
+      const opts = card.querySelectorAll('.option-row');
+      opts.forEach(o => {
+        o.classList.remove('selected','correct','incorrect','disabled');
+        const input = o.querySelector('input[type="radio"]');
+        input.disabled = false;
+        input.checked = false;
+      });
+      userAnswers[index] = '';
+      questionStatus[index] = 'retry';
+    }
+  });
+
+  document.getElementById('result-A').classList.remove('show');
+  document.querySelector('.submit-btn').style.display = 'inline-block';
+  event.target.style.display = 'none';
+  filterQuestions('wrong');
+}
+
+function filterQuestions(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('#filterA .filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  const cards = document.querySelectorAll('#questions-A .question-card');
+  cards.forEach((card, index) => {
+    if (currentFilter === 'all') {
+      card.style.display = 'block';
+    } else {
+      card.style.display = (questionStatus[index] === 'wrong' || questionStatus[index] === 'retry') ? 'block' : 'none';
+    }
+  });
+  document.querySelectorAll('#questions-A .passage-group').forEach(group => {
+    const anyVisible = Array.from(group.querySelectorAll('.question-card')).some(c => c.style.display !== 'none');
+    group.style.display = anyVisible ? 'block' : 'none';
+  });
+}
+
+function resetTest() {
+  initTest();
+  const resultDiv = document.getElementById('result-A');
+  resultDiv.classList.remove('show');
+  resultDiv.innerHTML = '';
+  document.querySelector('.submit-btn').style.display = 'inline-block';
+  document.querySelector('.retry-btn').style.display = 'none';
+  const filterDiv = document.getElementById('filterA');
+  filterDiv.classList.remove('show');
+  const fbtns = filterDiv.querySelectorAll('.filter-btn');
+  fbtns.forEach(b => b.classList.remove('active'));
+  fbtns[0].classList.add('active');
+}
+
+window.onload = initTest;
+</script>
+</body>
+</html>

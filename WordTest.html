@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>문해력 진단 테스트</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #2da55d;
+      --ink: #17120f;
+      --card: #f2f2f2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: #fff;
+      font-family: "Noto Sans KR", sans-serif;
+    }
+
+    button { font: inherit; }
+
+    .test-page {
+      width: min(1480px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 68px 0 72px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      position: relative;
+      display: inline-block;
+      margin: 0 0 38px;
+      padding: 10px 28px 12px;
+      border: 2px solid #dcebdd;
+      border-radius: 999px;
+      background: #fff;
+      font-family: "Jua", sans-serif;
+      font-size: clamp(19px, 1.7vw, 27px);
+      letter-spacing: .03em;
+    }
+
+    .eyebrow::after {
+      content: "";
+      position: absolute;
+      right: 58px;
+      bottom: -18px;
+      width: 24px;
+      height: 20px;
+      border-right: 2px solid #dcebdd;
+      border-radius: 0 0 20px 0;
+      transform: skewX(-25deg);
+      background: #fff;
+    }
+
+    .eyebrow strong { color: var(--green); font-weight: 400; }
+
+    h1 {
+      margin: 0;
+      color: var(--green);
+      font-family: "Jua", sans-serif;
+      font-size: clamp(52px, 6.2vw, 88px);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -.035em;
+    }
+
+    .description {
+      margin: 28px 0 48px;
+      font-size: clamp(21px, 2.1vw, 32px);
+      line-height: 1.8;
+      letter-spacing: -.04em;
+    }
+
+    .guide {
+      display: inline-block;
+      min-width: min(790px, 90%);
+      margin-bottom: 88px;
+      padding: 15px 44px 18px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--green);
+      font-family: "Jua", sans-serif;
+      font-size: clamp(25px, 2.8vw, 39px);
+      font-weight: 400;
+    }
+
+    .guide em { color: #ffd795; font-style: normal; }
+
+    .grade-list {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(150px, 1fr));
+      gap: 36px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .grade-card {
+      min-width: 0;
+      padding: 14px 14px 13px;
+      border-radius: 20px;
+      background: var(--card);
+    }
+
+    .grade-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      margin: 0 auto -17px;
+      object-fit: contain;
+    }
+
+    .grade-button {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 42px;
+      padding: 6px 12px 7px;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--grade-color);
+      box-shadow: 0 3px 0 rgba(0, 0, 0, .12);
+      font-size: clamp(15px, 1.35vw, 20px);
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .grade-button::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-top: 3px solid currentColor;
+      border-right: 3px solid currentColor;
+      transform: rotate(45deg);
+    }
+
+    .grade-button:hover { transform: translateY(-2px); filter: brightness(1.05); }
+    .grade-button:focus-visible { outline: 4px solid color-mix(in srgb, var(--grade-color), white 45%); outline-offset: 3px; }
+
+    .grade-card:nth-child(1) { --grade-color: #f5a32e; }
+    .grade-card:nth-child(2) { --grade-color: #f05b2e; }
+    .grade-card:nth-child(3) { --grade-color: #4aa934; }
+    .grade-card:nth-child(4) { --grade-color: #8f54b8; }
+    .grade-card:nth-child(5) { --grade-color: #2878c9; }
+    .grade-card:nth-child(6) { --grade-color: #123a7d; }
+
+    @media (max-width: 1100px) {
+      .grade-list { grid-template-columns: repeat(3, minmax(160px, 1fr)); gap: 28px; }
+      .guide { margin-bottom: 58px; }
+    }
+
+    @media (max-width: 620px) {
+      .test-page { width: min(100% - 28px, 1480px); padding-top: 38px; }
+      .description { margin: 22px 0 34px; line-height: 1.6; }
+      .guide { min-width: 0; width: 100%; margin-bottom: 42px; padding-inline: 18px; }
+      .grade-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      .grade-card { padding: 10px; border-radius: 16px; }
+      .grade-button { gap: 5px; padding-inline: 8px; }
+      .grade-button::after { width: 8px; height: 8px; border-width: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="test-page">
+    <p class="eyebrow">문해력은 <strong>모든 공부</strong>의 시작!</p>
+    <h1>문해력 진단 테스트</h1>
+    <p class="description">나의 문해력 수준을 알아보고,<br>알맞은 단계부터 실력을 키워 보세요!</p>
+    <div class="guide">테스트를 시작할 <em>학년을 선택</em>해 주세요.</div>
+
+    <ul class="grade-list" aria-label="테스트 학년 선택">
+      <li class="grade-card"><a href="WordTest/글핀_초등저학년_문해력진단_TEST.html"><img src="assets/banner/test_icon_1.png" alt="" aria-hidden="true"></a></li>
+      <li class="grade-card"><a href="WordTest/글핀_초등3학년_문해력_진단TEST_A.html"><img src="assets/banner/test_icon_2.png" alt="" aria-hidden="true"></a></li>
+      <li class="grade-card"><a href="WordTest/글핀_초등4학년_문해력_진단TEST_A.html"><img src="assets/banner/test_icon_3.png" alt="" aria-hidden="true"></a></li>
+      <li class="grade-card"><a href="WordTest/글핀_초등5학년_문해력_진단TEST_A.html"><img src="assets/banner/test_icon_4.png" alt="" aria-hidden="true"></a></li>
+      <li class="grade-card"><a href="WordTest/aa.html"><img src="assets/banner/test_icon_5.png" alt="" aria-hidden="true"></a></li>
+      <li class="grade-card"><a href="WordTest/aa.html"><img src="assets/banner/test_icon_6.png" alt="" aria-hidden="true"></a></li>
+    </ul>
+  </main>
+</body>
+</html>

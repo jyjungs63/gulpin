@@ -191,7 +191,7 @@ header("Expires: 0"); // Proxies
         }
 
         #idTable {
-            min-width: 1100px;
+            width: 100%;
         }
 
         .kgarden-table-wrap .tabulator {
@@ -214,6 +214,22 @@ header("Expires: 0"); // Proxies
 
         .kgarden-table-wrap .tabulator-row:hover {
             background: #eff6ff;
+        }
+
+        .branch-delete-btn {
+            min-width: 48px;
+            padding: 6px 9px;
+            border: 0;
+            border-radius: 7px;
+            background: #dc3545;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .branch-delete-btn:hover {
+            background: #b91c2c;
         }
 
         @media (max-width: 1199px) {
@@ -716,7 +732,7 @@ header("Expires: 0"); // Proxies
         BranchDelete = (cell) => {
             var result = confirm("Are you sure to delete ??");
             var id = cell._row.data['id'];
-            if (cell._row.data['role'] != "Admin") {
+            if (cell._row.data['role'] != "Admin" || role == "9") {
                 dispList = (resp) => {
                     cell.delete();
                 }
@@ -809,8 +825,7 @@ header("Expires: 0"); // Proxies
         });
 
         var deleteIcon = function(cell, formatterParams) {
-            //plain text value
-            return "<i class='fa fa-trash'></i>";
+            return "<button type='button' class='branch-delete-btn' aria-label='지사 삭제'>삭제</button>";
         };
 
         table = new Tabulator("#idTable", {
@@ -832,7 +847,9 @@ header("Expires: 0"); // Proxies
                 {
                     formatter: "rowSelection",
                     field: "check",
-                    width: "1%",
+                    width: 42,
+                    minWidth: 42,
+                    frozen: true,
                     titleFormatter: "rowSelection",
                     hozAlign: "center",
                     headerSort: false,
@@ -982,26 +999,23 @@ header("Expires: 0"); // Proxies
                     },
                 },
                 {
+                    title: "삭제",
                     formatter: deleteIcon,
-                    width: "5%",
+                    width: 72,
+                    minWidth: 72,
+                    frozen: true,
+                    visible: true,
+                    responsive: 0,
                     hozAlign: "center",
+                    headerHozAlign: "center",
+                    headerSort: false,
                     cellClick: function(e, cell) {
+                        e.stopPropagation();
                         BranchDelete(cell.getRow());
                     },
                 },
             ],
-                responsiveLayout: true,
-    responsiveLayoutCollapseStart: 768, // Hide columns when the screen width is less than 768 pixels
-    responsiveLayoutCollapseEnd: 0, // Show all columns when the screen width is less than 0 pixels (never)
-    responsiveLayoutCollapseFormatter: function (data) {
-      // Define which columns to hide in responsive layout
-      return data.columns.filter(
-        (column) =>
-          column.field !== "name" &&
-          column.field !== "id" &&
-          column.field !== "confirm"
-      );
-    },
+            responsiveLayout: "hide",
         });
 
         if (typeof table.on === "function") {
