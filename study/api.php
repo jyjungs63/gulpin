@@ -2,6 +2,7 @@
 // api.php
 header('Content-Type: application/json');
 require_once '../libs/db_config.php'; // DB 설정 파일 포함
+require_once '../Server/roles.php';   // role 정의
 
 try {
     $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -19,15 +20,16 @@ $mode = $_GET['mode'] ?? '';
 
 // --- 모드별 처리 ---
 
-// A-0. role=2 사용자를 chaitalk_online_ma에 동기화 (미등록자만 INSERT)
+// A-0. 선생 계정(roles.php GP_TEACHER_ROLES)을 gulpin_online_ma에 동기화 (미등록자만 INSERT)
 if ($mode === 'sync_users') {
     try {
-        $sql = "INSERT INTO chaitalk_online_ma (id, name, status, mon, created_at)
+        $teacherIn = implode(',', GP_TEACHER_ROLES);
+        $sql = "INSERT INTO gulpin_online_ma (id, name, status, mon, created_at)
                 SELECT u.id, u.name, 'all', NULL, CURRENT_TIMESTAMP
-                FROM chaitalk_user u
-                WHERE u.role = 2
+                FROM gulpin_user u
+                WHERE u.role IN ($teacherIn)
                   AND NOT EXISTS (
-                      SELECT 1 FROM chaitalk_online_ma m WHERE m.id = u.id
+                      SELECT 1 FROM gulpin_online_ma m WHERE m.id = u.id
                   )";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
@@ -42,9 +44,9 @@ if ($mode === 'list') {
 // 필터 파라미터가 있으면 해당 상태만 조회, 없으면 전체 조회
     $filter = $_GET['filter'] ?? 'all_list'; 
     if ($filter === 'all_list') {
-        $stmt = $pdo->query("SELECT id, name, status FROM chaitalk_online_ma ORDER BY name ASC");
+        $stmt = $pdo->query("SELECT id, name, status FROM gulpin_online_ma ORDER BY name ASC");
     } else {
-        $stmt = $pdo->prepare("SELECT id, name, status FROM chaitalk_online_ma WHERE status = ? ORDER BY name ASC");
+        $stmt = $pdo->prepare("SELECT id, name, status FROM gulpin_online_ma WHERE status = ? ORDER BY name ASC");
         $stmt->execute([$filter]);
     }
     echo json_encode(['status' => 'success', 'data' => $stmt->fetchAll()]);
@@ -52,7 +54,7 @@ if ($mode === 'list') {
 elseif ($mode === 'list_with_volume') {
     // 한 번의 쿼리로 모든 유치원 + mon 데이터를 한꺼번에 가져옴
     $sql = "SELECT id, name, status, mon 
-            FROM chaitalk_online_ma 
+            FROM gulpin_online_ma 
             ORDER BY name ASC";
     $stmt = $pdo->query($sql);
     echo json_encode(['status' => 'success', 'data' => $stmt->fetchAll()]);
@@ -63,16 +65,16 @@ elseif ($mode === 'get' && isset($_GET['id'])) {
     $target_id = $_GET['id'];
 
     try {
-        // 1. 먼저 본인의 설정이 chaitalk_online_ma에 있는지 확인
-        $stmt = $pdo->prepare("SELECT status, mon FROM chaitalk_online_ma WHERE id = ?");
+        // 1. 먼저 본인의 설정이 gulpin_online_ma에 있는지 확인
+        $stmt = $pdo->prepare("SELECT status, mon FROM gulpin_online_ma WHERE id = ?");
         $stmt->execute([$target_id]);
         $config = $stmt->fetch();
 
-        // 2. 본인 설정이 없다면 chaitalk_user에서 tid(관리자 ID)를 찾아 그 설정값을 확인
+        // 2. 본인 설정이 없다면 gulpin_user에서 tid(관리자 ID)를 찾아 그 설정값을 확인
         if (!$config) {
             $sql = "SELECT m.status, m.mon
-                    FROM chaitalk_user u
-                    JOIN chaitalk_online_ma m ON u.tid = m.id
+                    FROM gulpin_user u
+                    JOIN gulpin_online_ma m ON u.tid = m.id
                     WHERE u.id = ? AND u.tid IS NOT NULL AND u.tid != ''";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$target_id]);
@@ -82,8 +84,8 @@ elseif ($mode === 'get' && isset($_GET['id'])) {
         // 2-1. tid로도 못 찾으면 mid(지사 ID)를 통해 설정값 확인
         if (!$config) {
             $sql = "SELECT m.status, m.mon
-                    FROM chaitalk_user u
-                    JOIN chaitalk_online_ma m ON u.id = m.id
+                    FROM gulpin_user u
+                    JOIN gulpin_online_ma m ON u.id = m.id
                     WHERE u.id = ? ";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$target_id]);
@@ -175,11 +177,14 @@ elseif ($mode === 'study_stats') {
         $idWhere  = '';
         $idParams = [];
         if ($req_id !== '') {
-            if ($req_role === 2 || $req_role === 7) {
+            $teacherIn = implode(',', GP_TEACHER_ROLES);
+            if (in_array($req_role, GP_TEACHER_ROLES, true)) {
+                // 선생: 본인 담당 학생
                 $idWhere  = 'AND u.tid = ?';
                 $idParams = [$req_id];
-            } elseif ($req_role === 3 || $req_role === 30) {
-                $idWhere  = 'AND (u.tid = ? OR u.tid IN (SELECT id FROM chaitalk_user WHERE tid = ? AND role IN (2,7)))';
+            } elseif (in_array($req_role, GP_BRANCH_ROLES, true)) {
+                // 지사: 본인 학생 + 본인이 등록한 선생(mid)의 학생
+                $idWhere  = "AND (u.tid = ? OR u.tid IN (SELECT id FROM gulpin_user WHERE mid = ? AND role IN ($teacherIn)))";
                 $idParams = [$req_id, $req_id];
             }
         }
@@ -205,9 +210,9 @@ elseif ($mode === 'study_stats') {
                 COUNT(s.no)                  AS total_study_count,
                 COUNT(DISTINCT s.id)         AS student_count
             FROM study_record s
-            LEFT JOIN  chaitalk_user u  ON s.id = u.id
-            LEFT JOIN  chaitalk_user t  ON u.tid = t.id
-            LEFT JOIN  chaitalk_user mg ON t.mid = mg.id
+            LEFT JOIN  gulpin_user u  ON s.id = u.id
+            LEFT JOIN  gulpin_user t  ON u.tid = t.id
+            LEFT JOIN  gulpin_user mg ON t.mid = mg.id
             WHERE 1=1 $idWhere $dateWhere
             GROUP BY COALESCE(u.tid, s.id), COALESCE(t.name, s.id), COALESCE(mg.owner, '')
             ORDER BY total_study_count DESC
@@ -249,7 +254,7 @@ elseif ($mode === 'study_stats_detail') {
                 COUNT(s.no)                   AS study_count,
                 MAX(s.rdate)                  AS last_study
             FROM study_record s
-            LEFT JOIN chaitalk_user u ON s.id = u.id
+            LEFT JOIN gulpin_user u ON s.id = u.id
             WHERE u.tid = ? $dateWhere
             GROUP BY s.id, COALESCE(u.name, s.id), COALESCE(u.owner, '')
             ORDER BY study_count DESC
@@ -328,7 +333,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     error_log("저장 요청 - id:{$input['id']} status:{$input['status']} mon:{$mon}");
 
     try {
-        $sql = "UPDATE chaitalk_online_ma SET status = :status, mon = :mon WHERE id = :id";
+        $sql = "UPDATE gulpin_online_ma SET status = :status, mon = :mon WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             'status' => $input['status'],

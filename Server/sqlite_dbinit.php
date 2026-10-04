@@ -19,10 +19,12 @@ try {
         $pdo->exec(file_get_contents($schemaPath));
     }
 
-    sqliteEnsureColumn($pdo, 'chaitalk_user', 'p_mobile', "TEXT DEFAULT ''");
-    sqliteEnsureColumn($pdo, 'chaitalk_user', 'phone', "TEXT DEFAULT ''");
-    sqliteEnsureColumn($pdo, 'chaitalk_porlist', 'invoice', "TEXT DEFAULT ''");
-    sqliteEnsureColumn($pdo, 'chaitalk_porlist', 'refund', "TEXT DEFAULT ''");
+    sqliteEnsureColumn($pdo, 'gulpin_user', 'p_mobile', "TEXT DEFAULT ''");
+    sqliteEnsureColumn($pdo, 'gulpin_user', 'phone', "TEXT DEFAULT ''");
+    sqliteEnsureColumn($pdo, 'gulpin_user', 'sdate', 'TEXT');
+    sqliteEnsureColumn($pdo, 'gulpin_user', 'edate', 'TEXT');
+    sqliteEnsureColumn($pdo, 'gulpin_porlist', 'invoice', "TEXT DEFAULT ''");
+    sqliteEnsureColumn($pdo, 'gulpin_porlist', 'refund', "TEXT DEFAULT ''");
 } catch (Throwable $e) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');

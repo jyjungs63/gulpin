@@ -5,6 +5,7 @@
     <title>사용자 통합 관리 - 필터 기능 추가</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/roles.js"></script>
     <script src="../js/role-nav.js" defer></script>
     <style>
         :root {
@@ -599,9 +600,9 @@ function toggleUI() {
     select.className = `bg-${status}`;
 }
 
-// 6-0. 사용자 동기화 (role=2 미등록자 INSERT)
+// 6-0. 사용자 동기화 (선생 계정 미등록자 INSERT)
 async function syncUsers() {
-    if (!confirm('chaitalk_user에서 role=2(원관리) 중 미등록 사용자를 추가합니다.\n계속하시겠습니까?')) return;
+    if (!confirm('gulpin_user의 선생 계정(유치원·학원·홈스쿨·온라인·방과후) 중 미등록 사용자를 추가합니다.\n계속하시겠습니까?')) return;
     try {
         const res = await fetch(`${API_URL}?mode=sync_users`).then(r => r.json());
         if (res.status === 'success') {

@@ -1,0 +1,3366 @@
+{
+ "source": "xlsx",
+ "generated": "2026-10-04",
+ "videoAccessMonths": 6,
+ "groups": {
+  "homeschool": {
+   "name": "홈스쿨",
+   "items": [
+    {
+     "code": "L1-A",
+     "family": "급파한",
+     "title": "급파한 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-A"
+     ],
+     "lessons": [
+      "1-A1",
+      "1-A2",
+      "1-A3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 A [1-A1, 1-A2, 1-A3, 알아보기] (영상코드: L1-A)"
+    },
+    {
+     "code": "L1-B",
+     "family": "급파한",
+     "title": "급파한 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-B"
+     ],
+     "lessons": [
+      "1-B1",
+      "1-B2",
+      "1-B3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 B [1-B1, 1-B2, 1-B3, 알아보기] (영상코드: L1-B)"
+    },
+    {
+     "code": "L1-C",
+     "family": "급파한",
+     "title": "급파한 1단계 C",
+     "step": 1,
+     "unit": "C",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-C"
+     ],
+     "lessons": [
+      "1-C1",
+      "1-C2",
+      "1-C3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 C [1-C1, 1-C2, 1-C3, 알아보기] (영상코드: L1-C)"
+    },
+    {
+     "code": "L1-D",
+     "family": "급파한",
+     "title": "급파한 1단계 D",
+     "step": 1,
+     "unit": "D",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-D"
+     ],
+     "lessons": [
+      "1-D1",
+      "1-D2",
+      "1-D3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 D [1-D1, 1-D2, 1-D3, 알아보기] (영상코드: L1-D)"
+    },
+    {
+     "code": "L1-E",
+     "family": "급파한",
+     "title": "급파한 1단계 E",
+     "step": 1,
+     "unit": "E",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-E"
+     ],
+     "lessons": [
+      "1-E1",
+      "1-E2",
+      "1-E3",
+      "1-E4"
+     ],
+     "note": "급파한 1단계 E [1-E1, 1-E2, 1-E3, 1-E4] (영상코드: L1-E)"
+    },
+    {
+     "code": "L2-A",
+     "family": "급파한",
+     "title": "급파한 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-A"
+     ],
+     "lessons": [
+      "2-A1",
+      "2-A2",
+      "2-A3"
+     ],
+     "note": "급파한 2단계 A [2-A1, 2-A2, 2-A3] (영상코드: L2-A)"
+    },
+    {
+     "code": "L2-B",
+     "family": "급파한",
+     "title": "급파한 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-B"
+     ],
+     "lessons": [
+      "2-B1",
+      "2-B2",
+      "2-B3"
+     ],
+     "note": "급파한 2단계 B [2-B1, 2-B2, 2-B3] (영상코드: L2-B)"
+    },
+    {
+     "code": "L2-C",
+     "family": "급파한",
+     "title": "급파한 2단계 C",
+     "step": 2,
+     "unit": "C",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-C"
+     ],
+     "lessons": [
+      "2-C1",
+      "2-C2",
+      "2-C3"
+     ],
+     "note": "급파한 2단계 C [2-C1, 2-C2, 2-C3] (영상코드: L2-C)"
+    },
+    {
+     "code": "L2-D",
+     "family": "급파한",
+     "title": "급파한 2단계 D",
+     "step": 2,
+     "unit": "D",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-D"
+     ],
+     "lessons": [
+      "2-D1",
+      "2-D2",
+      "2-D3"
+     ],
+     "note": "급파한 2단계 D [2-D1, 2-D2, 2-D3] (영상코드: L2-D)"
+    },
+    {
+     "code": "L2-E",
+     "family": "급파한",
+     "title": "급파한 2단계 E",
+     "step": 2,
+     "unit": "E",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-E"
+     ],
+     "lessons": [
+      "2-E1",
+      "2-E2",
+      "2-E3",
+      "2-E4",
+      "2-E5"
+     ],
+     "note": "급파한 2단계 E [2-E1, 2-E2, 2-E3, 2-E4, 2-E5] (영상코드: L2-E)"
+    },
+    {
+     "code": "SO1-A",
+     "family": "홈스쿨",
+     "title": "홈스쿨 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 25000,
+     "includes": [
+      "L1-A"
+     ],
+     "videos": [
+      "L1-A"
+     ],
+     "lessons": [
+      "1-A1",
+      "1-A2",
+      "1-A3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 A [1-A1, 1-A2, 1-A3, 알아보기] (영상코드: L1-A)"
+    },
+    {
+     "code": "SO1-B",
+     "family": "홈스쿨",
+     "title": "홈스쿨 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 25000,
+     "includes": [
+      "L1-B"
+     ],
+     "videos": [
+      "L1-B"
+     ],
+     "lessons": [
+      "1-B1",
+      "1-B2",
+      "1-B3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 B [1-B1, 1-B2, 1-B3, 알아보기] (영상코드: L1-B)"
+    },
+    {
+     "code": "SO1-C",
+     "family": "홈스쿨",
+     "title": "홈스쿨 1단계 C",
+     "step": 1,
+     "unit": "C",
+     "price": 25000,
+     "includes": [
+      "L1-C"
+     ],
+     "videos": [
+      "L1-C"
+     ],
+     "lessons": [
+      "1-C1",
+      "1-C2",
+      "1-C3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 C [1-C1, 1-C2, 1-C3, 알아보기] (영상코드: L1-C)"
+    },
+    {
+     "code": "SO1-D",
+     "family": "홈스쿨",
+     "title": "홈스쿨 1단계 D",
+     "step": 1,
+     "unit": "D",
+     "price": 25000,
+     "includes": [
+      "L1-D"
+     ],
+     "videos": [
+      "L1-D"
+     ],
+     "lessons": [
+      "1-D1",
+      "1-D2",
+      "1-D3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 D [1-D1, 1-D2, 1-D3, 알아보기] (영상코드: L1-D)"
+    },
+    {
+     "code": "SO1-E",
+     "family": "홈스쿨",
+     "title": "홈스쿨 1단계 E",
+     "step": 1,
+     "unit": "E",
+     "price": 25000,
+     "includes": [
+      "L1-E"
+     ],
+     "videos": [
+      "L1-E"
+     ],
+     "lessons": [
+      "1-E1",
+      "1-E2",
+      "1-E3",
+      "1-E4"
+     ],
+     "note": "급파한 1단계 E [1-E1, 1-E2, 1-E3, 1-E4] (영상코드: L1-E)"
+    },
+    {
+     "code": "SO2-A",
+     "family": "홈스쿨",
+     "title": "홈스쿨 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 28000,
+     "includes": [
+      "L2-A",
+      "N"
+     ],
+     "videos": [
+      "L2-A"
+     ],
+     "lessons": [
+      "2-A1",
+      "2-A2",
+      "2-A3"
+     ],
+     "note": "급파한 2단계 A [2-A1, 2-A2, 2-A3] (영상코드: L2-A)"
+    },
+    {
+     "code": "SO2-B",
+     "family": "홈스쿨",
+     "title": "홈스쿨 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 28000,
+     "includes": [
+      "L2-B",
+      "N"
+     ],
+     "videos": [
+      "L2-B"
+     ],
+     "lessons": [
+      "2-B1",
+      "2-B2",
+      "2-B3"
+     ],
+     "note": "급파한 2단계 B [2-B1, 2-B2, 2-B3] (영상코드: L2-B)"
+    },
+    {
+     "code": "SO2-C",
+     "family": "홈스쿨",
+     "title": "홈스쿨 2단계 C",
+     "step": 2,
+     "unit": "C",
+     "price": 28000,
+     "includes": [
+      "L2-C",
+      "N"
+     ],
+     "videos": [
+      "L2-C"
+     ],
+     "lessons": [
+      "2-C1",
+      "2-C2",
+      "2-C3"
+     ],
+     "note": "급파한 2단계 C [2-C1, 2-C2, 2-C3] (영상코드: L2-C)"
+    },
+    {
+     "code": "SO2-D",
+     "family": "홈스쿨",
+     "title": "홈스쿨 2단계 D",
+     "step": 2,
+     "unit": "D",
+     "price": 28000,
+     "includes": [
+      "L2-D",
+      "N"
+     ],
+     "videos": [
+      "L2-D"
+     ],
+     "lessons": [
+      "2-D1",
+      "2-D2",
+      "2-D3"
+     ],
+     "note": "급파한 2단계 D [2-D1, 2-D2, 2-D3] (영상코드: L2-D)"
+    },
+    {
+     "code": "SO2-E",
+     "family": "홈스쿨",
+     "title": "홈스쿨 2단계 E",
+     "step": 2,
+     "unit": "E",
+     "price": 28000,
+     "includes": [
+      "L2-E",
+      "N"
+     ],
+     "videos": [
+      "L2-E"
+     ],
+     "lessons": [
+      "2-E1",
+      "2-E2",
+      "2-E3",
+      "2-E4",
+      "2-E5"
+     ],
+     "note": "급파한 2단계 E [2-E1, 2-E2, 2-E3, 2-E4, 2-E5] (영상코드: L2-E)"
+    }
+   ]
+  },
+  "afterschool": {
+   "name": "방과후",
+   "items": [
+    {
+     "code": "L1-A",
+     "family": "급파한",
+     "title": "급파한 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-A"
+     ],
+     "lessons": [
+      "1-A1",
+      "1-A2",
+      "1-A3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 A [1-A1, 1-A2, 1-A3, 알아보기] (영상코드: L1-A)"
+    },
+    {
+     "code": "L1-B",
+     "family": "급파한",
+     "title": "급파한 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-B"
+     ],
+     "lessons": [
+      "1-B1",
+      "1-B2",
+      "1-B3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 B [1-B1, 1-B2, 1-B3, 알아보기] (영상코드: L1-B)"
+    },
+    {
+     "code": "L1-C",
+     "family": "급파한",
+     "title": "급파한 1단계 C",
+     "step": 1,
+     "unit": "C",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-C"
+     ],
+     "lessons": [
+      "1-C1",
+      "1-C2",
+      "1-C3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 C [1-C1, 1-C2, 1-C3, 알아보기] (영상코드: L1-C)"
+    },
+    {
+     "code": "L1-D",
+     "family": "급파한",
+     "title": "급파한 1단계 D",
+     "step": 1,
+     "unit": "D",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-D"
+     ],
+     "lessons": [
+      "1-D1",
+      "1-D2",
+      "1-D3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 D [1-D1, 1-D2, 1-D3, 알아보기] (영상코드: L1-D)"
+    },
+    {
+     "code": "L1-E",
+     "family": "급파한",
+     "title": "급파한 1단계 E",
+     "step": 1,
+     "unit": "E",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-E"
+     ],
+     "lessons": [
+      "1-E1",
+      "1-E2",
+      "1-E3",
+      "1-E4"
+     ],
+     "note": "급파한 1단계 E [1-E1, 1-E2, 1-E3, 1-E4] (영상코드: L1-E)"
+    },
+    {
+     "code": "L2-A",
+     "family": "급파한",
+     "title": "급파한 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-A"
+     ],
+     "lessons": [
+      "2-A1",
+      "2-A2",
+      "2-A3"
+     ],
+     "note": "급파한 2단계 A [2-A1, 2-A2, 2-A3] (영상코드: L2-A)"
+    },
+    {
+     "code": "L2-B",
+     "family": "급파한",
+     "title": "급파한 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-B"
+     ],
+     "lessons": [
+      "2-B1",
+      "2-B2",
+      "2-B3"
+     ],
+     "note": "급파한 2단계 B [2-B1, 2-B2, 2-B3] (영상코드: L2-B)"
+    },
+    {
+     "code": "L2-C",
+     "family": "급파한",
+     "title": "급파한 2단계 C",
+     "step": 2,
+     "unit": "C",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-C"
+     ],
+     "lessons": [
+      "2-C1",
+      "2-C2",
+      "2-C3"
+     ],
+     "note": "급파한 2단계 C [2-C1, 2-C2, 2-C3] (영상코드: L2-C)"
+    },
+    {
+     "code": "L2-D",
+     "family": "급파한",
+     "title": "급파한 2단계 D",
+     "step": 2,
+     "unit": "D",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-D"
+     ],
+     "lessons": [
+      "2-D1",
+      "2-D2",
+      "2-D3"
+     ],
+     "note": "급파한 2단계 D [2-D1, 2-D2, 2-D3] (영상코드: L2-D)"
+    },
+    {
+     "code": "L2-E",
+     "family": "급파한",
+     "title": "급파한 2단계 E",
+     "step": 2,
+     "unit": "E",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-E"
+     ],
+     "lessons": [
+      "2-E1",
+      "2-E2",
+      "2-E3",
+      "2-E4",
+      "2-E5"
+     ],
+     "note": "급파한 2단계 E [2-E1, 2-E2, 2-E3, 2-E4, 2-E5] (영상코드: L2-E)"
+    },
+    {
+     "code": "SN1-A",
+     "family": "방과후",
+     "title": "방과후 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 15000,
+     "includes": [
+      "L1-A"
+     ],
+     "videos": [
+      "L1-A"
+     ],
+     "lessons": [
+      "1-A1",
+      "1-A2",
+      "1-A3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 A [1-A1, 1-A2, 1-A3, 알아보기] (영상코드: L1-A)"
+    },
+    {
+     "code": "SN1-B",
+     "family": "방과후",
+     "title": "방과후 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 15000,
+     "includes": [
+      "L1-B"
+     ],
+     "videos": [
+      "L1-B"
+     ],
+     "lessons": [
+      "1-B1",
+      "1-B2",
+      "1-B3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 B [1-B1, 1-B2, 1-B3, 알아보기] (영상코드: L1-B)"
+    },
+    {
+     "code": "SN1-C",
+     "family": "방과후",
+     "title": "방과후 1단계 C",
+     "step": 1,
+     "unit": "C",
+     "price": 15000,
+     "includes": [
+      "L1-C"
+     ],
+     "videos": [
+      "L1-C"
+     ],
+     "lessons": [
+      "1-C1",
+      "1-C2",
+      "1-C3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 C [1-C1, 1-C2, 1-C3, 알아보기] (영상코드: L1-C)"
+    },
+    {
+     "code": "SN1-D",
+     "family": "방과후",
+     "title": "방과후 1단계 D",
+     "step": 1,
+     "unit": "D",
+     "price": 15000,
+     "includes": [
+      "L1-D"
+     ],
+     "videos": [
+      "L1-D"
+     ],
+     "lessons": [
+      "1-D1",
+      "1-D2",
+      "1-D3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 D [1-D1, 1-D2, 1-D3, 알아보기] (영상코드: L1-D)"
+    },
+    {
+     "code": "SN1-E",
+     "family": "방과후",
+     "title": "방과후 1단계 E",
+     "step": 1,
+     "unit": "E",
+     "price": 15000,
+     "includes": [
+      "L1-E"
+     ],
+     "videos": [
+      "L1-E"
+     ],
+     "lessons": [
+      "1-E1",
+      "1-E2",
+      "1-E3",
+      "1-E4"
+     ],
+     "note": "급파한 1단계 E [1-E1, 1-E2, 1-E3, 1-E4] (영상코드: L1-E)"
+    },
+    {
+     "code": "SN2-A",
+     "family": "방과후",
+     "title": "방과후 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 18000,
+     "includes": [
+      "L2-A",
+      "N"
+     ],
+     "videos": [
+      "L2-A"
+     ],
+     "lessons": [
+      "2-A1",
+      "2-A2",
+      "2-A3"
+     ],
+     "note": "급파한 2단계 A [2-A1, 2-A2, 2-A3] (영상코드: L2-A)"
+    },
+    {
+     "code": "SN2-B",
+     "family": "방과후",
+     "title": "방과후 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 18000,
+     "includes": [
+      "L2-B",
+      "N"
+     ],
+     "videos": [
+      "L2-B"
+     ],
+     "lessons": [
+      "2-B1",
+      "2-B2",
+      "2-B3"
+     ],
+     "note": "급파한 2단계 B [2-B1, 2-B2, 2-B3] (영상코드: L2-B)"
+    },
+    {
+     "code": "SN2-C",
+     "family": "방과후",
+     "title": "방과후 2단계 C",
+     "step": 2,
+     "unit": "C",
+     "price": 18000,
+     "includes": [
+      "L2-C",
+      "N"
+     ],
+     "videos": [
+      "L2-C"
+     ],
+     "lessons": [
+      "2-C1",
+      "2-C2",
+      "2-C3"
+     ],
+     "note": "급파한 2단계 C [2-C1, 2-C2, 2-C3] (영상코드: L2-C)"
+    },
+    {
+     "code": "SN2-D",
+     "family": "방과후",
+     "title": "방과후 2단계 D",
+     "step": 2,
+     "unit": "D",
+     "price": 18000,
+     "includes": [
+      "L2-D",
+      "N"
+     ],
+     "videos": [
+      "L2-D"
+     ],
+     "lessons": [
+      "2-D1",
+      "2-D2",
+      "2-D3"
+     ],
+     "note": "급파한 2단계 D [2-D1, 2-D2, 2-D3] (영상코드: L2-D)"
+    },
+    {
+     "code": "SN2-E",
+     "family": "방과후",
+     "title": "방과후 2단계 E",
+     "step": 2,
+     "unit": "E",
+     "price": 18000,
+     "includes": [
+      "L2-E",
+      "N"
+     ],
+     "videos": [
+      "L2-E"
+     ],
+     "lessons": [
+      "2-E1",
+      "2-E2",
+      "2-E3",
+      "2-E4",
+      "2-E5"
+     ],
+     "note": "급파한 2단계 E [2-E1, 2-E2, 2-E3, 2-E4, 2-E5] (영상코드: L2-E)"
+    }
+   ]
+  },
+  "academy": {
+   "name": "학원",
+   "items": [
+    {
+     "code": "L1-A",
+     "family": "급파한",
+     "title": "급파한 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-A"
+     ],
+     "lessons": [
+      "1-A1",
+      "1-A2",
+      "1-A3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 A [1-A1, 1-A2, 1-A3, 알아보기] (영상코드: L1-A)"
+    },
+    {
+     "code": "L1-B",
+     "family": "급파한",
+     "title": "급파한 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-B"
+     ],
+     "lessons": [
+      "1-B1",
+      "1-B2",
+      "1-B3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 B [1-B1, 1-B2, 1-B3, 알아보기] (영상코드: L1-B)"
+    },
+    {
+     "code": "L1-C",
+     "family": "급파한",
+     "title": "급파한 1단계 C",
+     "step": 1,
+     "unit": "C",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-C"
+     ],
+     "lessons": [
+      "1-C1",
+      "1-C2",
+      "1-C3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 C [1-C1, 1-C2, 1-C3, 알아보기] (영상코드: L1-C)"
+    },
+    {
+     "code": "L1-D",
+     "family": "급파한",
+     "title": "급파한 1단계 D",
+     "step": 1,
+     "unit": "D",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-D"
+     ],
+     "lessons": [
+      "1-D1",
+      "1-D2",
+      "1-D3",
+      "알아보기"
+     ],
+     "note": "급파한 1단계 D [1-D1, 1-D2, 1-D3, 알아보기] (영상코드: L1-D)"
+    },
+    {
+     "code": "L1-E",
+     "family": "급파한",
+     "title": "급파한 1단계 E",
+     "step": 1,
+     "unit": "E",
+     "price": 15000,
+     "includes": [],
+     "videos": [
+      "L1-E"
+     ],
+     "lessons": [
+      "1-E1",
+      "1-E2",
+      "1-E3",
+      "1-E4"
+     ],
+     "note": "급파한 1단계 E [1-E1, 1-E2, 1-E3, 1-E4] (영상코드: L1-E)"
+    },
+    {
+     "code": "L2-A",
+     "family": "급파한",
+     "title": "급파한 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-A"
+     ],
+     "lessons": [
+      "2-A1",
+      "2-A2",
+      "2-A3"
+     ],
+     "note": "급파한 2단계 A [2-A1, 2-A2, 2-A3] (영상코드: L2-A)"
+    },
+    {
+     "code": "L2-B",
+     "family": "급파한",
+     "title": "급파한 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-B"
+     ],
+     "lessons": [
+      "2-B1",
+      "2-B2",
+      "2-B3"
+     ],
+     "note": "급파한 2단계 B [2-B1, 2-B2, 2-B3] (영상코드: L2-B)"
+    },
+    {
+     "code": "L2-C",
+     "family": "급파한",
+     "title": "급파한 2단계 C",
+     "step": 2,
+     "unit": "C",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-C"
+     ],
+     "lessons": [
+      "2-C1",
+      "2-C2",
+      "2-C3"
+     ],
+     "note": "급파한 2단계 C [2-C1, 2-C2, 2-C3] (영상코드: L2-C)"
+    },
+    {
+     "code": "L2-D",
+     "family": "급파한",
+     "title": "급파한 2단계 D",
+     "step": 2,
+     "unit": "D",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-D"
+     ],
+     "lessons": [
+      "2-D1",
+      "2-D2",
+      "2-D3"
+     ],
+     "note": "급파한 2단계 D [2-D1, 2-D2, 2-D3] (영상코드: L2-D)"
+    },
+    {
+     "code": "L2-E",
+     "family": "급파한",
+     "title": "급파한 2단계 E",
+     "step": 2,
+     "unit": "E",
+     "price": 18000,
+     "includes": [],
+     "videos": [
+      "L2-E"
+     ],
+     "lessons": [
+      "2-E1",
+      "2-E2",
+      "2-E3",
+      "2-E4",
+      "2-E5"
+     ],
+     "note": "급파한 2단계 E [2-E1, 2-E2, 2-E3, 2-E4, 2-E5] (영상코드: L2-E)"
+    },
+    {
+     "code": "P1",
+     "family": "한자파닉스",
+     "title": "한자파닉스 1",
+     "step": null,
+     "unit": null,
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "P1"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-01 (영상코드: P1)"
+    },
+    {
+     "code": "P2",
+     "family": "한자파닉스",
+     "title": "한자파닉스 2",
+     "step": null,
+     "unit": null,
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "P2"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-02 (영상코드: P2)"
+    },
+    {
+     "code": "P3",
+     "family": "한자파닉스",
+     "title": "한자파닉스 3",
+     "step": null,
+     "unit": null,
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "P3"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-03 (영상코드: P3)"
+    },
+    {
+     "code": "P4",
+     "family": "한자파닉스",
+     "title": "한자파닉스 4",
+     "step": null,
+     "unit": null,
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "P4"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-04 (영상코드: P4)"
+    },
+    {
+     "code": "H1-A",
+     "family": "한어사",
+     "title": "한어사 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H1-A"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 A level-01 / unit-01 (영상코드: H1-A)"
+    },
+    {
+     "code": "H1-B",
+     "family": "한어사",
+     "title": "한어사 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H1-B"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 B level-01 / unit-02 (영상코드: H1-B)"
+    },
+    {
+     "code": "H1-C",
+     "family": "한어사",
+     "title": "한어사 1단계 C",
+     "step": 1,
+     "unit": "C",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H1-C"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 C level-01 / unit-03 (영상코드: H1-C)"
+    },
+    {
+     "code": "H1-D",
+     "family": "한어사",
+     "title": "한어사 1단계 D",
+     "step": 1,
+     "unit": "D",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H1-D"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 D level-01 / unit-04 (영상코드: H1-D)"
+    },
+    {
+     "code": "H2-A",
+     "family": "한어사",
+     "title": "한어사 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H2-A"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 A level-02 / unit-01 (영상코드: H2-A)"
+    },
+    {
+     "code": "H2-B",
+     "family": "한어사",
+     "title": "한어사 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H2-B"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 B level-02 / unit-02 (영상코드: H2-B)"
+    },
+    {
+     "code": "H2-C",
+     "family": "한어사",
+     "title": "한어사 2단계 C",
+     "step": 2,
+     "unit": "C",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H2-C"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 C level-02 / unit-03 (영상코드: H2-C)"
+    },
+    {
+     "code": "H2-D",
+     "family": "한어사",
+     "title": "한어사 2단계 D",
+     "step": 2,
+     "unit": "D",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H2-D"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 D level-02 / unit-04 (영상코드: H2-D)"
+    },
+    {
+     "code": "H3-A",
+     "family": "한어사",
+     "title": "한어사 3단계 A",
+     "step": 3,
+     "unit": "A",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H3-A"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 A level-03 / unit-01 (영상코드: H3-A)"
+    },
+    {
+     "code": "H3-B",
+     "family": "한어사",
+     "title": "한어사 3단계 B",
+     "step": 3,
+     "unit": "B",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H3-B"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 B level-03 / unit-02 (영상코드: H3-B)"
+    },
+    {
+     "code": "H3-C",
+     "family": "한어사",
+     "title": "한어사 3단계 C",
+     "step": 3,
+     "unit": "C",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H3-C"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 C level-03 / unit-03 (영상코드: H3-C)"
+    },
+    {
+     "code": "H3-D",
+     "family": "한어사",
+     "title": "한어사 3단계 D",
+     "step": 3,
+     "unit": "D",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H3-D"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 D level-03 / unit-04 (영상코드: H3-D)"
+    },
+    {
+     "code": "H4-A",
+     "family": "한어사",
+     "title": "한어사 4단계 A",
+     "step": 4,
+     "unit": "A",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H4-A"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 A level-04 / unit-01 (영상코드: H4-A)"
+    },
+    {
+     "code": "H4-B",
+     "family": "한어사",
+     "title": "한어사 4단계 B",
+     "step": 4,
+     "unit": "B",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H4-B"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 B level-04 / unit-02 (영상코드: H4-B)"
+    },
+    {
+     "code": "H4-C",
+     "family": "한어사",
+     "title": "한어사 4단계 C",
+     "step": 4,
+     "unit": "C",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H4-C"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 C level-04 / unit-03 (영상코드: H4-C)"
+    },
+    {
+     "code": "H4-D",
+     "family": "한어사",
+     "title": "한어사 4단계 D",
+     "step": 4,
+     "unit": "D",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H4-D"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 D level-04 / unit-04 (영상코드: H4-D)"
+    },
+    {
+     "code": "H5-A",
+     "family": "한어사",
+     "title": "한어사 5단계 A",
+     "step": 5,
+     "unit": "A",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H5-A"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 A level-5 / unit-01 (영상코드: H5-A)"
+    },
+    {
+     "code": "H5-B",
+     "family": "한어사",
+     "title": "한어사 5단계 B",
+     "step": 5,
+     "unit": "B",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H5-B"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 B level-5 / unit-02 (영상코드: H5-B)"
+    },
+    {
+     "code": "H5-C",
+     "family": "한어사",
+     "title": "한어사 5단계 C",
+     "step": 5,
+     "unit": "C",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H5-C"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 C level-5 / unit-03 (영상코드: H5-C)"
+    },
+    {
+     "code": "H5-D",
+     "family": "한어사",
+     "title": "한어사 5단계 D",
+     "step": 5,
+     "unit": "D",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H5-D"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 D level-5 / unit-04 (영상코드: H5-D)"
+    },
+    {
+     "code": "H6-A",
+     "family": "한어사",
+     "title": "한어사 6단계 A",
+     "step": 6,
+     "unit": "A",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H6-A"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 A level-6 / unit-01 (영상코드: H6-A)"
+    },
+    {
+     "code": "H6-B",
+     "family": "한어사",
+     "title": "한어사 6단계 B",
+     "step": 6,
+     "unit": "B",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H6-B"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 B level-6 / unit-02 (영상코드: H6-B)"
+    },
+    {
+     "code": "H6-C",
+     "family": "한어사",
+     "title": "한어사 6단계 C",
+     "step": 6,
+     "unit": "C",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H6-C"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 C level-6 / unit-03 (영상코드: H6-C)"
+    },
+    {
+     "code": "H6-D",
+     "family": "한어사",
+     "title": "한어사 6단계 D",
+     "step": 6,
+     "unit": "D",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H6-D"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 D level-6 / unit-04 (영상코드: H6-D)"
+    },
+    {
+     "code": "H7-A",
+     "family": "한어사",
+     "title": "한어사 7단계 A",
+     "step": 7,
+     "unit": "A",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H7-A"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 A level-7 / unit-01 (영상코드: H7-A)"
+    },
+    {
+     "code": "H7-B",
+     "family": "한어사",
+     "title": "한어사 7단계 B",
+     "step": 7,
+     "unit": "B",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H7-B"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 B level-7 / unit-02 (영상코드: H7-B)"
+    },
+    {
+     "code": "H7-C",
+     "family": "한어사",
+     "title": "한어사 7단계 C",
+     "step": 7,
+     "unit": "C",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H7-C"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 C level-7 / unit-03 (영상코드: H7-C)"
+    },
+    {
+     "code": "H7-D",
+     "family": "한어사",
+     "title": "한어사 7단계 D",
+     "step": 7,
+     "unit": "D",
+     "price": 25000,
+     "includes": [],
+     "videos": [
+      "H7-D"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 D level-7 / unit-04 (영상코드: H7-D)"
+    },
+    {
+     "code": "SH1",
+     "family": "한어사 세트",
+     "title": "한어사 세트 1",
+     "step": 1,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "P1",
+      "P2",
+      "PW1"
+     ],
+     "videos": [
+      "P1",
+      "P2"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-01 , level-01/ unit-02 (영상코드: P1, P2)"
+    },
+    {
+     "code": "SH2",
+     "family": "한어사 세트",
+     "title": "한어사 세트 2",
+     "step": 1,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "H1-A",
+      "N"
+     ],
+     "videos": [
+      "H1-A"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 A level-01 / unit-01 (영상코드: H1-A)"
+    },
+    {
+     "code": "SH3",
+     "family": "한어사 세트",
+     "title": "한어사 세트 3",
+     "step": 1,
+     "unit": "C",
+     "price": 60000,
+     "includes": [
+      "H1-B",
+      "N"
+     ],
+     "videos": [
+      "H1-B"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 B level-01 / unit-02 (영상코드: H1-B)"
+    },
+    {
+     "code": "SH4",
+     "family": "한어사 세트",
+     "title": "한어사 세트 4",
+     "step": 1,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H1-C",
+      "N"
+     ],
+     "videos": [
+      "H1-C"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 C level-01 / unit-03 (영상코드: H1-C)"
+    },
+    {
+     "code": "SH5",
+     "family": "한어사 세트",
+     "title": "한어사 세트 5",
+     "step": 2,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "H1-D",
+      "N"
+     ],
+     "videos": [
+      "H1-D"
+     ],
+     "lessons": [],
+     "note": "한어사 1단계 D level-01 / unit-04 (영상코드: H1-D)"
+    },
+    {
+     "code": "SH6",
+     "family": "한어사 세트",
+     "title": "한어사 세트 6",
+     "step": 2,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "H2-A",
+      "N"
+     ],
+     "videos": [
+      "H2-A"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 A level-02 / unit-01 (영상코드: H2-A)"
+    },
+    {
+     "code": "SH7",
+     "family": "한어사 세트",
+     "title": "한어사 세트 7",
+     "step": 2,
+     "unit": "C",
+     "price": 60000,
+     "includes": [
+      "H2-B",
+      "N"
+     ],
+     "videos": [
+      "H2-B"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 B level-02 / unit-02 (영상코드: H2-B)"
+    },
+    {
+     "code": "SH8",
+     "family": "한어사 세트",
+     "title": "한어사 세트 8",
+     "step": 2,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H2-C",
+      "N"
+     ],
+     "videos": [
+      "H2-C"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 C level-02 / unit-03 (영상코드: H2-C)"
+    },
+    {
+     "code": "SH9",
+     "family": "한어사 세트",
+     "title": "한어사 세트 9",
+     "step": 3,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "H2-D",
+      "N"
+     ],
+     "videos": [
+      "H2-D"
+     ],
+     "lessons": [],
+     "note": "한어사 2단계 D level-02 / unit-04 (영상코드: H2-D)"
+    },
+    {
+     "code": "SH10",
+     "family": "한어사 세트",
+     "title": "한어사 세트 10",
+     "step": 3,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "H3-A",
+      "N"
+     ],
+     "videos": [
+      "H3-A"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 A level-03 / unit-01 (영상코드: H3-A)"
+    },
+    {
+     "code": "SH11",
+     "family": "한어사 세트",
+     "title": "한어사 세트 11",
+     "step": 3,
+     "unit": "C",
+     "price": 60000,
+     "includes": [
+      "H3-B",
+      "N"
+     ],
+     "videos": [
+      "H3-B"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 B level-03 / unit-02 (영상코드: H3-B)"
+    },
+    {
+     "code": "SH12",
+     "family": "한어사 세트",
+     "title": "한어사 세트 12",
+     "step": 3,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H3-C",
+      "N"
+     ],
+     "videos": [
+      "H3-C"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 C level-03 / unit-03 (영상코드: H3-C)"
+    },
+    {
+     "code": "SH13",
+     "family": "한어사 세트",
+     "title": "한어사 세트 13",
+     "step": 4,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "H3-D",
+      "N"
+     ],
+     "videos": [
+      "H3-D"
+     ],
+     "lessons": [],
+     "note": "한어사 3단계 D level-03 / unit-04 (영상코드: H3-D)"
+    },
+    {
+     "code": "SH14",
+     "family": "한어사 세트",
+     "title": "한어사 세트 14",
+     "step": 4,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "P3",
+      "PW2"
+     ],
+     "videos": [
+      "P3"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-03 (영상코드: P3)"
+    },
+    {
+     "code": "SH15",
+     "family": "한어사 세트",
+     "title": "한어사 세트 15",
+     "step": 4,
+     "unit": "C",
+     "price": 60000,
+     "includes": [
+      "H4-A",
+      "N"
+     ],
+     "videos": [
+      "H4-A"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 A level-04 / unit-01 (영상코드: H4-A)"
+    },
+    {
+     "code": "SH16",
+     "family": "한어사 세트",
+     "title": "한어사 세트 16",
+     "step": 4,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H4-B",
+      "N"
+     ],
+     "videos": [
+      "H4-B"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 B level-04 / unit-02 (영상코드: H4-B)"
+    },
+    {
+     "code": "SH17",
+     "family": "한어사 세트",
+     "title": "한어사 세트 17",
+     "step": 5,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "H4-C",
+      "N"
+     ],
+     "videos": [
+      "H4-C"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 C level-04 / unit-03 (영상코드: H4-C)"
+    },
+    {
+     "code": "SH18",
+     "family": "한어사 세트",
+     "title": "한어사 세트 18",
+     "step": 5,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "H4-D",
+      "N"
+     ],
+     "videos": [
+      "H4-D"
+     ],
+     "lessons": [],
+     "note": "한어사 4단계 D level-04 / unit-04 (영상코드: H4-D)"
+    },
+    {
+     "code": "SH19",
+     "family": "한어사 세트",
+     "title": "한어사 세트 19",
+     "step": 5,
+     "unit": "C",
+     "price": 60000,
+     "includes": [
+      "H5-A",
+      "N"
+     ],
+     "videos": [
+      "H5-A"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 A level-5 / unit-01 (영상코드: H5-A)"
+    },
+    {
+     "code": "SH20",
+     "family": "한어사 세트",
+     "title": "한어사 세트 20",
+     "step": 5,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H5-B",
+      "N"
+     ],
+     "videos": [
+      "H5-B"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 B level-5 / unit-02 (영상코드: H5-B)"
+    },
+    {
+     "code": "SH21",
+     "family": "한어사 세트",
+     "title": "한어사 세트 21",
+     "step": 6,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "H5-C",
+      "N"
+     ],
+     "videos": [
+      "H5-C"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 C level-5 / unit-03 (영상코드: H5-C)"
+    },
+    {
+     "code": "SH22",
+     "family": "한어사 세트",
+     "title": "한어사 세트 22",
+     "step": 6,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "H5-D",
+      "N"
+     ],
+     "videos": [
+      "H5-D"
+     ],
+     "lessons": [],
+     "note": "한어사 5단계 D level-5 / unit-04 (영상코드: H5-D)"
+    },
+    {
+     "code": "SH23",
+     "family": "한어사 세트",
+     "title": "한어사 세트 23",
+     "step": 6,
+     "unit": "C",
+     "price": 60000,
+     "includes": [
+      "P4",
+      "PW3"
+     ],
+     "videos": [
+      "P4"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-04 (영상코드: P4)"
+    },
+    {
+     "code": "SH24",
+     "family": "한어사 세트",
+     "title": "한어사 세트 24",
+     "step": 6,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H6-A",
+      "N"
+     ],
+     "videos": [
+      "H6-A"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 A level-6 / unit-01 (영상코드: H6-A)"
+    },
+    {
+     "code": "SH25",
+     "family": "한어사 세트",
+     "title": "한어사 세트 25",
+     "step": 7,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "H6-B",
+      "N"
+     ],
+     "videos": [
+      "H6-B"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 B level-6 / unit-02 (영상코드: H6-B)"
+    },
+    {
+     "code": "SH26",
+     "family": "한어사 세트",
+     "title": "한어사 세트 26",
+     "step": 7,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "H6-C",
+      "N"
+     ],
+     "videos": [
+      "H6-C"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 C level-6 / unit-03 (영상코드: H6-C)"
+    },
+    {
+     "code": "SH27",
+     "family": "한어사 세트",
+     "title": "한어사 세트 27",
+     "step": 7,
+     "unit": "C",
+     "price": 60000,
+     "includes": [
+      "H6-D",
+      "N"
+     ],
+     "videos": [
+      "H6-D"
+     ],
+     "lessons": [],
+     "note": "한어사 6단계 D level-6 / unit-04 (영상코드: H6-D)"
+    },
+    {
+     "code": "SH28",
+     "family": "한어사 세트",
+     "title": "한어사 세트 28",
+     "step": 7,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H7-A",
+      "N"
+     ],
+     "videos": [
+      "H7-A"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 A level-7 / unit-01 (영상코드: H7-A)"
+    },
+    {
+     "code": "SH29",
+     "family": "한어사 세트",
+     "title": "한어사 세트 29",
+     "step": 6,
+     "unit": "D",
+     "price": 60000,
+     "includes": [
+      "H7-B",
+      "N"
+     ],
+     "videos": [
+      "H7-B"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 B level-7 / unit-02 (영상코드: H7-B)"
+    },
+    {
+     "code": "SH30",
+     "family": "한어사 세트",
+     "title": "한어사 세트 30",
+     "step": 7,
+     "unit": "A",
+     "price": 60000,
+     "includes": [
+      "H7-C",
+      "N"
+     ],
+     "videos": [
+      "H7-C"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 C level-7 / unit-03 (영상코드: H7-C)"
+    },
+    {
+     "code": "SH31",
+     "family": "한어사 세트",
+     "title": "한어사 세트 31",
+     "step": 7,
+     "unit": "B",
+     "price": 60000,
+     "includes": [
+      "H7-D",
+      "N"
+     ],
+     "videos": [
+      "H7-D"
+     ],
+     "lessons": [],
+     "note": "한어사 7단계 D level-7 / unit-04 (영상코드: H7-D)"
+    },
+    {
+     "code": "J1-A",
+     "family": "어휘잼",
+     "title": "어휘잼 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J1-A"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 A level-01 / unit-01 (영상코드: J1-A)"
+    },
+    {
+     "code": "J1-B",
+     "family": "어휘잼",
+     "title": "어휘잼 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J1-B"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 B level-01 / unit-02 (영상코드: J1-B)"
+    },
+    {
+     "code": "J1-C",
+     "family": "어휘잼",
+     "title": "어휘잼 1단계 C",
+     "step": 1,
+     "unit": "C",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J1-C"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 C level-01 / unit-03 (영상코드: J1-C)"
+    },
+    {
+     "code": "J1-D",
+     "family": "어휘잼",
+     "title": "어휘잼 1단계 D",
+     "step": 1,
+     "unit": "D",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J1-D"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 D level-01 / unit-04 (영상코드: J1-D)"
+    },
+    {
+     "code": "J2-A",
+     "family": "어휘잼",
+     "title": "어휘잼 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J2-A"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 A level-02 / unit-01 (영상코드: J2-A)"
+    },
+    {
+     "code": "J2-B",
+     "family": "어휘잼",
+     "title": "어휘잼 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J2-B"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 B level-02 / unit-02 (영상코드: J2-B)"
+    },
+    {
+     "code": "J2-C",
+     "family": "어휘잼",
+     "title": "어휘잼 2단계 C",
+     "step": 2,
+     "unit": "C",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J2-C"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 C level-02 / unit-03 (영상코드: J2-C)"
+    },
+    {
+     "code": "J2-D",
+     "family": "어휘잼",
+     "title": "어휘잼 2단계 D",
+     "step": 2,
+     "unit": "D",
+     "price": 20000,
+     "includes": [],
+     "videos": [
+      "J2-D"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 D level-02 / unit-04 (영상코드: J2-D)"
+    },
+    {
+     "code": "SJ1",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 1",
+     "step": 1,
+     "unit": "A",
+     "price": 80000,
+     "includes": [
+      "P1",
+      "P2",
+      "PW1"
+     ],
+     "videos": [
+      "P1",
+      "P2"
+     ],
+     "lessons": [],
+     "note": "한자그림파닉스 level-01 / unit-01 , level-01/ unit-02 (영상코드: P1, P2)"
+    },
+    {
+     "code": "SJ2",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 2",
+     "step": 1,
+     "unit": "A",
+     "price": 80000,
+     "includes": [
+      "J1-A",
+      "H1-A",
+      "N"
+     ],
+     "videos": [
+      "J1-A",
+      "H1-A"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 A level-01 / unit-01, 한어사 1단계 A level-01 / unit-01 (영상코드: J1-A, H1-A)"
+    },
+    {
+     "code": "SJ3",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 3",
+     "step": 1,
+     "unit": "B",
+     "price": 80000,
+     "includes": [
+      "J1-B",
+      "H1-B",
+      "N"
+     ],
+     "videos": [
+      "J1-B",
+      "H1-B"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 B level-01 / unit-02, 한어사 1단계 B level-01 / unit-02 (영상코드: J1-B, H1-B)"
+    },
+    {
+     "code": "SJ4",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 4",
+     "step": 1,
+     "unit": "C",
+     "price": 80000,
+     "includes": [
+      "J1-C",
+      "H1-C",
+      "N"
+     ],
+     "videos": [
+      "J1-C",
+      "H1-C"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 C level-01 / unit-03, 한어사 1단계 C level-01 / unit-03 (영상코드: J1-C, H1-C)"
+    },
+    {
+     "code": "SJ5",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 5",
+     "step": 1,
+     "unit": "D",
+     "price": 80000,
+     "includes": [
+      "J1-D",
+      "H1-D",
+      "N"
+     ],
+     "videos": [
+      "J1-D",
+      "H1-D"
+     ],
+     "lessons": [],
+     "note": "어휘잼 1단계 D level-01 / unit-04, 한어사 1단계 D level-01 / unit-04 (영상코드: J1-D, H1-D)"
+    },
+    {
+     "code": "SJ6",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 6",
+     "step": 2,
+     "unit": "A",
+     "price": 80000,
+     "includes": [
+      "J2-A",
+      "H2-A",
+      "N"
+     ],
+     "videos": [
+      "J2-A",
+      "H2-A"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 level-02 / unit-01, 한어사 2단계 A level-02 / unit-01 (영상코드: J2-A, H2-A)"
+    },
+    {
+     "code": "SJ7",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 7",
+     "step": 2,
+     "unit": "B",
+     "price": 80000,
+     "includes": [
+      "J2-B",
+      "H2-B",
+      "N"
+     ],
+     "videos": [
+      "J2-B",
+      "H2-B"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 B level-02 / unit-02, 한어사 2단계 B level-02 / unit-02 (영상코드: J2-B, H2-B)"
+    },
+    {
+     "code": "SJ8",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 8",
+     "step": 2,
+     "unit": "C",
+     "price": 80000,
+     "includes": [
+      "J2-C",
+      "H2-C",
+      "N"
+     ],
+     "videos": [
+      "J2-C",
+      "H2-C"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 C level-02 / unit-03, 한어사 2단계 C level-02 / unit-03 (영상코드: J2-C, H2-C)"
+    },
+    {
+     "code": "SJ9",
+     "family": "어휘잼 세트",
+     "title": "어휘잼 세트 9",
+     "step": 2,
+     "unit": "D",
+     "price": 80000,
+     "includes": [
+      "J2-D",
+      "H2-D",
+      "N"
+     ],
+     "videos": [
+      "J2-D",
+      "H2-D"
+     ],
+     "lessons": [],
+     "note": "어휘잼 2단계 D level-02 / unit-04, 한어사 2단계 D level-02 / unit-04 (영상코드: J2-D, H2-D)"
+    },
+    {
+     "code": "S1-A",
+     "family": "어휘의신",
+     "title": "어휘의신 1단계 A",
+     "step": 1,
+     "unit": "A",
+     "price": 28000,
+     "includes": [],
+     "videos": [
+      "S1-A"
+     ],
+     "lessons": [],
+     "note": "어휘의신 1단계 A level-01 / unit-01 (영상코드: S1-A)"
+    },
+    {
+     "code": "S1-B",
+     "family": "어휘의신",
+     "title": "어휘의신 1단계 B",
+     "step": 1,
+     "unit": "B",
+     "price": 28000,
+     "includes": [],
+     "videos": [
+      "S1-B"
+     ],
+     "lessons": [],
+     "note": "어휘의신 1단계 B level-02 / unit-02 (영상코드: S1-B)"
+    },
+    {
+     "code": "S2-A",
+     "family": "어휘의신",
+     "title": "어휘의신 2단계 A",
+     "step": 2,
+     "unit": "A",
+     "price": 28000,
+     "includes": [],
+     "videos": [
+      "S2-A"
+     ],
+     "lessons": [],
+     "note": "어휘의신 2단계 A level-02 / unit-01 (영상코드: S2-A)"
+    },
+    {
+     "code": "S2-B",
+     "family": "어휘의신",
+     "title": "어휘의신 2단계 B",
+     "step": 2,
+     "unit": "B",
+     "price": 28000,
+     "includes": [],
+     "videos": [
+      "S2-B"
+     ],
+     "lessons": [],
+     "note": "어휘의신 2단계 B level-02 / unit-02 (영상코드: S2-B)"
+    },
+    {
+     "code": "N",
+     "family": "노트",
+     "title": "파자담 노트(기본)",
+     "step": null,
+     "unit": null,
+     "price": 0,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "N1",
+     "family": "노트",
+     "title": "배우는 파자담 노트",
+     "step": null,
+     "unit": null,
+     "price": 5000,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "N2",
+     "family": "노트",
+     "title": "스스로 파자담 노트",
+     "step": null,
+     "unit": null,
+     "price": 5000,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    }
+   ]
+  },
+  "kinder": {
+   "name": "유치원",
+   "items": [
+    {
+     "code": "MJ1",
+     "family": "말잼별",
+     "title": "말잼별 1호",
+     "step": null,
+     "unit": "1",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ1"
+     ],
+     "lessons": [],
+     "note": "말잼별 1단계 (영상코드: MJ1)"
+    },
+    {
+     "code": "MJ2",
+     "family": "말잼별",
+     "title": "말잼별 2호",
+     "step": null,
+     "unit": "2",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ2"
+     ],
+     "lessons": [],
+     "note": "말잼별 2단계 (영상코드: MJ2)"
+    },
+    {
+     "code": "MJ3",
+     "family": "말잼별",
+     "title": "말잼별 3호",
+     "step": null,
+     "unit": "3",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ3"
+     ],
+     "lessons": [],
+     "note": "말잼별 3단계 (영상코드: MJ3)"
+    },
+    {
+     "code": "MJ4",
+     "family": "말잼별",
+     "title": "말잼별 4호",
+     "step": null,
+     "unit": "4",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ4"
+     ],
+     "lessons": [],
+     "note": "말잼별 4단계 (영상코드: MJ4)"
+    },
+    {
+     "code": "MJ5",
+     "family": "말잼별",
+     "title": "말잼별 5호",
+     "step": null,
+     "unit": "5",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ5"
+     ],
+     "lessons": [],
+     "note": "말잼별 5단계 (영상코드: MJ5)"
+    },
+    {
+     "code": "MJ6",
+     "family": "말잼별",
+     "title": "말잼별 6호",
+     "step": null,
+     "unit": "6",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ6"
+     ],
+     "lessons": [],
+     "note": "말잼별 6단계 (영상코드: MJ6)"
+    },
+    {
+     "code": "MJ7",
+     "family": "말잼별",
+     "title": "말잼별 7호",
+     "step": null,
+     "unit": "7",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ7"
+     ],
+     "lessons": [],
+     "note": "말잼별 7단계 (영상코드: MJ7)"
+    },
+    {
+     "code": "MJ8",
+     "family": "말잼별",
+     "title": "말잼별 8호",
+     "step": null,
+     "unit": "8",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ8"
+     ],
+     "lessons": [],
+     "note": "말잼별 8단계 (영상코드: MJ8)"
+    },
+    {
+     "code": "MJ9",
+     "family": "말잼별",
+     "title": "말잼별 9호",
+     "step": null,
+     "unit": "9",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ9"
+     ],
+     "lessons": [],
+     "note": "말잼별 9단계 (영상코드: MJ9)"
+    },
+    {
+     "code": "MJ10",
+     "family": "말잼별",
+     "title": "말잼별 10호",
+     "step": null,
+     "unit": "10",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "MJ10"
+     ],
+     "lessons": [],
+     "note": "말잼별 10단계 (영상코드: MJ10)"
+    },
+    {
+     "code": "GJ1",
+     "family": "글잼별",
+     "title": "글잼별 1호",
+     "step": null,
+     "unit": "1",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ1"
+     ],
+     "lessons": [],
+     "note": "글잼별 1단계 (영상코드: GJ1)"
+    },
+    {
+     "code": "GJ2",
+     "family": "글잼별",
+     "title": "글잼별 2호",
+     "step": null,
+     "unit": "2",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ2"
+     ],
+     "lessons": [],
+     "note": "글잼별 2단계 (영상코드: GJ2)"
+    },
+    {
+     "code": "GJ3",
+     "family": "글잼별",
+     "title": "글잼별 3호",
+     "step": null,
+     "unit": "3",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ3"
+     ],
+     "lessons": [],
+     "note": "글잼별 3단계 (영상코드: GJ3)"
+    },
+    {
+     "code": "GJ4",
+     "family": "글잼별",
+     "title": "글잼별 4호",
+     "step": null,
+     "unit": "4",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ4"
+     ],
+     "lessons": [],
+     "note": "글잼별 4단계 (영상코드: GJ4)"
+    },
+    {
+     "code": "GJ5",
+     "family": "글잼별",
+     "title": "글잼별 5호",
+     "step": null,
+     "unit": "5",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ5"
+     ],
+     "lessons": [],
+     "note": "글잼별 5단계 (영상코드: GJ5)"
+    },
+    {
+     "code": "GJ6",
+     "family": "글잼별",
+     "title": "글잼별 6호",
+     "step": null,
+     "unit": "6",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ6"
+     ],
+     "lessons": [],
+     "note": "글잼별 6단계 (영상코드: GJ6)"
+    },
+    {
+     "code": "GJ7",
+     "family": "글잼별",
+     "title": "글잼별 7호",
+     "step": null,
+     "unit": "7",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ7"
+     ],
+     "lessons": [],
+     "note": "글잼별 7단계 (영상코드: GJ7)"
+    },
+    {
+     "code": "GJ8",
+     "family": "글잼별",
+     "title": "글잼별 8호",
+     "step": null,
+     "unit": "8",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ8"
+     ],
+     "lessons": [],
+     "note": "글잼별 8단계 (영상코드: GJ8)"
+    },
+    {
+     "code": "GJ9",
+     "family": "글잼별",
+     "title": "글잼별 9호",
+     "step": null,
+     "unit": "9",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ9"
+     ],
+     "lessons": [],
+     "note": "글잼별 9단계 (영상코드: GJ9)"
+    },
+    {
+     "code": "GJ10",
+     "family": "글잼별",
+     "title": "글잼별 10호",
+     "step": null,
+     "unit": "10",
+     "price": 3500,
+     "includes": [],
+     "videos": [
+      "GJ10"
+     ],
+     "lessons": [],
+     "note": "글잼별 10단계 (영상코드: GJ10)"
+    },
+    {
+     "code": "MJGJ",
+     "family": "말잼별글잼별 카달로그",
+     "title": "말잼별글잼별 카달로그",
+     "step": null,
+     "unit": null,
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP1",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 1호",
+     "step": null,
+     "unit": "1",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP2",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 2호",
+     "step": null,
+     "unit": "2",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP3",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 3호",
+     "step": null,
+     "unit": "3",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP4",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 4호",
+     "step": null,
+     "unit": "4",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP5",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 5호",
+     "step": null,
+     "unit": "5",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP6",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 6호",
+     "step": null,
+     "unit": "6",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP7",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 7호",
+     "step": null,
+     "unit": "7",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP8",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 8호",
+     "step": null,
+     "unit": "8",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP9",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 9호",
+     "step": null,
+     "unit": "9",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJP10",
+     "family": "말잼별 B2 대형 놀이 포스터",
+     "title": "말잼별 B2 대형 놀이 포스터 10호",
+     "step": null,
+     "unit": "10",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP1",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 1호",
+     "step": null,
+     "unit": "1",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP2",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 2호",
+     "step": null,
+     "unit": "2",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP3",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 3호",
+     "step": null,
+     "unit": "3",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP4",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 4호",
+     "step": null,
+     "unit": "4",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP5",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 5호",
+     "step": null,
+     "unit": "5",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP6",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 6호",
+     "step": null,
+     "unit": "6",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP7",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 7호",
+     "step": null,
+     "unit": "7",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP8",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 8호",
+     "step": null,
+     "unit": "8",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP9",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 9호",
+     "step": null,
+     "unit": "9",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJP10",
+     "family": "글잼별 B2 대형 놀이 포스터",
+     "title": "글잼별 B2 대형 놀이 포스터 10호",
+     "step": null,
+     "unit": "10",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJC1",
+     "family": "말잼별 어휘소통카드",
+     "title": "말잼별 어휘소통카드 1호",
+     "step": null,
+     "unit": "1",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJC2",
+     "family": "말잼별 어휘소통카드",
+     "title": "말잼별 어휘소통카드 2호",
+     "step": null,
+     "unit": "2",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJC3",
+     "family": "말잼별 어휘소통카드",
+     "title": "말잼별 어휘소통카드 3호",
+     "step": null,
+     "unit": "3",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJC4",
+     "family": "말잼별 어휘소통카드",
+     "title": "말잼별 어휘소통카드 4호",
+     "step": null,
+     "unit": "4",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "MJC5",
+     "family": "말잼별 어휘소통카드",
+     "title": "말잼별 어휘소통카드 5호",
+     "step": null,
+     "unit": "5",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJC1",
+     "family": "글잼별 어휘소통카드",
+     "title": "글잼별 어휘소통카드 1호",
+     "step": null,
+     "unit": "1",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJC2",
+     "family": "글잼별 어휘소통카드",
+     "title": "글잼별 어휘소통카드 2호",
+     "step": null,
+     "unit": "2",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJC3",
+     "family": "글잼별 어휘소통카드",
+     "title": "글잼별 어휘소통카드 3호",
+     "step": null,
+     "unit": "3",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJC4",
+     "family": "글잼별 어휘소통카드",
+     "title": "글잼별 어휘소통카드 4호",
+     "step": null,
+     "unit": "4",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "GJC5",
+     "family": "글잼별 어휘소통카드",
+     "title": "글잼별 어휘소통카드 5호",
+     "step": null,
+     "unit": "5",
+     "price": 1,
+     "includes": [],
+     "videos": [],
+     "lessons": [],
+     "note": ""
+    },
+    {
+     "code": "SMJ1",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 1호",
+     "step": null,
+     "unit": "1",
+     "price": 3500,
+     "includes": [
+      "MJ1",
+      "MJP1"
+     ],
+     "videos": [
+      "MJ1"
+     ],
+     "lessons": [],
+     "note": "말잼별 1단계 (영상코드: MJ1)"
+    },
+    {
+     "code": "SMJ2",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 2호",
+     "step": null,
+     "unit": "2",
+     "price": 3500,
+     "includes": [
+      "MJ2",
+      "MJP2",
+      "MJC1"
+     ],
+     "videos": [
+      "MJ2"
+     ],
+     "lessons": [],
+     "note": "말잼별 2단계 (영상코드: MJ2)"
+    },
+    {
+     "code": "SMJ3",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 3호",
+     "step": null,
+     "unit": "3",
+     "price": 3500,
+     "includes": [
+      "MJ3",
+      "MJP3"
+     ],
+     "videos": [
+      "MJ3"
+     ],
+     "lessons": [],
+     "note": "말잼별 3단계 (영상코드: MJ3)"
+    },
+    {
+     "code": "SMJ4",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 4호",
+     "step": null,
+     "unit": "4",
+     "price": 3500,
+     "includes": [
+      "MJ4",
+      "MJP4",
+      "MJC2"
+     ],
+     "videos": [
+      "MJ4"
+     ],
+     "lessons": [],
+     "note": "말잼별 4단계 (영상코드: MJ4)"
+    },
+    {
+     "code": "SMJ5",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 5호",
+     "step": null,
+     "unit": "5",
+     "price": 3500,
+     "includes": [
+      "MJ5",
+      "MJP5"
+     ],
+     "videos": [
+      "MJ5"
+     ],
+     "lessons": [],
+     "note": "말잼별 5단계 (영상코드: MJ5)"
+    },
+    {
+     "code": "SMJ6",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 6호",
+     "step": null,
+     "unit": "6",
+     "price": 3500,
+     "includes": [
+      "MJ6",
+      "MJP6",
+      "MJC3"
+     ],
+     "videos": [
+      "MJ6"
+     ],
+     "lessons": [],
+     "note": "말잼별 6단계 (영상코드: MJ6)"
+    },
+    {
+     "code": "SMJ7",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 7호",
+     "step": null,
+     "unit": "7",
+     "price": 3500,
+     "includes": [
+      "MJ7",
+      "MJP7"
+     ],
+     "videos": [
+      "MJ7"
+     ],
+     "lessons": [],
+     "note": "말잼별 7단계 (영상코드: MJ7)"
+    },
+    {
+     "code": "SMJ8",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 8호",
+     "step": null,
+     "unit": "8",
+     "price": 3500,
+     "includes": [
+      "MJ8",
+      "MJP8",
+      "MJC4"
+     ],
+     "videos": [
+      "MJ8"
+     ],
+     "lessons": [],
+     "note": "말잼별 8단계 (영상코드: MJ8)"
+    },
+    {
+     "code": "SMJ9",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 9호",
+     "step": null,
+     "unit": "9",
+     "price": 3500,
+     "includes": [
+      "MJ9",
+      "MJP9"
+     ],
+     "videos": [
+      "MJ9"
+     ],
+     "lessons": [],
+     "note": "말잼별 9단계 (영상코드: MJ9)"
+    },
+    {
+     "code": "SMJ10",
+     "family": "말잼별 세트",
+     "title": "말잼별 세트 10호",
+     "step": null,
+     "unit": "10",
+     "price": 3500,
+     "includes": [
+      "MJ10",
+      "MJP10",
+      "MJC5"
+     ],
+     "videos": [
+      "MJ10"
+     ],
+     "lessons": [],
+     "note": "말잼별 10단계 (영상코드: MJ10)"
+    },
+    {
+     "code": "SGJ1",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 1호",
+     "step": null,
+     "unit": "1",
+     "price": 3500,
+     "includes": [
+      "GJ1",
+      "GJP1"
+     ],
+     "videos": [
+      "GJ1"
+     ],
+     "lessons": [],
+     "note": "글잼별 1단계 (영상코드: GJ1)"
+    },
+    {
+     "code": "SGJ2",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 2호",
+     "step": null,
+     "unit": "2",
+     "price": 3500,
+     "includes": [
+      "GJ2",
+      "GJP2",
+      "GJC1"
+     ],
+     "videos": [
+      "GJ2"
+     ],
+     "lessons": [],
+     "note": "글잼별 2단계 (영상코드: GJ2)"
+    },
+    {
+     "code": "SGJ3",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 3호",
+     "step": null,
+     "unit": "3",
+     "price": 3500,
+     "includes": [
+      "GJ3",
+      "GJP3"
+     ],
+     "videos": [
+      "GJ3"
+     ],
+     "lessons": [],
+     "note": "글잼별 3단계 (영상코드: GJ3)"
+    },
+    {
+     "code": "SGJ4",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 4호",
+     "step": null,
+     "unit": "4",
+     "price": 3500,
+     "includes": [
+      "GJ4",
+      "GJP4",
+      "GJC2"
+     ],
+     "videos": [
+      "GJ4"
+     ],
+     "lessons": [],
+     "note": "글잼별 4단계 (영상코드: GJ4)"
+    },
+    {
+     "code": "SGJ5",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 5호",
+     "step": null,
+     "unit": "5",
+     "price": 3500,
+     "includes": [
+      "GJ5",
+      "GJP5"
+     ],
+     "videos": [
+      "GJ5"
+     ],
+     "lessons": [],
+     "note": "글잼별 5단계 (영상코드: GJ5)"
+    },
+    {
+     "code": "SGJ6",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 6호",
+     "step": null,
+     "unit": "6",
+     "price": 3500,
+     "includes": [
+      "GJ6",
+      "GJP6",
+      "GJC3"
+     ],
+     "videos": [
+      "GJ6"
+     ],
+     "lessons": [],
+     "note": "글잼별 6단계 (영상코드: GJ6)"
+    },
+    {
+     "code": "SGJ7",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 7호",
+     "step": null,
+     "unit": "7",
+     "price": 3500,
+     "includes": [
+      "GJ7",
+      "GJP7"
+     ],
+     "videos": [
+      "GJ7"
+     ],
+     "lessons": [],
+     "note": "글잼별 7단계 (영상코드: GJ7)"
+    },
+    {
+     "code": "SGJ8",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 8호",
+     "step": null,
+     "unit": "8",
+     "price": 3500,
+     "includes": [
+      "GJ8",
+      "GJP8",
+      "GJC4"
+     ],
+     "videos": [
+      "GJ8"
+     ],
+     "lessons": [],
+     "note": "글잼별 8단계 (영상코드: GJ8)"
+    },
+    {
+     "code": "SGJ9",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 9호",
+     "step": null,
+     "unit": "9",
+     "price": 3500,
+     "includes": [
+      "GJ9",
+      "GJP9"
+     ],
+     "videos": [
+      "GJ9"
+     ],
+     "lessons": [],
+     "note": "글잼별 9단계 (영상코드: GJ9)"
+    },
+    {
+     "code": "SGJ10",
+     "family": "글잼별 세트",
+     "title": "글잼별 세트 10호",
+     "step": null,
+     "unit": "10",
+     "price": 3500,
+     "includes": [
+      "GJ10",
+      "GJP10",
+      "GJC5"
+     ],
+     "videos": [
+      "GJ10"
+     ],
+     "lessons": [],
+     "note": "글잼별 10단계 (영상코드: GJ10)"
+    }
+   ]
+  }
+ }
+}

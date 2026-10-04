@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="welcome.css?v=<?= filemtime('welcome.css') ?>">
 <link rel="stylesheet" href="role-nav.css?v=<?= filemtime('role-nav.css') ?>">
 <script src="js/common.js?v=<?= filemtime('js/common.js') ?>"></script>
+<script src="js/roles.js?v=<?= filemtime('js/roles.js') ?>"></script>
 <script src="js/role-nav.js?v=<?= filemtime('js/role-nav.js') ?>" defer></script>
 </head>
 <body>
@@ -21,7 +22,7 @@
 
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고"  onerror="this.style.display='none';">
-    <span class="pill">글핀</span><span id="gpWelcome">방문자님 환영합니다</span>
+    <span class="pill">글핀</span><span id="gpWelcome" data-login-welcome>방문자님 환영합니다</span>
   </div>
 
   <header class="site-header">
@@ -32,7 +33,7 @@
       <button class="nav-toggle" onclick="toggleNav(this)">글핀이란?</button>
       <button class="nav-toggle" onclick="toggleNav(this)">글핀 중국어</button>
       <button class="nav-toggle" onclick="toggleNav(this); openKakao()">상담·신청</button>
-      <button class="nav-toggle" onclick="toggleNav(this); goTo('page-gp')">글핀 가맹점 모집</button>
+      <button class="nav-toggle" onclick="goToGpInternalUrl('Find_Branch.html')">글핀 가맹점 찾기/모집</button>
       <button class="home-logout" id="homeLogout" type="button" onclick="handleGpLoginMenu()" hidden>로그아웃</button>
     </nav>
   </header>
@@ -43,16 +44,22 @@
     <button class="car-arrow next" id="nextBtn" onclick="slide(1)">›</button>
     <div class="carousel-viewport">
       <div class="carousel-track" id="track">
-        <div class="slide" onclick="goToAfterLogin('page-gp')">
-          <div class="imgbox">
-            <img data-src="gp_partner_bn.png" alt="글에 어휘의 핀을 꽂다 - 가맹점 전용" onerror="onImgErr(this)">
-            <div class="fallback">📖<br>gp_partner_bn.png<br>가맹점 전용</div>
-          </div>
-        </div>
         <div class="slide" onclick="goToAfterLogin('page-mj')">
           <div class="imgbox">
             <img data-src="mj_online_3.png" alt="말잼별글잼별 - 유치원 전용" onerror="onImgErr(this)">
-            <div class="fallback">🐢<br>mj_online_3.png<br>유치원 전용</div>
+            <div class="fallback">🐢<br>mjm_kinder_bn.png<br>유치원 전용</div>
+          </div>
+        </div>
+        <div class="slide" onclick="goToAfterLogin('page-gp')">
+          <div class="imgbox">
+            <img data-src="gp_partner_bn.png" alt="글에 어휘의 핀을 꽂다 - 학원 전용" onerror="onImgErr(this)">
+            <div class="fallback">📖<br>gp_partner_bn.png<br>학원 전용</div>
+          </div>
+        </div>
+        <div class="slide" onclick="openWindowAfterLogin('simple/index.php')">
+          <div class="imgbox">
+            <img data-src="bn_school.png" alt="홈스쿨 전용" onerror="onImgErr(this)">
+            <div class="fallback">💻<br>bn_school.png<br>홈스쿨 전용</div>
           </div>
         </div>
         <div class="slide" onclick="goToAfterLogin('page-class')">
@@ -62,7 +69,7 @@
           </div>
         </div>
         <!-- <div class="slide" onclick="window.open('https://www.chaitalkkid.co.kr/simple/','_blank')"> -->
-        <div class="slide" onclick="location.href='simple/'">
+        <div class="slide" onclick="goToGpInternalUrl('simple/')">
           <div class="imgbox">
             <img data-src="bn_afterschool.png" alt="학교 방과후 전용" onerror="onImgErr(this)">
             <div class="fallback">🏫<br>bn_afterschool.png<br>학교 방과후 전용</div>
@@ -94,25 +101,29 @@
     </div>
   </div>
 
-  <!-- Icons: swap to *_click.png on hover, navigate on click -->
-  <div class="icon-row">
-    <button class="icon-btn" data-base="icon_gp" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="goTo('page-gp')">
-      <span class="icon-box"><div class="imgbox"><img data-src="icon_gp.png" alt="글핀 가맹점" onerror="onImgErr(this)"><div class="fallback">🗂️</div></div></span>
-      <span>글핀 가맹점</span>
+  <!-- Icons: green border on hover, mark selected on click -->
+  <div class="icon-row" onclick="selectIcon(event)">
+    <button class="icon-btn" onclick="goToAfterLogin('page-mj')">
+      <span class="icon-box"><div class="imgbox"><img data-src="icon_child.jpg" alt="유치원" onerror="onImgErr(this)"><div class="fallback">🧒</div></div></span>
+      <span>유치원</span>
     </button>
-    <button class="icon-btn" data-base="icon_child" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="goTo('page-mj')">
-      <span class="icon-box"><div class="imgbox"><img data-src="icon_child.png" alt="말잼별글잼별" onerror="onImgErr(this)"><div class="fallback">🧒</div></div></span>
-      <span>말잼별 글잼별</span>
+    <button class="icon-btn" onclick="goToAfterLogin('page-gp')">
+      <span class="icon-box"><div class="imgbox"><img data-src="icon_gp.png" alt="학원" onerror="onImgErr(this)"><div class="fallback">🗂️</div></div></span>
+      <span>학원</span>
     </button>
-    <button class="icon-btn" data-base="icon_monitor" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="goTo('page-class')">
-      <span class="icon-box"><div class="imgbox"><img data-src="icon_monitor.png" alt="온라인 화상 수업" onerror="onImgErr(this)"><div class="fallback">🖥️</div></div></span>
-      <span>온라인 화상 수업</span>
+    <button class="icon-btn" onclick="openWindowAfterLogin('simple/index.php', 'homeschool')">
+      <span class="icon-box"><div class="imgbox"><img data-src="icon_home.png" alt="홈스쿨" onerror="onImgErr(this)"><div class="fallback">🗂️</div></div></span>
+      <span>홈스쿨</span>
     </button>
-    <button class="icon-btn" data-base="icon_school" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="window.open('simple/index.php','_blank')">
+    <button class="icon-btn" onclick="openWindowAfterLogin('simple/index.php', 'afterschool')">
       <span class="icon-box"><div class="imgbox"><img data-src="icon_school.png" alt="방과후 한자" onerror="onImgErr(this)"><div class="fallback">🏫</div></div></span>
       <span>방과후 한자</span>
     </button>
-    <button class="icon-btn" data-base="icon_check" onmouseenter="iconHover(this,true)" onmouseleave="iconHover(this,false)" onclick="goToAfterLogin('word-test')">
+    <button class="icon-btn" onclick="goToAfterLogin('page-class')">
+      <span class="icon-box"><div class="imgbox"><img data-src="icon_monitor.png" alt="화상 수업<" onerror="onImgErr(this)"><div class="fallback">🖥️</div></div></span>
+      <span>화상 수업</span>
+    </button>
+    <button class="icon-btn" onclick="goTo('word-test')">
       <span class="icon-box"><div class="imgbox"><img data-src="icon_check.png" alt="문해력 테스트" onerror="onImgErr(this)"><div class="fallback">📝</div></div></span>
       <span>문해력 테스트</span>
     </button>
@@ -149,7 +160,7 @@
 <div id="page-gp" class="page">
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-    <span class="pill">글핀</span><span id="gpWelcome2">방문자님 환영합니다</span>
+    <span class="pill">글핀</span><span id="gpWelcome2" data-login-welcome>방문자님 환영합니다</span>
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
@@ -175,16 +186,17 @@
     <a class="pill-link" onclick="goTo('page-hp')">한자파닉스 ›</a>
     <a class="pill-link" onclick="goTo('page-wj')">어휘잼 ›</a>
     <a class="pill-link" onclick="goTo('page-hj')">한자로 어휘를 사고한다 ›</a>
-    <a class="pill-link" onclick="goTo('page-gs')">급수파자한자 ›</a>
+    <a class="pill-link" onclick="goToGpInternalUrl('simple/', 'https://www.chaitalkkid.co.kr/gulpin/portal_image/gs_online.png')">급수파자한자 ›</a>
+    <!-- <a class="pill-link" onclick="goTo('page-gs')">급수파자한자 ›</a> -->
     <a class="pill-link" onclick="goTo('page-wjs')">어휘력의 신 ›</a>
   </div>
 </div>
 
-<div class="login-overlay" id="gpLoginModal" role="dialog" aria-modal="true" aria-labelledby="gpLoginTitle" onclick="closeGpLogin(event)">
+<div class="login-overlay" id="gpLoginModal" role="dialog" aria-modal="true" aria-labelledby="gpLoginTitle">
   <div class="login-dialog">
     <div class="login-header">
       <h3 id="gpLoginTitle">로그인</h3>
-      <button type="button" class="login-close" aria-label="닫기" onclick="closeGpLogin()">×</button>
+      <button type="button" class="login-close" aria-label="로그인 창 닫기" onclick="event.stopPropagation(); closeGpLogin()">×</button>
     </div>
     <div class="login-body">
       <form id="gpLoginForm" autocomplete="on">
@@ -261,7 +273,7 @@
     <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
   </header>
   <div class="banner-hero">
-    <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/gs_online.png');" role="img" aria-label="한자기반 어휘사고력, 급수파자한자">
+    <div class="imgbox embedded-learning-hero" role="img" aria-label="한자기반 어휘사고력, 급수파자한자">
       <section class="video-learning-menu" data-program="gs-paja" aria-label="급수파자한자 동영상 학습"></section>
     </div>
   </div>
@@ -287,7 +299,7 @@
 <div id="page-mj" class="page">
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-    <span class="pill">말잼별글잼별</span><span>방문자님 환영합니다</span>
+    <span class="pill">말잼별글잼별</span><span data-login-welcome>방문자님 환영합니다</span>
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
@@ -302,13 +314,13 @@
       <div class="fallback">🐢 말잼별글잼별 - 지구팡의 대모험 🐢<br>(mj_online_2.png)</div>
     </div>
     <div class="mj-tabs">
-      <button class="mj-tab-btn on" data-t="0" onclick="goTo('page-jj')">
+      <button class="mj-tab-btn on" data-t="0" onclick="goToAfterLogin('page-jj')">
         <span class="mj-tab-face"><span class="mj-tab-number">0</span><span class="mj-tab-label">잼잼별</span></span>
       </button>
-      <button class="mj-tab-btn" data-t="1" onclick="goTo('page-mjplay')">
+      <button class="mj-tab-btn" data-t="1" onclick="goToAfterLogin('page-mjplay')">
         <span class="mj-tab-face"><span class="mj-tab-number">1</span><span class="mj-tab-label">말잼별</span></span>
       </button>
-      <button class="mj-tab-btn" data-t="2" onclick="goTo('page-gj')">
+      <button class="mj-tab-btn" data-t="2" onclick="goToAfterLogin('page-gj')">
         <span class="mj-tab-face"><span class="mj-tab-number">2</span><span class="mj-tab-label">글잼별</span></span>
       </button>
     </div>
@@ -329,12 +341,13 @@
     <div class="star-levels" aria-label="잼잼별 단계 선택"></div>
     <div class="star-learning-actions">
       <!-- <h3>level-01 / unit-01</h3> -->
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상1.mp4')">학습영상1</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상2.mp4')">학습영상2</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/어휘송.mp4')">어휘송</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/한자송.mp4')">한자송</button>
-      <a class="star-game-link" href="game/memory-game/index.html" target="_blank" rel="noopener">게임1</a>
-      <a class="star-game-link" href="game/matching-game/index.php" target="_blank" rel="noopener">게임2</a>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-jj/level-01/학습영상1.mp4')">학습영상1</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-jj/level-01/학습영상2.mp4')">학습영상2</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-jj/level-01/어휘송.mp4')">어휘송</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-jj/level-01/한자송.mp4')">한자송</button>
+
+      <!-- <a class="star-game-link" href="game/memory-game/index.html" target="_blank" rel="noopener">게임1</a>
+      <a class="star-game-link" href="game/matching-game/index.php" target="_blank" rel="noopener">게임2</a> -->
     </div>
     <div class="learning-video star-video-popup" role="dialog" aria-modal="true" aria-label="잼잼별 영상 재생">
       <div class="learning-video-header"><p class="learning-video-title">동영상 재생</p><button class="learning-video-close" type="button" aria-label="동영상 닫기" onclick="closeStarVideo(this)">×</button></div>
@@ -346,22 +359,22 @@
 <div id="page-mjplay" class="page">
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
-    <span class="pill">말잼별글잼별</span><span>말잼</span>
+    <span class="pill">말잼별글잼별</span><span>말잼별</span>
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼별글잼별으로</button>
-  <section class="star-learning-panel" style="--star-bg:url('assets/banner/mj_main_2.png')" aria-label="말잼별 영상 학습">
+  <section class="star-learning-panel" data-video-prefix="MJ" style="--star-bg:url('assets/banner/mj_main_2.png')" aria-label="말잼별 영상 학습">
     <div class="star-levels" aria-label="말잼별 단계 선택"></div>
     <div class="star-learning-actions">
       <!-- <h3>level-01 / unit-01</h3> -->
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상1.mp4')">학습영상1</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상2.mp4')">학습영상2</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/어휘송.mp4')">어휘송</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/한자송.mp4')">한자송</button>
-      <a class="star-game-link" href="game/memory-game/index.html" target="_blank" rel="noopener">게임1</a>
-      <a class="star-game-link" href="game/matching-game/index.php" target="_blank" rel="noopener">게임2</a>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-mjplay/level-01/학습영상1.mp4')">학습영상1</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-mjplay/level-01/학습영상2.mp4')">학습영상2</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-mjplay/level-01/어휘송.mp4')">어휘송</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-mjplay/level-01/한자송.mp4')">한자송</button>
+      <a class="star-game-link" href="game/word-game/index.html?star=mjplay&level=01" onclick="return setStarGameLevel(this)">어휘게임</a>
+      <a class="star-game-link" href="game/memory-game/index.html?star=mjplay&level=01" onclick="return setStarGameLevel(this)">한자게임</a>
     </div>
     <div class="learning-video star-video-popup" role="dialog" aria-modal="true" aria-label="말잼별 영상 재생">
       <div class="learning-video-header"><p class="learning-video-title">동영상 재생</p><button class="learning-video-close" type="button" aria-label="동영상 닫기" onclick="closeStarVideo(this)">×</button></div>
@@ -379,16 +392,17 @@
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼별글잼별으로</button>
-  <section class="star-learning-panel" style="--star-bg:url('assets/banner/gj_bg_04.png')" aria-label="글잼별 영상 학습">
+  <section class="star-learning-panel" data-video-prefix="GJ" style="--star-bg:url('assets/banner/gj_bg_04.png')" aria-label="글잼별 영상 학습">
     <div class="star-levels" aria-label="글잼별 단계 선택"></div>
     <div class="star-learning-actions">
       <!-- <h3>level-01 / unit-01</h3> -->
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상1.mp4')">학습영상1</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/학습영상2.mp4')">학습영상2</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/어휘송.mp4')">어휘송</button>
-      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/한자송.mp4')">한자송</button>
-      <a class="star-game-link" href="game/memory-game/index.html" target="_blank" rel="noopener">게임1</a>
-      <a class="star-game-link" href="game/matching-game/index.php" target="_blank" rel="noopener">게임2</a>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-gj/level-01/학습영상1.mp4')">학습영상1</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-gj/level-01/학습영상2.mp4')">학습영상2</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-gj/level-01/어휘송.mp4')">어휘송</button>
+      <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-gj/level-01/한자송.mp4')">한자송</button>
+      <a class="star-game-link" href="game/paza-game/index.php" target="_blank" rel="noopener">문장마스터</a>
+      <a class="star-game-link" href="game/word-game/index.html?star=gj&level=01" onclick="return setStarGameLevel(this)">어휘게임</a>
+      <a class="star-game-link" href="game/memory-game/index.html?star=gj&level=01" onclick="return setStarGameLevel(this)">한자게임</a>
     </div>
     <div class="learning-video star-video-popup" role="dialog" aria-modal="true" aria-label="글잼별 영상 재생">
       <div class="learning-video-header"><p class="learning-video-title">동영상 재생</p><button class="learning-video-close" type="button" aria-label="동영상 닫기" onclick="closeStarVideo(this)">×</button></div>
@@ -546,11 +560,13 @@
     'song-01.mp4':'한자송 1','song-02.mp4':'한자송 2','song-03.mp4':'한자송 3'
   };
 
+  const learningProgramsWithAllUnits=new Set(['hj-phonics','word-jam','legacy-hj','voca-genius']);
+
   function initVideoLearningMenu(menu){
     if(menu.dataset.initialized) return;
     const program=learningPrograms[menu.dataset.program];
     if(!program) return;
-    const state={program,programId:menu.dataset.program,level:1,unit:1};
+    const state={program,programId:menu.dataset.program,level:1,unit:menu.dataset.program==='hj-phonics'?0:1};
     menu.dataset.initialized='true';
     menu.innerHTML=`
       <h3>동영상 학습</h3>
@@ -571,7 +587,11 @@
       button.className='learning-level-btn';
       button.dataset.level=level;
       button.textContent=`${level}단계`;
-      button.addEventListener('click',()=>{state.level=level;state.unit=1;renderLearningMenu(menu,state);});
+      button.addEventListener('click',()=>{
+        state.level=level;
+        state.unit=state.programId==='hj-phonics'?0:1;
+        renderLearningMenu(menu,state);
+      });
       levelWrap.appendChild(button);
     }
     menu.querySelector('.learning-video-close').addEventListener('click',()=>closeLearningVideo(menu));
@@ -582,6 +602,13 @@
     menu.querySelectorAll('.learning-level-btn').forEach(button=>button.classList.toggle('active',Number(button.dataset.level)===state.level));
     const unitWrap=menu.querySelector('.learning-units');
     unitWrap.innerHTML='<span>단원:</span>';
+    if(learningProgramsWithAllUnits.has(state.programId)){
+      const allButton=document.createElement('button');
+      allButton.className=`learning-unit-btn learning-unit-all${state.unit===0?' active':''}`;
+      allButton.textContent='전체';
+      allButton.addEventListener('click',()=>{state.unit=0;renderLearningMenu(menu,state);});
+      unitWrap.appendChild(allButton);
+    }
     for(let unit=1;unit<=state.program.units(state.level);unit++){
       const button=document.createElement('button');
       button.className=`learning-unit-btn${unit===state.unit?' active':''}`;
@@ -593,45 +620,52 @@
     }
     const grid=menu.querySelector('.learning-course-grid');
     grid.innerHTML='';
+    grid.classList.toggle('all-units',state.unit===0);
     const levelFolder=`level-${String(state.level).padStart(2,'0')}`;
-    const unitFolder=`unit-${String(state.unit).padStart(2,'0')}`;
-    const card=document.createElement('article');
-    card.className='learning-course-card';
-    card.innerHTML=`<div class="learning-course-title ${state.level===2?'level-2':''}">${levelFolder} / ${unitFolder}</div>`;
+    const visibleUnits=state.unit===0
+      ? Array.from({length:state.program.units(state.level)},(_,index)=>index+1)
+      : [state.unit];
 
-    if(state.program.legacy){
-      for(let course=1;course<=3;course++) state.program.files().forEach(file=>{
-        const button=document.createElement('button');
-        button.className='learning-action-btn';
-        button.textContent=`${course}강 ${file==='study'?'학습 영상':file==='voca'?'어휘 영상':'한자송'}`;
-        button.addEventListener('click',()=>playLearningVideo(menu,state,`${course}g_${file}.mp4`,button.textContent));
-        card.appendChild(button);
-      });
-    }else{
-      state.program.files(state.level,state.unit).forEach(file=>{
-        const button=document.createElement('button');
-        button.className='learning-action-btn';
-        button.textContent=learningFileLabels[file]||file;
-        button.addEventListener('click',()=>playLearningVideo(menu,state,file,button.textContent));
-        card.appendChild(button);
-      });
-    }
-    grid.appendChild(card);
+    visibleUnits.forEach(unit=>{
+      const unitFolder=`unit-${String(unit).padStart(2,'0')}`;
+      const card=document.createElement('article');
+      card.className='learning-course-card';
+      card.innerHTML=`<div class="learning-course-title ${state.level===2?'level-2':''}">${levelFolder} / ${unitFolder}</div>`;
+
+      if(state.program.legacy){
+        for(let course=1;course<=3;course++) state.program.files().forEach(file=>{
+          const button=document.createElement('button');
+          button.className='learning-action-btn';
+          button.textContent=`${course}강 ${file==='study'?'학습 영상':file==='voca'?'어휘 영상':'한자송'}`;
+          button.addEventListener('click',()=>playLearningVideo(menu,state,`${course}g_${file}.mp4`,button.textContent,unit));
+          card.appendChild(button);
+        });
+      }else{
+        state.program.files(state.level,unit).forEach(file=>{
+          const button=document.createElement('button');
+          button.className='learning-action-btn';
+          button.textContent=learningFileLabels[file]||file;
+          button.addEventListener('click',()=>playLearningVideo(menu,state,file,button.textContent,unit));
+          card.appendChild(button);
+        });
+      }
+      grid.appendChild(card);
+    });
   }
 
-  function playLearningVideo(menu,state,file,label){
+  function playLearningVideo(menu,state,file,label,unit=state.unit){
     if(!gpLoginInfo){
       handleGpLoginMenu();
       return;
     }
     const videoBox=menu.querySelector('.learning-video');
     const video=videoBox.querySelector('video');
-    videoBox.querySelector('.learning-video-title').textContent=`${state.level}단계 ${state.unit}단원 - ${label}`;
+    videoBox.querySelector('.learning-video-title').textContent=`${state.level}단계 ${unit}단원 - ${label}`;
     const level=String(state.level).padStart(2,'0');
-    const unit=String(state.unit).padStart(2,'0');
+    const unitNumber=String(unit).padStart(2,'0');
     video.querySelector('source').src=state.program.legacy
-      ? `/assets/simple/videos/${state.level}-level/unit_${String.fromCharCode(96+state.unit)}/${file}`
-      : `assets/gulpin/programs/${state.programId}/level-${level}/unit-${unit}/videos/${file}`;
+      ? `/assets/simple/videos/${state.level}-level/unit_${String.fromCharCode(96+unit)}/${file}`
+      : `assets/gulpin/programs/${state.programId}/level-${level}/unit-${unitNumber}/videos/${file}`;
     video.load();
     videoBox.classList.add('active');
     menu.classList.add('video-active');
@@ -651,29 +685,99 @@
   function initStarLevels(panel){
     const levelWrap=panel.querySelector('.star-levels');
     if(!levelWrap || levelWrap.children.length) return;
+    panel.dataset.level='01';
     for(let level=1;level<=10;level++){
       const button=document.createElement('button');
       button.type='button';
       button.className=`star-level-btn${level===1?' active':''}`;
       button.textContent=`${level}단계`;
       button.addEventListener('click',()=>{
+        panel.dataset.level=String(level).padStart(2,'0');
         levelWrap.querySelectorAll('.star-level-btn').forEach(item=>item.classList.toggle('active',item===button));
       });
       levelWrap.appendChild(button);
     }
   }
 
+  // 교재 구매에 따른 단계 열람 권한 (Server/catalog.php SGetLearningAccess)
+  //   말잼별 N단계 = 영상코드 MJN, 글잼별 = GJN (data-video-prefix), 주문일로부터 6개월. 접두어 없는 패널(잼잼별)은 제한 없음
+  let gpLearningAccess = null;
+
+  function starLevelOpen(panel, level){
+    const prefix = panel.dataset.videoPrefix;
+    if(!prefix) return true;
+    if(!gpLearningAccess) return false;
+    return gpLearningAccess.all || Boolean(gpLearningAccess.codes[`${prefix}${Number(level)}`]);
+  }
+
+  function applyStarAccess(panel){
+    if(!panel.dataset.videoPrefix) return;
+    const buttons = Array.from(panel.querySelectorAll('.star-level-btn'));
+    buttons.forEach((button, index)=>{
+      const open = starLevelOpen(panel, index + 1);
+      button.disabled = !open;
+      button.classList.toggle('locked', !open);
+      button.title = open ? '' : '교재 구매 후 이용 가능';
+    });
+    // 선택된 단계가 잠겨 있으면 구매한 첫 단계로 이동
+    if(!starLevelOpen(panel, panel.dataset.level || '01')){
+      const firstOpen = buttons.find((button, index)=>starLevelOpen(panel, index + 1));
+      if(firstOpen) firstOpen.click();
+    }
+    const anyOpen = buttons.some((button, index)=>starLevelOpen(panel, index + 1));
+    const actions = panel.querySelector('.star-learning-actions');
+    actions.querySelectorAll('button, .star-game-link[onclick*="setStarGameLevel"]').forEach(item=>item.classList.toggle('locked', !anyOpen));
+    let note = actions.querySelector('.star-locked-note');
+    if(!anyOpen && !note){
+      note = document.createElement('p');
+      note.className = 'star-locked-note';
+      note.textContent = '교재 구매 후 이용 가능';
+      actions.prepend(note);
+    }
+    if(note) note.hidden = anyOpen;
+  }
+
+  function refreshStarAccess(page){
+    const panels = Array.from(page.querySelectorAll('.star-learning-panel[data-video-prefix]'));
+    if(!panels.length || !gpLoginInfo) return;
+    CallAjax1('SMethods.php', 'POST', { functionName: 'SGetLearningAccess', otherData: {} }, resp=>{
+      gpLearningAccess = resp.success || { all: false, codes: {} };
+      panels.forEach(applyStarAccess);
+    }, e=>{
+      gpLearningAccess = { all: false, codes: {} };
+      panels.forEach(applyStarAccess);
+      if(e && e.status === 401) CallToast('로그인이 만료되었습니다. 다시 로그인해 주세요.', 'error');
+    });
+  }
+
+  function requireStarLevel(panel){
+    if(starLevelOpen(panel, panel.dataset.level || '01')) return true;
+    CallToast('교재 구매 후 이용 가능합니다.', 'error');
+    return false;
+  }
+
   function playStarVideo(button, path){
     const panel=button.closest('.star-learning-panel');
+    if(!requireStarLevel(panel)) return;
     const videoBox=panel.querySelector('.learning-video');
     const video=videoBox.querySelector('video');
     const source=video.querySelector('source');
+    const selectedLevel=panel.dataset.level || '01';
+    const selectedPath=path.replace(/level-\d{2}/,`level-${selectedLevel}`);
     panel.querySelectorAll('.star-learning-actions button').forEach(item=>item.classList.toggle('active',item===button));
-    videoBox.querySelector('.learning-video-title').textContent=button.textContent.trim();
-    source.src=path;
+    videoBox.querySelector('.learning-video-title').textContent=`${Number(selectedLevel)}단계 - ${button.textContent.trim()}`;
+    source.src=selectedPath;
     video.load();
     videoBox.classList.add('active');
     video.play().catch(()=>{});
+  }
+
+  function setStarGameLevel(link){
+    const panel=link.closest('.star-learning-panel');
+    if(!requireStarLevel(panel)) return false;
+    const selectedLevel=panel.dataset.level || '01';
+    link.href=link.href.replace(/level=\d{2}/,`level=${selectedLevel}`);
+    return true;
   }
 
   function closeStarVideo(closeButton){
@@ -698,7 +802,14 @@
     document.querySelectorAll('.star-learning-actions button.active').forEach(button=>button.classList.remove('active'));
   }
 
+  const GP_PROTECTED_PAGE_IDS = new Set(['page-jj', 'page-mjplay', 'page-gj']);
+
   function goTo(id, updateHistory=true){
+    if(GP_PROTECTED_PAGE_IDS.has(id) && !gpLoginInfo){
+      gpLoginDestination = id;
+      openGpLogin(gpAreaOf(id));
+      return;
+    }
     const page = document.getElementById(id);
     if(!page) return;
     stopAllMedia();
@@ -711,6 +822,7 @@
     page.classList.add('active');
     page.querySelectorAll('.video-learning-menu').forEach(initVideoLearningMenu);
     page.querySelectorAll('.star-learning-panel').forEach(initStarLevels);
+    refreshStarAccess(page);
     const utilityMenu = document.getElementById('gpUtilityMenu');
     utilityMenu.classList.remove('open');
     const utilityToggle = document.querySelector('.gp-utility-toggle');
@@ -731,6 +843,7 @@
     }
   }
 
+  const gpRestoredPageId = history.state?.gulpinPage;
   history.replaceState({gulpinPage:'page-main'}, '', location.href);
 
   window.addEventListener('popstate', event=>{
@@ -738,7 +851,69 @@
     goTo(document.getElementById(id) ? id : 'page-main', false);
   });
 
-  window.addEventListener('pagehide', stopAllMedia);
+  let gpInternalNavigation = false;
+  let gpInternalNavigationResetTimer = null;
+
+  function isGpInternalUrl(url){
+    try{
+      return new URL(url, location.href).origin === location.origin;
+    }catch(error){
+      return false;
+    }
+  }
+
+  function markGpInternalNavigation(){
+    gpInternalNavigation = true;
+    clearTimeout(gpInternalNavigationResetTimer);
+    gpInternalNavigationResetTimer = setTimeout(()=>{
+      gpInternalNavigation = false;
+    }, 5000);
+  }
+
+  function goToGpInternalUrl(url, backgroundImage){
+    const gsHero = document.querySelector('#page-gs .embedded-learning-hero');
+    if(gsHero) gsHero.style.backgroundImage = backgroundImage ? `url('${backgroundImage}')` : '';
+    if(backgroundImage){
+      sessionStorage.setItem('simpleBackgroundImage', backgroundImage);
+    }else{
+      sessionStorage.removeItem('simpleBackgroundImage');
+    }
+    if(!gpLoginInfo){
+      gpLoginDestination = {type:'internal', value:url, backgroundImage};
+      openGpLogin();
+      return;
+    }
+    markGpInternalNavigation();
+    location.href = url;
+  }
+
+  document.addEventListener('click', event=>{
+    const link = event.target.closest('a[href]');
+    if(link && isGpInternalUrl(link.href)) markGpInternalNavigation();
+  }, true);
+
+  window.addEventListener('pagehide', ()=>{
+    stopAllMedia();
+    if(!gpInternalNavigation) logoutGpUser(false);
+  });
+
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'hidden'){
+      if(!gpInternalNavigation) logoutGpUser(false);
+      return;
+    }
+    gpInternalNavigation = false;
+    gpLoginInfo = getGpLoginInfo();
+    renderGpLogin();
+    window.renderRoleNav?.();
+  });
+
+  window.addEventListener('pageshow', event=>{
+    if(!event.persisted) return;
+    gpLoginInfo = getGpLoginInfo();
+    renderGpLogin();
+    window.renderRoleNav?.();
+  });
 
   function toggleNav(btn){ btn.classList.toggle('on'); }
   function toggleGpUtilityMenu(button){
@@ -748,14 +923,12 @@
     button.setAttribute('aria-label',isOpen?'관리 메뉴 닫기':'관리 메뉴 열기');
     button.textContent=isOpen?'× 닫기':'☰ 메뉴';
   }
-  function iconHover(btn, on){
-    const base = btn.getAttribute('data-base');
-    const img = btn.querySelector('img');
-    if(!img) return;
-    img.classList.remove('err');
-    img.src = src(base + (on ? '_click.png' : '.png'));
+  function selectIcon(event){
+    const btn = event.target.closest('.icon-btn');
+    if(!btn) return;
+    document.querySelectorAll('.icon-row .icon-btn').forEach(b=>b.classList.toggle('selected', b === btn));
   }
-  function openKakao(){ alert('카카오톡 채널로 상담·문의 연결 (데모)'); }
+  function openKakao(){ window.open('https://pf.kakao.com/_qMdPX', '_blank'); }
 
   const GP_LOGIN_MAX_AGE_MS = 8 * 60 * 60 * 1000;
   const GP_LOGIN_ID_PATTERN = /^[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40}$/;
@@ -776,8 +949,7 @@
   }
 
   function renderGpLogin(){
-    const welcome = document.getElementById('gpWelcome');
-    const welcome2 = document.getElementById('gpWelcome2');
+    const welcomeMessages = document.querySelectorAll('[data-login-welcome]');
     const homeLogout = document.getElementById('homeLogout');
     const utilityNav = document.getElementById('gpUtilityNav');
     utilityNav.replaceChildren();
@@ -793,35 +965,16 @@
     };
 
     if(gpLoginInfo){
-      const msg = `${gpLoginInfo.name || gpLoginInfo.user}님 환영합니다`;
-      welcome.textContent = msg;
-      if(welcome2) welcome2.textContent = msg;
+      const displayName = String(gpLoginInfo.name || gpLoginInfo.user || '').trim();
+      const msg = displayName ? `${displayName}님 환영합니다` : '사용자님 환영합니다';
+      welcomeMessages.forEach(element=>element.textContent = msg);
 
-      const role = String(gpLoginInfo.role ?? '0').toLowerCase();
-      const user = String(gpLoginInfo.user ?? '').trim().toLowerCase();
-      const isAdmin = role === '9' || role === 'admin' || user === 'admin' || user === 'chaitalk';
-      const menus = isAdmin ? [
-        ['게시판', 'board/boardmgr.php'],
-        ['지사관리', 'purchase/branchmgr.php'],
-        ['주문관리', 'purchase/order.php'],
-        ['사용자관리', 'study/vol_manage.php'],
-        ['학습현황', 'study/study_stats.php'],
-        ['리뷰추가', 'reviews/admin_reviews.php']
-      ] : role === '1' ? [
-        ['게시판', 'board/boardmgr.php'],
-        ['지사관리', 'purchase/branchmgr.php'],
-        ['주문관리', 'purchase/order.php']
-      ] : role === '2' ? [
-        ['게시판', 'board/boardmgr.php'],
-        ['유치원관리', 'purchase/kgardenmgr.php']
-      ] : [];
-
-      menus.forEach(([text, href])=>addUtilityMenu(text, href));
+      // role 별 메뉴는 js/roles.js 에 정의
+      GP_ROLE.menus(gpLoginInfo.role, '').forEach(([text, href])=>addUtilityMenu(text, href));
       const logout = addUtilityMenu('로그아웃', '', 'gpLoginMenu');
       logout.onclick = handleGpLoginMenu;
     }else{
-      welcome.textContent = '방문자님 환영합니다';
-      if(welcome2) welcome2.textContent = '방문자님 환영합니다';
+      welcomeMessages.forEach(element=>element.textContent = '방문자님 환영합니다');
       const login = addUtilityMenu('로그인', '', 'gpLoginMenu');
       login.onclick = handleGpLoginMenu;
     }
@@ -829,17 +982,31 @@
 
   function handleGpLoginMenu(){
     if(gpLoginInfo){
-      deleteLocalStorage('infochaitalk');
-      gpLoginInfo = null;
-      renderGpLogin();
-      window.renderRoleNav?.();
+      logoutGpUser();
       return;
     }
     gpLoginDestination = null;
     openGpLogin();
   }
 
-  function openGpLogin(){
+  // 초기 화면 영역 — 계정 그룹(js/roles.js)이 같은 영역에서만 로그인·이용 (본사는 전체)
+  //   유치원: page-mj 와 하위 페이지,  학원: page-gp,  화상수업: page-class,
+  //   홈스쿨·방과후 아이콘: 각 그룹,  어휘담 슬라이드: 홈스쿨·화상수업·방과후 공용 (openWindowAfterLogin)
+  const GP_PAGE_AREA = {'page-mj':'kinder', 'page-jj':'kinder', 'page-mjplay':'kinder', 'page-gj':'kinder', 'page-gp':'academy', 'page-class':'online'};
+  let gpLoginArea = '';
+
+  function gpAreaOf(pageId){
+    return GP_PAGE_AREA[pageId] || '';
+  }
+
+  function gpAllowArea(area){
+    if(GP_ROLE.canUseArea(gpLoginInfo.role, area)) return true;
+    CallToast(`${GP_ROLE.name(gpLoginInfo.role)} 계정은 ${GP_ROLE.AREA_NAMES[area]} 영역을 이용할 수 없습니다.`, 'error');
+    return false;
+  }
+
+  function openGpLogin(area=''){
+    gpLoginArea = area;
     document.getElementById('gpLoginModal').classList.add('open');
     document.body.style.overflow = 'hidden';
     setTimeout(()=>document.getElementById('gpEmail').focus(), 0);
@@ -847,11 +1014,53 @@
 
   function goToAfterLogin(id){
     if(gpLoginInfo){
-      goTo(id);
+      if(gpAllowArea(gpAreaOf(id))) goTo(id);
       return;
     }
     gpLoginDestination = id;
-    openGpLogin();
+    openGpLogin(gpAreaOf(id));
+  }
+
+  function openWindowAfterLogin(url, area='franchise'){
+    if(gpLoginInfo){
+      if(gpAllowArea(area)) openGpDestinationWindow(url);
+      return;
+    }
+    gpLoginDestination = {type:'window', value:url};
+    openGpLogin(area);
+  }
+
+  function logoutGpUser(shouldRender=true){
+    deleteLocalStorage('infochaitalk');
+    gpLoginInfo = null;
+    if(shouldRender){
+      renderGpLogin();
+      window.renderRoleNav?.();
+    }
+
+    const currentPage = document.querySelector('.page.active');
+    if(currentPage?.id === 'page-main') return;
+    goTo('page-main', shouldRender);
+    if(!shouldRender) history.replaceState({gulpinPage:'page-main'}, '', location.href);
+  }
+
+  function continueAfterGpLogin(destination){
+    if(!destination) return;
+    if(typeof destination === 'string'){
+      goTo(destination);
+      return;
+    }
+    if(destination.type === 'internal') goToGpInternalUrl(destination.value, destination.backgroundImage);
+    if(destination.type === 'window') openGpDestinationWindow(destination.value);
+  }
+
+  function openGpDestinationWindow(url){
+    const isInternal = isGpInternalUrl(url);
+    if(isInternal) markGpInternalNavigation();
+    const destinationWindow = window.open(url, '_blank');
+    if(destinationWindow) destinationWindow.opener = null;
+    if(!isInternal) logoutGpUser();
+    if(!destinationWindow) location.href = url;
   }
 
   function closeGpLogin(event){
@@ -885,6 +1094,7 @@
     formData.set('Email', email);
     formData.set('Password', password);
     formData.append('functionName', 'Slogon');
+    formData.append('area', gpLoginArea);
     gpLoginSubmitting = true;
     button.disabled = true;
     button.textContent = '로그인 중...';
@@ -918,9 +1128,9 @@
           const destination = gpLoginDestination;
           gpLoginDestination = null;
           closeGpLogin();
-          if(destination) goTo(destination);
+          continueAfterGpLogin(destination);
         }else{
-          showError('아이디 또는 비밀번호가 잘못되었습니다.');
+          showError(response.message || '아이디 또는 비밀번호가 잘못되었습니다.');
         }
       }, ()=>showError('로그인 처리 중 오류가 발생했습니다.'));
     }finally{
@@ -931,14 +1141,31 @@
   });
 
   document.addEventListener('keydown', event=>{
-    if(event.key === 'Escape' && document.getElementById('gpLoginModal').classList.contains('open')) closeGpLogin();
-  });
+    const loginModal = document.getElementById('gpLoginModal');
+    if((event.key === 'Escape' || event.key === 'Esc') && loginModal.classList.contains('open')){
+      event.preventDefault();
+      event.stopPropagation();
+      closeGpLogin();
+    }
+  }, true);
 
   gpLoginInfo = getGpLoginInfo();
   renderGpLogin();
   const initialPageId = location.hash.slice(1);
-  if(initialPageId && document.getElementById(initialPageId)?.classList.contains('page')){
+  // URL 옵션으로 페이지 직접 접근 (예: index.php?page=page-mj 또는 ?page=mj) — 페이지를 먼저 보여주고 로그인 창 표시
+  const queryPageParam = new URLSearchParams(location.search).get('page') || '';
+  const queryPageId = queryPageParam && !document.getElementById(queryPageParam) ? `page-${queryPageParam}` : queryPageParam;
+  if(queryPageId && document.getElementById(queryPageId)?.classList.contains('page')){
+    goTo(queryPageId);
+    if(!gpLoginInfo && !gpLoginDestination) openGpLogin(gpAreaOf(queryPageId));
+  }else if(initialPageId && document.getElementById(initialPageId)?.classList.contains('page')){
     goTo(initialPageId);
+  }else if(gpRestoredPageId && gpRestoredPageId !== 'page-main' && document.getElementById(gpRestoredPageId)?.classList.contains('page')){
+    // 게임 등 다른 페이지에서 뒤로 가기로 돌아온 경우 호출했던 페이지 복원
+    goTo(gpRestoredPageId, false);
+    if(document.getElementById(gpRestoredPageId).classList.contains('active')){
+      history.replaceState({gulpinPage:gpRestoredPageId}, '', location.href);
+    }
   }
 
   const totalSlides = 4, visible = 3, maxIndex = totalSlides - visible;
@@ -1005,5 +1232,30 @@
   loadReviews();
   window.addEventListener('load', ()=>{ render(); startAuto(); });
 </script>
+
+<!-- 추석 팝업 (비활성화)
+<div id="chuseokPopup" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;">
+  <div style="position:relative;width:min(420px,92vw);max-height:95vh;">
+    <button onclick="closeChuseok()" style="position:absolute;top:-12px;right:-12px;z-index:10;width:36px;height:36px;border-radius:50%;border:none;background:#1c2b4a;color:#F0D680;font-size:1.2rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;">&times;</button>
+    <iframe id="chuseokFrame" src="" style="width:100%;aspect-ratio:3/5;border:none;border-radius:18px;display:block;"></iframe>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY = 'chuseok2026_closed';
+  if(sessionStorage.getItem(KEY)) return;
+  var popup = document.getElementById('chuseokPopup');
+  popup.style.display = 'flex';
+  document.getElementById('chuseokFrame').src = 'chuseok-card.html';
+  popup.addEventListener('click', function(e){ if(e.target === popup) closeChuseok(); });
+})();
+function closeChuseok(){
+  var popup = document.getElementById('chuseokPopup');
+  popup.style.display = 'none';
+  document.getElementById('chuseokFrame').src = '';
+  sessionStorage.setItem('chuseok2026_closed','1');
+}
+</script>
+-->
 </body>
 </html>

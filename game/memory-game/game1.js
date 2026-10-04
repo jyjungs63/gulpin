@@ -10,6 +10,8 @@ if (clas == "" || clas == null) clas = "A";
 // if (sor == "" || sor == null) sor = "sentens";
 
 const assetBasePath = "../../assets/game/memory-game";
+const PREVIEW_MS = 5000;
+const CARD_FLIP_MS = 600;
 
 const selectors = {
   boardContainer: document.querySelector(".board-container"),
@@ -27,6 +29,7 @@ const state = {
   totalTime: 0,
   loop: null,
   revealTimeout: null,
+  revealFinishTimeout: null,
 };
 
 const shuffle = (array) => {
@@ -115,8 +118,10 @@ const revealAllCards = () => {
         card.classList.remove("flipped");
       }
     });
-    startGameTimer();
-  }, 3000);
+    state.revealFinishTimeout = setTimeout(() => {
+      startGameTimer();
+    }, CARD_FLIP_MS);
+  }, PREVIEW_MS);
 };
 
 const startGameTimer = () => {
@@ -132,6 +137,7 @@ const startGame = () => {
   if (state.gameStarted) {
     clearInterval(state.loop);
     clearTimeout(state.revealTimeout);
+    clearTimeout(state.revealFinishTimeout);
   }
   state.gameStarted = false;
   state.flippedCards = 0;
@@ -247,3 +253,4 @@ const attachEventListeners = () => {
 
 generateGame();
 attachEventListeners();
+startGame();

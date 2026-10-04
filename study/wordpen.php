@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<script src="../js/common.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/roles.js"></script>
 <style>
   :root{
     --lv0:#5DA831;  --lv0-tint:#e8f6d7;
@@ -566,8 +567,8 @@
       var classValue = safeCall('getClass');
       var stepValue = safeCall('getStep');
 
-      if (role === '30' || role === '1' || role === '2') {
-        if ((!classValue || classValue === 'undefined') && role === '30') addLevelsFrom(stepValue, levels);
+      if (GP_ROLE.isAcademyStudent(role) || GP_ROLE.isBranch(role) || GP_ROLE.isTeacher(role)) {
+        if ((!classValue || classValue === 'undefined') && GP_ROLE.isAcademyStudent(role)) addLevelsFrom(stepValue, levels);
         addLevelsFrom(classValue, levels);
       } else {
         if (stepValue) addLevelsFrom(stepValue, levels);
@@ -771,7 +772,7 @@
       });
       els.reviewLink.classList.toggle('is-hidden', currentLevel !== 'B');
 
-      var ebookLocked = (String(role) === '0' || String(role) === '30');
+      var ebookLocked = GP_ROLE.isStudent(role); // 학생 계정은 E-Book 잠금 (js/roles.js)
       els.ebookLink.classList.toggle('disabled-link', ebookLocked);
 
       updateMemoryState();

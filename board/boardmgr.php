@@ -23,6 +23,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <title>Chaitlak Kids 자료실</title>
     <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/roles.js"></script>
     <script src="../js/role-nav.js" defer></script>
     <style>
         .gp-visitor-strip{background:#1f5233; color:#eafff0; font-size:.78rem; padding:6px 20px; display:flex; justify-content:flex-end; align-items:center; gap:10px;}

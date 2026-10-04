@@ -303,6 +303,24 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
             opacity: 0.6;
         }
 
+        /* 교재 미구매 호수: 회색 처리 */
+        .course-card.is-locked {
+            filter: grayscale(1);
+            opacity: 0.6;
+        }
+
+        .course-card .locked-note {
+            display: none;
+            margin: -8px 0 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #555555;
+        }
+
+        .course-card.is-locked .locked-note {
+            display: block;
+        }
+
         /* Video Player Section */
         .video-section {
             display: none;
@@ -560,8 +578,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
     <header class="site-header">
         <a class="home-link" href="../index.php">🏠 Home</a>
         <nav class="utility-nav">
-            <a id="simpleBoardMenu" href="../board/boardmgr.php" style="display:none;">게시판</a>
-            <a id="simpleBranchMenu" href="../purchase/branchmgr.php" style="display:none;">지사관리</a>
+            <span id="simpleRoleMenu" style="display:contents"></span>
             <div class="right" onclick="openLogin()">로그인</div>
         </nav>
     </header>
@@ -640,12 +657,16 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         </div>
     </div>
 
-    <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
+    <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
+    <script src="../js/roles.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script>
         let currentMode = '';
         let currentUnit = '';
         let isLoggedIn = false;
+        // 교재 구매에 따른 열람 권한 (Server/catalog.php SGetLearningAccess)
+        //   급파한 영상코드 L{단계}-{호수} 를 주문일로부터 6개월간 연다. 본사는 전체.
+        let learningAccess = { all: false, codes: {} };
         const SIMPLE_IMAGE_PATH = '<?= SIMPLE_IMAGE_PATH ?>';
         const SIMPLE_VIDEO_PATH = '<?= SIMPLE_VIDEO_PATH ?>';
 
@@ -660,31 +681,68 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
 
         function updateMainBackground() {
             if (!isLoggedIn) return;
-            document.body.style.backgroundImage = window.innerWidth <= 768
-                ? `url('${SIMPLE_IMAGE_PATH}/main_port.jpg')`
-                : `url('${SIMPLE_IMAGE_PATH}/main_land.jpg')`;
+            const requestedBackground = sessionStorage.getItem('simpleBackgroundImage');
+            document.body.style.backgroundImage = requestedBackground
+                ? `url('${requestedBackground}')`
+                : 'none';
         }
 
         window.addEventListener('resize', updateMainBackground);
+
+        function loadLearningAccess() {
+            const done = (access) => {
+                learningAccess = access;
+                generateCourseCards();
+            };
+            CallAjax('SMethods.php', 'POST', { functionName: 'SGetLearningAccess', otherData: {} },
+                (resp) => done(resp.success || { all: false, codes: {} }),
+                (e) => {
+                    done({ all: false, codes: {} });
+                    if (e && e.status === 401) CallToast('로그인이 만료되었습니다. 다시 로그인해 주세요.', 'error');
+                });
+        }
+
+        // 단계·현재 호수의 열람 기한 (없으면 미구매)
+        function learningUntil(level) {
+            if (learningAccess.all) return '전체';
+            return learningAccess.codes[`L${level === '1-level' ? 1 : 2}-${currentUnit}`] || '';
+        }
+
+        function requireLearningAccess(level) {
+            if (learningUntil(level)) return true;
+            CallToast('교재 구매 후 이용 가능합니다.', 'error');
+            return false;
+        }
+
+        // 로그인 role 별 관리 메뉴 (js/roles.js — 관리페이지.xlsx 기준), 로그아웃이면 비움
+        function renderSimpleMenu(role) {
+            const menu = document.getElementById('simpleRoleMenu');
+            menu.replaceChildren(...(role === null ? [] : GP_ROLE.menus(role, '../')).map(([text, href]) => {
+                const link = document.createElement('a');
+                link.href = href;
+                link.textContent = text;
+                return link;
+            }));
+        }
 
         function restoreSimpleLogin(){
             const info = getLocalStorage('infochaitalk');
             const isCurrent = info && info.loginAt && Date.now() - Number(info.loginAt) <= 8 * 60 * 60 * 1000;
             const role = String(info?.role ?? '');
-            if(!isCurrent || (role !== '9' && role !== '7')) return;
+            if(!isCurrent || !GP_ROLE.canUseArea(role, 'franchise')) return; // 본사·가맹 그룹만 (js/roles.js)
 
             isLoggedIn = true;
             const loginBtn = document.querySelector('.utility-nav .right');
             loginBtn.textContent = '로그아웃';
             loginBtn.classList.add('logged-in');
             loginBtn.onclick = logout;
-            document.getElementById('simpleBoardMenu').style.display = '';
-            document.getElementById('simpleBranchMenu').style.display = '';
+            renderSimpleMenu(info.role);
             document.getElementById('idUserName').textContent = (info.name || info.user) + '님 환영합니다!';
             document.getElementsByClassName('container')[0].style.display = 'block';
             updateMainBackground();
             enableAllButtons();
             applyLevelAccess(info.clas);
+            loadLearningAccess();
         }
 
         function openLogin() {
@@ -713,10 +771,11 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
             formData.append('Email', document.getElementById('loginId').value);
             formData.append('Password', document.getElementById('loginPassword').value);
             formData.append('functionName', 'Slogon');
+            formData.append('area', 'franchise'); // 홈스쿨·방과후·온라인 영역 — 서버에서 그룹 검사
 
             const dispList = (resp) => {
                 if ('success' in resp) {
-                    if ( resp.success[0].role !== '9' && resp.success[0].role !== '7' ) {
+                    if (!GP_ROLE.canUseArea(resp.success[0].role, 'franchise')) {
                         errorMessage.classList.add('show');
                         CallToast('어휘담 계정 로그인 해주세요!!', "error");
                         return;
@@ -745,14 +804,14 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
                     loginBtn.textContent = '로그아웃';
                     loginBtn.classList.add('logged-in');
                     loginBtn.onclick = logout;
-                    document.getElementById('simpleBoardMenu').style.display = '';
-                    document.getElementById('simpleBranchMenu').style.display = '';
+                    renderSimpleMenu(resp.success[0].role);
 
                     document.getElementsByClassName('container')[0].style.display = 'block';
                     document.getElementById('idUserName').textContent = resp.success[0].name + '님 환영합니다!';
                     updateMainBackground();
                     enableAllButtons();
                     applyLevelAccess(resp.success[0].clas);
+                    loadLearningAccess();
                 } else if ('falure' in resp) {
                     errorMessage.classList.add('show');
                     CallToast('Password empty or mismatch !!', "error");
@@ -770,20 +829,22 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         function logout() {
             isLoggedIn = false;
             deleteLocalStorage('infochaitalk');
+            sessionStorage.removeItem('simpleBackgroundImage');
             const loginBtn = document.querySelector('.utility-nav .right');
             loginBtn.textContent = 'LOGIN';
             loginBtn.classList.remove('logged-in');
             loginBtn.onclick = openLogin;
-            document.getElementById('simpleBoardMenu').style.display = 'none';
-            document.getElementById('simpleBranchMenu').style.display = 'none';
+            renderSimpleMenu(null);
             document.getElementsByClassName('container')[0].style.display = 'none';
             document.getElementById('idUserName').textContent = '방문자님 환영합니다';
             document.body.style.backgroundImage = `url('${SIMPLE_IMAGE_PATH}/potal_land.jpg')`;
             disableAllButtons();
+            location.href = '../index.php';
         }
 
         function enableAllButtons() {
-            document.querySelectorAll('.level-btn, .unit-btn, .action-btn').forEach(btn => btn.disabled = false);
+            // 미구매 호수의 버튼은 잠금 유지
+            document.querySelectorAll('.level-btn, .unit-btn, .action-btn:not(.is-locked)').forEach(btn => btn.disabled = false);
         }
 
         function disableAllButtons() {
@@ -942,20 +1003,54 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
             header.style.background = level === '1-level' ? '#60BF4C' : '#F2A916';
             card.appendChild(header);
 
+            const until = learningUntil(level);
+            const locked = !until;
+            card.classList.toggle('is-locked', locked);
+            if (until && until !== '전체') card.title = `열람 기한: ${until}까지`;
+            const lockedNote = document.createElement('div');
+            lockedNote.className = 'locked-note';
+            lockedNote.textContent = '구매 후 이용 가능';
+            card.appendChild(lockedNote);
+
             const buttonsContainer = document.createElement('div');
             buttonsContainer.className = 'action-buttons';
 
             actions.forEach(action => {
                 const btn = document.createElement('button');
-                btn.className = 'action-btn';
+                btn.className = locked ? 'action-btn is-locked' : 'action-btn';
                 btn.textContent = action.name;
-                btn.disabled = !isLoggedIn;
+                btn.disabled = !isLoggedIn || locked;
                 btn.onclick = () => playVideo(level, courseId, action.id, `${courseName} ${action.name}`);
                 buttonsContainer.appendChild(btn);
             });
 
+            const gameBtn = document.createElement('button');
+            gameBtn.className = locked ? 'action-btn is-locked' : 'action-btn';
+            gameBtn.textContent = '게임';
+            gameBtn.disabled = !isLoggedIn || locked;
+            gameBtn.onclick = () => openMemoryGame(level, courseName);
+            buttonsContainer.appendChild(gameBtn);
+
             card.appendChild(buttonsContainer);
             return card;
+        }
+
+        // 한자게임(메모리게임): 선택한 단계/호수/과정의 이미지로 게임
+        function openMemoryGame(level, courseName) {
+            if (!isLoggedIn) {
+                alert('로그인이 필요합니다.');
+                openLogin();
+                return;
+            }
+            if (!requireLearningAccess(level)) return;
+
+            const query = new URLSearchParams({
+                program: 'homeschool',
+                level: level === '1-level' ? '01' : '02',
+                unit: currentUnit,
+                course: courseName
+            });
+            location.href = `../game/memory-game/index.html?${query}`;
         }
 
         // Play Video
@@ -965,6 +1060,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
                 openLogin();
                 return;
             }
+            if (!requireLearningAccess(level)) return;
             
             if (!level || !currentUnit) {
                 alert('단계와 호수를 먼저 선택해주세요.');

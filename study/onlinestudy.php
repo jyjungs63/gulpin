@@ -22,7 +22,8 @@ header("Expires: 0");
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="mp4list.js?v=<?= filemtime('mp4list.js') ?>"></script>
-    <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
+    <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
+    <script src="../js/roles.js"></script>
 
     <!-- ── CSS ── -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" />
@@ -678,11 +679,11 @@ header("Expires: 0");
         let step;
         var ckStep = (stepp != null && stepp !== "") ? 1 : 0;
 
-        if (role === '30' || role === '1' || role === '2') {
+        if (GP_ROLE.isAcademyStudent(role) || GP_ROLE.isBranch(role) || GP_ROLE.isTeacher(role)) {
             // ── 관리자 계정 ──────────────────────────────
             let cl = getClass();
 
-            if ((cl === "" || cl === undefined) && role === '30') {
+            if ((cl === "" || cl === undefined) && GP_ROLE.isAcademyStudent(role)) {
                 if (stepp && stepp.includes("0")) $("#basic0").prop('disabled', false);
                 if (stepp && stepp.includes("A")) $("#basic").prop('disabled', false);
                 if (stepp && stepp.includes("B")) $("#step1").prop('disabled', false);
@@ -747,7 +748,7 @@ header("Expires: 0");
             document.getElementById("idReview").style.display = "inline";
         } else {
             document.getElementById("idReview").style.display =
-                (role === '30' || role === '1' || role === '2' || role === '9') ? "inline" : "none";
+                (GP_ROLE.isAcademyStudent(role) || GP_ROLE.isBranch(role) || GP_ROLE.isTeacher(role) || GP_ROLE.isAdmin(role)) ? "inline" : "none";
         }
 
         setGuest();
@@ -971,7 +972,7 @@ header("Expires: 0");
             $("#idEbook").attr("src", (s === "") ? "images/0.png" : `images/${s}.png`);
 
             // 학생 계정이면 E-Book 비활성
-            if (role == 0 || role == 30) {
+            if (GP_ROLE.isStudent(role)) {
                 document.getElementById('w1_3').classList.add('disabled');
                 document.getElementById('idEbook').classList.add('disabled');
             } else {
@@ -1049,7 +1050,7 @@ header("Expires: 0");
             $("#idImgCover").attr("src", `../assets/portal_image/${step}${vol[1]}.jpg`);
             $("#idEbook").attr("src", (step === "") ? "images/0.png" : `images/${step}.png`);
 
-            if (role == 0 || role == 30) {
+            if (GP_ROLE.isStudent(role)) {
                 document.getElementById('w1_3').classList.add('disabled');
                 document.getElementById('idEbook').classList.add('disabled');
             } else {

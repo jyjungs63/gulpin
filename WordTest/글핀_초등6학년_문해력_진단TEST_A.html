@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>글핀 초등 6학년 어휘·한자 문해력 진단 TEST A</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  background: #5b8def;
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+.back-link {
+  display:inline-block; margin-bottom:12px; padding:10px 18px; background:white; color:#3560c9;
+  border-radius:24px; text-decoration:none; font-weight:700; box-shadow:0 3px 8px rgba(0,0,0,.14);
+}
+.back-link:hover { background:#eaf1ff; }
+.header {
+  background: white; padding: 25px; border-radius: 15px 15px 0 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
+}
+.header h1 { color: #5b8def; font-size: 1.7rem; font-weight: bold; }
+.header p.sub { color: #666; margin-top: 6px; font-size: 0.95rem; }
+.test-paper { background: white; padding: 40px; min-height: 800px; border-radius: 0 0 15px 15px; border-top: 3px solid #5b8def;}
+.instructions {
+  background: #f0f6ff; border: 2px solid #b9d1ff; border-radius: 10px; padding: 20px; margin-bottom: 30px;
+}
+.instructions h3 { color: #5b8def; font-weight: 700; margin-bottom: 10px; font-size: 1.2rem; }
+.instructions p { font-size: 1.02rem; color: #333; line-height: 1.6; }
+.instructions p.caution { color:#c0392b; font-weight:600; margin-top:8px; font-size:0.95rem; }
+.questions-grid { display: block; margin-bottom: 20px; }
+.questions-grid > * { margin-bottom: 15px; }
+.questions-grid > *:last-child { margin-bottom: 0; }
+.passage-group { border-left: 4px solid #5b8def; padding-left: 16px; }
+.passage-range-label { color:#5b8def; font-weight:700; font-size:0.98rem; margin-bottom:8px; }
+.passage-group .question-card { margin-bottom: 15px; }
+.passage-group .question-card:last-child { margin-bottom: 0; }
+.question-card {
+  background: #fafcff; border: 2px solid #b9d1ff; border-radius: 12px; padding: 16px; transition: all .3s;
+}
+.question-card:hover { border-color: #5b8def; box-shadow: 0 4px 12px rgba(91,141,239,0.15); }
+.question-card.wrong { border-color: #ff9800; background: #fff8f0; }
+.question-card.correct-card { border-color: #28a745; background: #f0fff4; opacity: .7; }
+.question-header { display:flex; align-items:flex-start; gap:8px; margin-bottom:10px; }
+.question-number { color:#5b8def; font-weight:700; font-size:1.05rem; flex-shrink:0; }
+.question-text { font-size:1.03rem; font-weight:600; color:#333; line-height:1.5; }
+.area-tag { display:inline-block; margin-left:6px; font-size:0.72rem; font-weight:700; color:#5b8def; background:#eaf1ff; padding:2px 8px; border-radius:10px; vertical-align:middle;}
+.passage-box {
+  background:#fff; border:1px dashed #9fb9ea; border-radius:8px; padding:10px 12px;
+  margin-bottom:10px; font-size:0.94rem; color:#444; line-height:1.55;
+}
+.passage-box .sub-passage-label { color:#1a56c4; font-weight:800; margin-top:8px; display:block; }
+.passage-box strong { color:#1a56c4; font-weight:800; }
+.data-line { margin-top:8px; padding:8px 10px; background:#eef4ff; border-radius:6px; }
+.data-line b { color:#1a56c4; }
+.options { display:flex; flex-direction:column; gap:10px; margin-top: 10px; }
+.option-row {
+  display:flex; align-items:center; gap:10px; padding:11px 16px; background:white;
+  border:2px solid #b9d1ff; border-radius:8px; cursor:pointer;
+  font-size:0.96rem; font-weight:600; color:#333; transition: all .3s;
+}
+.option-row:hover { background:#eaf1ff; border-color:#5b8def; }
+.option-row input[type="radio"] { width:18px; height:18px; flex-shrink:0; accent-color:#5b8def; cursor:pointer; }
+.option-row .option-text { flex:1; }
+.option-row.selected { background:#eaf1ff; border-color:#5b8def; }
+.option-row.correct { background:#e9f8ef; border-color:#28a745; color:#1e7e34; }
+.option-row.incorrect { background:#fdecec; border-color:#dc3545; color:#b02a37; }
+.option-row.disabled { cursor:not-allowed; opacity:.85; }
+.option-row.disabled input[type="radio"] { cursor:not-allowed; }
+.hint-section {
+  margin-top:12px; padding:12px; background:#fff8e1; border:2px solid #ffc107; border-radius:8px; display:none;
+}
+.hint-section.show { display:block; }
+.hint-title { color:#f57c00; font-weight:700; margin-bottom:6px; font-size:1rem; }
+.hint-content { color:#333; line-height:1.55; font-size:0.95rem; }
+.hint-answer { color:#d32f2f; font-weight:700; margin-top:4px; }
+.hint-btn {
+  background:#ffc107; color:#333; border:none; padding:7px 18px; border-radius:6px; cursor:pointer;
+  font-size:0.9rem; font-weight:600; margin-top:10px; transition:all .3s;
+}
+.hint-btn:hover { background:#ffb300; }
+.action-buttons {
+  text-align:center; margin-top:30px; padding-top:30px; border-top:2px solid #eaf1ff;
+  display:flex; gap:15px; justify-content:center; flex-wrap:wrap;
+}
+.submit-btn {
+  background:#5b8def; color:white; border:none; padding:15px 50px; font-size:1.15rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s; box-shadow:0 4px 15px rgba(91,141,239,0.3);
+}
+.submit-btn:hover { background:#4676d8; transform:translateY(-2px); box-shadow:0 6px 20px rgba(91,141,239,0.4); }
+.reset-btn, .retry-btn {
+  background:#6c757d; color:white; border:none; padding:15px 40px; font-size:1.05rem; font-weight:bold;
+  border-radius:25px; cursor:pointer; transition:all .3s;
+}
+.reset-btn:hover, .retry-btn:hover { background:#5a6268; transform:translateY(-2px); }
+.retry-btn { background:#ff9800; }
+.retry-btn:hover { background:#f57c00; }
+.result {
+  margin-top:30px; padding:26px; background:#d4edda; border:3px solid #28a745; border-radius:15px;
+  text-align:center; display:none;
+}
+.result.show { display:block; }
+.result h3 { color:#28a745; font-size:1.6rem; margin-bottom:12px; }
+.result p { font-size:1.15rem; color:#155724; font-weight:600; }
+.diagnosis-card {
+  margin-top:22px; background:white; border:3px solid #5b8def; border-radius:14px; padding:22px;
+  text-align:left;
+}
+.diagnosis-title { font-size:1.25rem; font-weight:800; color:#333; margin-bottom:10px; }
+.diagnosis-desc { font-size:1rem; color:#444; line-height:1.65; margin-bottom:6px; }
+.diagnosis-note { font-size:0.88rem; color:#c0392b; margin-top:10px; font-weight:600; }
+.area-report { margin-top:22px; background:white; border:3px solid #28a745; border-radius:14px; padding:22px; text-align:left; }
+.area-report-title { font-size:1.2rem; font-weight:800; color:#1e7e34; margin-bottom:14px; }
+.area-row { border-bottom:1px solid #eee; padding:12px 0; }
+.area-row:last-child { border-bottom:none; }
+.area-row-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.area-name { font-weight:700; color:#333; font-size:1.02rem; }
+.area-score { font-weight:700; color:#5b8def; }
+.area-score.low { color:#dc3545; }
+.area-bar-bg { background:#eee; border-radius:6px; height:10px; overflow:hidden; margin-bottom:8px; }
+.area-bar-fill { background:#5b8def; height:100%; border-radius:6px; }
+.area-bar-fill.low { background:#ff9800; }
+.area-comment { font-size:0.92rem; color:#555; line-height:1.55; background:#f8f9fa; padding:10px 12px; border-radius:8px; }
+.progress-info { text-align:center; margin-bottom:18px; font-size:1.05rem; color:#5b8def; font-weight:600; }
+.filter-buttons { text-align:center; margin-bottom:18px; display:none; }
+.filter-buttons.show { display:block; }
+.filter-btn {
+  background:white; color:#5b8def; border:2px solid #5b8def; padding:9px 22px; border-radius:20px;
+  cursor:pointer; font-size:0.95rem; font-weight:600; margin:0 5px; transition:all .3s;
+}
+.filter-btn.active { background:#5b8def; color:white; }
+.filter-btn:hover { background:#eaf1ff; }
+.filter-btn.active:hover { background:#4676d8; }
+@media (max-width:768px) {
+  .questions-grid { grid-template-columns:1fr; }
+  .header h1 { font-size:1.25rem; }
+  .test-paper { padding:20px; }
+}
+@media print {
+  @page { margin:1cm; size:A4; }
+  body { background:white; padding:0; margin:0; }
+  .container { max-width:100%; margin:0; }
+  .header { padding:10px 15px; margin-bottom:8px; box-shadow:none; border-radius:0; }
+  .header h1 { font-size:1.3rem; margin:0; }
+  .submit-btn, .retry-btn, .reset-btn, .hint-btn { display:none !important; }
+  .filter-buttons { display:none !important; }
+  .result { display:none !important; }
+  .progress-info { display:none !important; }
+  .test-paper { padding:5px 10px; border-radius:0; }
+  .questions-grid { gap:8px; display:grid; grid-template-columns:repeat(2,1fr); }
+  .question-card { break-inside:avoid; page-break-inside:avoid; padding:10px; border:1px solid #b9d1ff; }
+  .hint-section { display:none !important; }
+}
+</style>
+</head>
+<body>
+  <a class="back-link" href="../WordTest.html">← 뒤로 가기</a>
+<div class="container">
+  <div class="header">
+    <h1>📖 글핀 어휘·한자 문해력 진단 TEST A</h1>
+    <p class="sub">초등 6학년 · 총 15문제 · 문제 순서는 매번 랜덤으로 출제됩니다.</p>
+  </div>
+
+  <div class="test-paper" id="testPaperView">
+    <div class="instructions">
+      <h3>📝 TEST A - 어휘·한자 문해력 진단 (초등 6학년)</h3>
+      <p>낱말의 뜻과 개념 추론, 문맥 속 어휘 이해, 자료 해석과 근거 판단, 관점 비교와 비판적 사고를 평가하는 문제입니다. 글과 자료를 꼼꼼히 읽고 알맞은 답을 골라 보세요.</p>
+      <p class="caution">※ 이 평가는 초등학교 6학년 교과 학습에 필요한 어휘 이해를 바탕으로, 고난도 비문학 어휘의 문맥 추론, 자료 해석, 근거 판단, 관점 비교, 비판적 사고까지 종합적으로 확인하도록 구성한 심화 진단평가입니다. 점수가 다소 낮게 나오더라도 문해력이 부족하다고 단정하지 마시고, 채점 후 안내되는 &lsquo;총점 진단 기준&rsquo;을 함께 참고해 주세요.</p>
+    </div>
+    <div class="filter-buttons" id="filterA">
+      <button class="filter-btn active" onclick="filterQuestions('all')">전체</button>
+      <button class="filter-btn" onclick="filterQuestions('wrong')">틀린 문제만</button>
+    </div>
+    <div class="progress-info" id="progressA">0 / 15 문제 완료</div>
+    <div id="questions-A" class="questions-grid"></div>
+    <div class="action-buttons">
+      <button class="submit-btn" onclick="checkAnswers()">제출하기</button>
+      <button class="retry-btn" onclick="retryWrong()" style="display:none;">틀린 문제 다시 풀기</button>
+      <button class="reset-btn" onclick="resetTest()">전체 다시 풀기</button>
+    </div>
+    <div id="result-A" class="result"></div>
+  </div>
+</div>
+
+<script>
+const passages = {
+  p1: `한 지역의 학생 500명을 조사했는데, 그중 성적이 가장 높은 20명의 결과만 공개한다면 조사 자료 자체가 거짓은 아니더라도 전체 학생의 실태가 <strong>왜곡</strong>되어 전달될 수 있다.`,
+  p3: `한 도시가 청소년 정책 예산의 대부분을 체육 시설 확충에 사용했습니다. 그 결과 체육 활동의 기회는 늘어났지만, 상담·진로·문화 프로그램에 배정할 예산은 크게 줄었습니다.`,
+  p4: `도시 외곽의 농경지 주변에 물류 창고와 주택 단지가 해마다 조금씩 늘어나고 있습니다. 농경지의 전체 면적이 한꺼번에 크게 줄어든 것은 아니지만, 개발 지역이 넓어질수록 농사를 지을 수 있는 땅은 계속 감소하고 있습니다.`,
+  p5: `한 지방 자치 단체는 강 주변의 습지를 보존하려고 합니다. 그런데 홍수 피해를 줄이기 위해 제방을 넓게 설치해야 한다는 의견도 나왔습니다. 제방을 설치하면 주민의 안전에는 도움이 될 수 있지만, 일부 습지가 사라질 가능성이 있습니다.`,
+  p6: `생산량을 늘리는 데만 집중하여 자원을 계속 사용한다면 결국 자원의 고갈이라는 결과로 <strong>귀결</strong>될 수 있다.`,
+  p789: `인공지능은 많은 자료에서 일정한 경향이나 규칙을 찾아 새로운 결과를 예측하는 데 활용됩니다. 그런데 인공지능이 학습하는 자료가 현실의 다양한 모습을 고르게 반영하지 못한다면, 그 결과에도 문제가 나타날 수 있습니다.<br><br>예를 들어 식물의 종류를 구별하는 인공지능에게 맑은 날 야외에서 촬영한 사진만 집중적으로 학습시켰다고 가정해 봅시다. 이 인공지능은 학습한 사진과 비슷한 환경에서는 식물을 정확하게 구별할 수 있지만, 비가 오거나 어두운 실내에서 촬영한 사진에서는 정확도가 크게 떨어질 수 있습니다. 학습 자료가 특정한 환경에 치우쳐 있기 때문입니다.<br><br>따라서 인공지능의 성능을 평가할 때에는 학습에 사용한 자료에서 높은 정확도를 보였다는 사실만으로 충분하지 않습니다. 밝기, 촬영 장소, 계절 등이 다른 새로운 자료에서도 비슷한 성능을 보이는지 확인해야 합니다. 그래야 특정한 자료에서 나타난 성능이 다른 조건에서도 <strong>재현</strong>되는지 판단할 수 있습니다.`,
+  p1012: `한 지방 자치 단체가 도심의 차량 정체를 줄이기 위해 중심 지역으로 들어오는 자동차에 일정한 비용을 부과하는 정책을 검토했습니다. 자동차 이용을 줄이고 대중교통 이용을 늘리려는 목적입니다.<br><br>그러나 정책의 효과만큼이나 주민의 <strong>수용성</strong>도 중요합니다. 대중교통이 잘 갖추어진 지역의 주민은 자동차 이용을 줄이기 비교적 쉽지만, 대중교통이 부족한 외곽 지역의 주민은 같은 비용을 내더라도 더 큰 불편을 겪을 수 있습니다. 따라서 모든 운전자에게 똑같은 비용을 부과하는 것이 겉으로는 공평해 보여도 실제 부담의 정도는 서로 다를 수 있습니다.<br><br>또한 정책을 시행한 뒤 도심의 차량 통행량이 감소하더라도 그것만으로 정책이 성공했다고 평가하기는 어렵습니다. 차량이 주변 지역으로 이동하여 인접 도로의 교통량이 늘어나지는 않았는지, 상점 이용객이 크게 감소하지는 않았는지 등 예상하지 못한 파급 효과도 함께 살펴야 합니다.`,
+  p11: `도심 차량에 일정한 비용을 부과한 뒤 도심의 차량 통행량은 감소했습니다. 그러나 일부 운전자들이 비용을 피하려고 인접 지역의 도로를 이용하면서 그 지역의 교통 체증이 심해졌습니다.`,
+  p1315: `<span class="sub-passage-label">(가)</span> 멸종 위기에 놓인 야생 동물을 보호하기 위해서는 필요한 경우 사람이 적극적으로 개입해야 한다는 주장이 있습니다. 서식지가 파괴되어 개체 수가 급격히 감소했다면 보호 구역을 만들거나 인공 번식 등을 통해 개체 수의 회복을 도울 필요가 있다는 것입니다.<br><br>특히 인간의 개발 활동으로 생태계가 훼손된 경우에는 인간에게 이를 회복할 책임이 있다는 주장도 설득력을 얻습니다. 자연이 스스로 회복되기만을 기다리는 동안 개체 수가 다시 회복하기 어려운 수준까지 감소할 수도 있기 때문입니다. 따라서 멸종 위험이 큰 상황에서는 과학적인 조사와 근거를 바탕으로 인간이 적극적으로 개입할 필요가 있습니다.
+  <span class="sub-passage-label">(나)</span> 야생 동물을 보호한다는 이유만으로 인간이 자연에 지나치게 개입하는 것은 신중해야 합니다. 생태계에서는 여러 생물이 복잡하게 관계를 맺고 있기 때문에 특정 생물의 수를 인위적으로 늘리면 예상하지 못한 변화가 나타날 수도 있습니다.<br><br>예를 들어 특정 포식자의 수를 크게 늘리면 그 먹이가 되는 생물의 수가 지나치게 감소할 수 있습니다. 따라서 인간이 개입의 결과를 모두 정확하게 예측할 수 있다고 생각해서는 안 됩니다. 개입이 필요한 상황이라 하더라도 그 범위와 영향을 충분히 검토하고, 이후의 변화도 지속적으로 관찰해야 합니다.`
+};
+
+const rawData = [
+  { q:"다음 문장에서 밑줄 친 '왜곡(歪曲)'의 의미로 가장 알맞은 것은 무엇일까요?", passage:passages.p1, area:"고급 어휘·개념 추론",
+    options:["자료의 일부가 부족하여 명확한 결론을 내리지 못하는 것","서로 다른 자료를 하나의 기준에 따라 비교하기 어려운 것","일부 사실만 선택적으로 제시하여 실제 모습과 다르게 받아들이게 하는 것","사실과 의견을 구별하여 자료의 의미를 새롭게 해석하는 것","조사 과정에서 잘못된 자료가 포함되어 결과를 다시 계산하는 것"],
+    answer:"일부 사실만 선택적으로 제시하여 실제 모습과 다르게 받아들이게 하는 것",
+    explain:"'왜곡'은 사실이나 현상이 실제 모습과 다르게 받아들여지도록 만드는 것을 뜻합니다. 성적이 가장 높은 일부 학생의 결과만 공개하면 자료 자체가 거짓은 아니더라도 전체 학생의 실태와 다른 인상을 줄 수 있습니다." },
+  { q:"다음 중 '유보(留保)'의 의미가 가장 잘 드러난 상황은 무엇일까요?", passage:null, area:"고급 어휘·개념 추론",
+    options:["여러 증거가 일치하자 처음 세운 주장을 확정하였다.","새로운 근거가 발견되자 기존의 주장을 완전히 철회하였다.","두 주장 가운데 어느 쪽이 더 많은 지지를 받는지 조사하였다.","의견 차이가 좁혀지지 않자 다수결로 곧바로 결정하였다.","자료가 충분하지 않아 추가 조사 결과가 나올 때까지 판단을 미루었다."],
+    answer:"자료가 충분하지 않아 추가 조사 결과가 나올 때까지 판단을 미루었다.",
+    explain:"'유보'는 판단이나 결정을 바로 확정하지 않고 뒤로 미루는 것을 뜻합니다. 자료가 충분하지 않아 추가 조사 결과를 기다리는 상황이 가장 적절합니다." },
+  { q:"다음 상황에서 '예산이 편중되었다'고 판단할 수 있는 가장 중요한 근거는 무엇일까요?", passage:passages.p3, area:"고급 어휘·개념 추론",
+    options:["정책 대상의 수요를 조사하여 분야별 예산 규모를 다르게 정했기 때문이다.","특정 분야에 예산이 지나치게 몰려 다른 분야에 대한 지원이 상대적으로 줄었기 때문이다.","한정된 예산 안에서 사업의 필요성에 따라 우선순위를 정했기 때문이다.","여러 사업의 효과를 비교하여 성과가 높은 분야에 추가 예산을 배정했기 때문이다.","각 분야가 필요로 하는 비용의 차이를 고려하여 예산을 차등 배분했기 때문이다."],
+    answer:"특정 분야에 예산이 지나치게 몰려 다른 분야에 대한 지원이 상대적으로 줄었기 때문이다.",
+    explain:"'편중'은 특정한 대상이나 분야에 지나치게 치우쳐 비중을 두는 것을 뜻합니다. 분야별 필요에 따라 예산을 다르게 배정하는 것 자체는 편중이 아니며, 핵심은 '지나치게 한쪽에 몰렸다'는 점입니다." },
+  { q:"다음 상황을 '개발 지역이 농경지를 잠식하고 있다'고 표현하는 까닭으로 가장 알맞은 것은 무엇일까요?", passage:passages.p4, area:"고급 어휘·개념 추론",
+    options:["농경지의 생산성이 낮아져 이용 가치가 점차 떨어지고 있기 때문이다.","농경지와 개발 지역의 경계를 명확하게 구분하기 어려워지고 있기 때문이다.","농경지의 이용 목적이 농업에서 다른 산업 중심으로 바뀌고 있기 때문이다.","개발 지역이 기존 농경지의 일부를 점차 차지하면서 그 범위를 줄이고 있기 때문이다.","개발 지역과 농경지가 서로 가까워지면서 영향을 주고받고 있기 때문이다."],
+    answer:"개발 지역이 기존 농경지의 일부를 점차 차지하면서 그 범위를 줄이고 있기 때문이다.",
+    explain:"'잠식'은 다른 영역이나 범위를 조금씩 차지하여 줄어들게 하는 것을 뜻합니다. 단순히 용도가 바뀌거나 두 지역이 가까워지는 것만으로는 '잠식'이라고 하지 않으며, 기존 영역이 점차 줄어드는 과정이 중요합니다." },
+  { q:"다음 상황을 '딜레마'라고 볼 수 있는 가장 중요한 이유는 무엇일까요?", passage:passages.p5, area:"고급 어휘·개념 추론",
+    options:["하나의 중요한 가치를 지키려는 선택이 다른 중요한 가치의 손실로 이어질 수 있기 때문이다.","두 방안 가운데 어느 쪽의 비용이 더 적게 드는지 아직 확인되지 않았기 때문이다.","주민마다 자연환경과 안전을 중요하게 생각하는 정도가 서로 다르기 때문이다.","두 방안을 함께 시행하려면 처음 계획보다 많은 예산이 필요하기 때문이다.","어느 방안을 선택하더라도 예상했던 효과가 나타나지 않을 가능성이 있기 때문이다."],
+    answer:"하나의 중요한 가치를 지키려는 선택이 다른 중요한 가치의 손실로 이어질 수 있기 때문이다.",
+    explain:"'딜레마'는 어느 쪽을 선택하더라도 중요한 가치 가운데 하나를 포기해야 하는 상황을 뜻합니다. 단순히 비용이 더 들거나 의견이 다른 상황은 딜레마가 아니며, 두 중요한 가치가 동시에 충족되기 어려운 상황이어야 합니다." },
+  { q:"다음 문장에서 밑줄 친 '귀결(歸結)'의 의미로 가장 알맞은 것은 무엇일까요?", passage:passages.p6, area:"고급 어휘·개념 추론",
+    options:["어떤 현상의 원인을 여러 방향에서 찾아가는 것","여러 결과 가운데 가장 바람직한 것을 선택하는 것","일정한 과정이나 원인이 결국 어떤 결과에 이르게 되는 것","예상하지 못한 문제가 생겨 기존 계획을 수정하는 것","여러 원인이 동시에 작용하여 결과를 예측하기 어려워지는 것"],
+    answer:"일정한 과정이나 원인이 결국 어떤 결과에 이르게 되는 것",
+    explain:"'귀결'은 일정한 과정이나 원인이 이어져 결국 어떤 결과에 이르게 되는 것을 뜻합니다. 자원을 계속 사용하는 과정이 결국 자원 고갈이라는 결과로 이어지므로 이 뜻이 알맞습니다." },
+  { q:"윗글에서 밑줄 친 '재현되는지'의 의미로 가장 알맞은 것은 무엇일까요?", passage:passages.p789, area:"과학·기술 문해력",
+    options:["새로운 자료를 기존 자료와 비슷하게 수정할 수 있는지","서로 다른 자료를 같은 조건에서 반복하여 수집할 수 있는지","잘못된 결과가 나온 원인을 찾아 다시 조사할 수 있는지","학습에 사용한 자료로 동일한 결과를 다시 만들어 낼 수 있는지","특정 조건에서 나타난 결과가 다른 조건에서도 비슷하게 다시 나타나는지"],
+    answer:"특정 조건에서 나타난 결과가 다른 조건에서도 비슷하게 다시 나타나는지",
+    explain:"이 글에서 '재현'은 특정 조건에서 나타난 성능이나 결과가 다른 조건에서도 비슷하게 다시 나타나는 것을 뜻합니다." },
+  { q:"연구진은 이 인공지능이 학습한 환경과 다른 새로운 상황에서도 식물의 특징을 제대로 구별하는지 확인하려고 합니다. 다음 중 이러한 연구 목적에 가장 알맞은 검증 방법은 무엇일까요?", passage:passages.p789, area:"과학·기술 문해력",
+    options:["학습할 때 정답률이 높았던 사진만 다시 골라 같은 결과가 나타나는지 확인한다.","학습에 사용하지 않은 여러 계절·밝기·촬영 장소의 사진으로 성능을 평가한다.","학습 자료와 비슷한 환경에서 촬영한 사진을 더 많이 제시하여 평균 정확도를 구한다.","틀리게 구별한 사진을 제외하고 나머지 사진만으로 전체 성능을 다시 계산한다.","같은 식물을 같은 장소에서 여러 번 촬영하여 결과가 일정하게 나타나는지 확인한다."],
+    answer:"학습에 사용하지 않은 여러 계절·밝기·촬영 장소의 사진으로 성능을 평가한다.",
+    explain:"연구 목적은 인공지능이 학습한 환경과 다른 새로운 상황에서도 제대로 작동하는지 확인하는 것입니다. 기존 학습 자료와 비슷한 사진만 반복해서 사용하면 새로운 환경에서도 성능이 유지되는지 알 수 없습니다." },
+  { q:"다음과 같은 평가 결과가 추가로 나타났습니다. [ 맑은 날 야외 사진 정확도 96%, 비 오는 날 야외 사진 정확도 68%, 어두운 실내 사진 정확도 64% ] 이 자료를 바탕으로 내릴 수 있는 판단으로 가장 타당한 것은 무엇일까요?", passage:passages.p789, area:"과학·기술 문해력",
+    options:["세 환경에서 모두 절반 이상의 사진을 맞혔으므로 촬영 환경은 성능과 관계가 없다.","맑은 날의 정확도가 높으므로 식물 구별 능력에는 문제가 없다고 확정할 수 있다.","비 오는 날과 실내에서 정확도가 낮으므로 인공지능은 식물의 특징을 전혀 학습하지 못했다고 볼 수 있다.","촬영 환경에 따라 정확도의 차이가 크므로 다양한 조건에서도 성능이 안정적으로 유지되는지 추가로 검증해야 한다.","학습 사진의 양만 충분히 늘리면 환경에 따른 정확도 차이는 반드시 사라질 것이다."],
+    answer:"촬영 환경에 따라 정확도의 차이가 크므로 다양한 조건에서도 성능이 안정적으로 유지되는지 추가로 검증해야 한다.",
+    explain:"맑은 날에는 정확도가 높지만 비 오는 날과 어두운 실내에서는 정확도가 크게 낮아졌습니다. 따라서 촬영 환경에 따라 성능이 달라질 가능성이 있으며, 다양한 조건에서도 안정적으로 작동하는지 추가 검증이 필요합니다." },
+  { q:"윗글을 바탕으로 정책의 수용성에 대해 이해한 내용으로 가장 적절한 것은 무엇일까요?", passage:passages.p1012, area:"사회·공공 정책",
+    options:["같은 정책이라도 사람들의 생활 조건과 부담의 정도에 따라 받아들이는 수준이 달라질 수 있다.","정책의 수용성은 그 정책이 목표한 효과를 얼마나 크게 달성했는지에 따라 결정된다.","수용성이 낮은 정책은 실제 정책 효과도 나타날 수 없다고 보아야 한다.","다수의 주민이 정책에 동의한다면 일부 집단이 받는 상대적으로 큰 부담은 고려하지 않아도 된다.","모든 사람에게 같은 기준을 적용하면 생활 조건과 관계없이 실제 부담도 같다고 볼 수 있다."],
+    answer:"같은 정책이라도 사람들의 생활 조건과 부담의 정도에 따라 받아들이는 수준이 달라질 수 있다.",
+    explain:"정책의 '수용성'은 정책의 영향을 받는 사람들이 그 정책을 어느 정도 받아들이고 따를 수 있는지를 뜻합니다. 수용성은 정책의 효과성과 같은 개념이 아니며, 정책 효과가 크더라도 주민이 큰 부담을 느끼면 수용성은 낮을 수 있습니다." },
+  { q:"다음 상황을 '정책의 파급 효과'라고 볼 수 있는 가장 중요한 이유는 무엇일까요?", passage:passages.p11, area:"사회·공공 정책",
+    options:["정책 시행 전에 예상하지 못했던 결과가 나타났기 때문이다.","정책 시행 뒤 도심의 차량 통행량이 실제로 감소했기 때문이다.","정책의 효과를 확인하기 위한 새로운 자료가 필요해졌기 때문이다.","정책에 대한 지역 주민의 찬성과 반대가 동시에 나타났기 때문이다.","한 지역을 대상으로 한 정책의 영향이 주변의 다른 지역까지 이어졌기 때문이다."],
+    answer:"한 지역을 대상으로 한 정책의 영향이 주변의 다른 지역까지 이어졌기 때문이다.",
+    explain:"'파급 효과'는 어떤 정책이나 사건의 영향이 직접 대상에만 머물지 않고 주변의 다른 지역이나 집단까지 이어지는 것을 뜻합니다. 단순히 예상하지 못한 결과가 나왔다고 해서 모두 파급 효과인 것은 아니며, 영향이 다른 지역으로 퍼졌다는 점이 핵심입니다." },
+  { q:"정책 시행 후 다음과 같은 자료가 조사되었습니다. [ 도심 차량 통행량 20% 감소, 도심 버스 이용객 15% 증가, 인접 지역 차량 통행량 18% 증가, 외곽 지역 주민의 정책 찬성률 32% ] 이 자료를 종합하여 내린 판단으로 가장 적절한 것은 무엇일까요?", passage:passages.p1012, area:"사회·공공 정책",
+    options:["도심 차량이 감소했으므로 정책의 목표는 모두 달성되었다고 볼 수 있다.","도심의 교통량 감소라는 효과는 나타났지만, 인접 지역의 교통량 증가와 외곽 주민의 낮은 수용성도 함께 고려해야 한다.","버스 이용객이 증가했으므로 외곽 지역 주민의 교통 불편도 감소했다고 볼 수 있다.","인접 지역의 차량이 증가했으므로 도심에서 나타난 차량 감소 효과는 인정할 수 없다.","외곽 지역의 찬성률이 낮으므로 차량 통행량 변화는 정책과 관련이 없다고 볼 수 있다."],
+    answer:"도심의 교통량 감소라는 효과는 나타났지만, 인접 지역의 교통량 증가와 외곽 주민의 낮은 수용성도 함께 고려해야 한다.",
+    explain:"도심 차량 통행량 감소와 버스 이용객 증가는 긍정적인 변화이지만, 인접 지역 차량 통행량이 증가했고 외곽 주민의 찬성률도 낮았습니다. 정책의 직접 효과뿐 아니라 주변 지역의 변화와 수용성까지 함께 고려해야 합니다." },
+  { q:"(가)와 (나)의 주장에 대한 설명으로 가장 적절한 것은 무엇일까요?", passage:passages.p1315, area:"관점 비교·종합",
+    options:["(가)는 필요한 경우 인간의 개입이 필요하다고 보고, (나)는 개입할 경우 예상하지 못한 영향까지 신중하게 살펴야 한다고 본다.","(가)는 모든 야생 동물을 인공 번식해야 한다고 보고, (나)는 인공 번식만을 허용해야 한다고 본다.","(가)는 자연이 스스로 회복할 가능성을 완전히 부정하고, (나)는 인간에게 자연 보호의 책임이 없다고 본다.","(가)는 생태계보다 인간의 이익을 우선해야 한다고 보고, (나)는 야생 동물의 수를 인위적으로 줄여야 한다고 본다.","(가)와 (나)는 모두 인간이 자연에 개입하는 것을 원칙적으로 금지해야 한다고 본다."],
+    answer:"(가)는 필요한 경우 인간의 개입이 필요하다고 보고, (나)는 개입할 경우 예상하지 못한 영향까지 신중하게 살펴야 한다고 본다.",
+    explain:"(가)는 멸종 위험이 큰 상황에서는 인간의 개입이 필요하다고 보고, (나)는 개입 자체를 무조건 반대하기보다 그 영향과 범위를 신중하게 검토해야 한다고 봅니다." },
+  { q:"다음 상황에 대해 (가)와 (나)의 글쓴이가 모두 동의할 가능성이 가장 높은 것은 무엇일까요? [ 인간의 개발로 서식지가 크게 줄어들면서 어느 야생 동물의 개체 수가 급격히 감소하였다. 연구진은 인공 번식을 통해 개체 수를 늘리는 방안을 제안하였다. ]", passage:passages.p1315, area:"관점 비교·종합",
+    options:["인간이 원인을 제공했으므로 다른 생물에 미칠 영향과 관계없이 즉시 개체 수를 최대한 늘려야 한다.","자연에서 일어난 변화는 자연에 맡겨야 하므로 인간이 원인을 제공했더라도 개입해서는 안 된다.","보호의 필요성을 검토하되, 개입한다면 생태계에 미칠 영향을 조사하고 이후의 변화도 지속적으로 살펴야 한다.","개체 수가 감소했다는 사실만 확인되면 다른 자료를 조사할 필요 없이 인공 번식을 시작해야 한다.","인공 번식은 인간이 자연에 개입하는 행위이므로 어떤 상황에서도 자연 보호 방법으로 인정할 수 없다."],
+    answer:"보호의 필요성을 검토하되, 개입한다면 생태계에 미칠 영향을 조사하고 이후의 변화도 지속적으로 살펴야 한다.",
+    explain:"(가)는 필요할 경우 개입해야 한다고 보고, (나)는 개입한다면 생태계에 미칠 영향과 이후 변화를 충분히 살펴야 한다고 봅니다. 따라서 보호의 필요성을 검토하면서 개입의 영향도 조사하고 지속적으로 관찰하는 선택지가 두 글 모두가 동의할 가능성이 가장 높습니다." },
+  { q:"두 글을 읽은 학생이 다음과 같이 말했습니다. [ &ldquo;(가)는 적극적인 개입을 주장하고, (나)는 개입의 위험성을 강조하고 있어. 그러니까 두 글의 주장은 서로 완전히 모순된다고 볼 수 있어.&rdquo; ] 이 학생의 판단을 평가한 것으로 가장 타당한 것은 무엇일까요?", passage:passages.p1315, area:"관점 비교·종합",
+    options:["타당하다. 두 글은 인간에게 자연을 보호할 책임이 있는지를 두고 정반대의 입장을 취하기 때문이다.","타당하다. 한 글이 적극적 개입을 주장하면 다른 글은 반드시 개입 자체를 반대하는 입장이기 때문이다.","적절하지 않다. 두 글 모두 인간이 개입하면 생태계를 완전히 회복할 수 있다고 전제하기 때문이다.","적절하지 않다. (나)는 개입 자체를 무조건 반대하는 것이 아니라, 필요한 경우에도 개입의 범위와 영향을 신중하게 검토해야 한다고 보기 때문이다.","판단하기 어렵다. 두 글에서 다루는 야생 동물의 종류가 구체적으로 제시되어 있지 않기 때문이다."],
+    answer:"적절하지 않다. (나)는 개입 자체를 무조건 반대하는 것이 아니라, 필요한 경우에도 개입의 범위와 영향을 신중하게 검토해야 한다고 보기 때문이다.",
+    explain:"(나)는 인간의 개입 자체를 무조건 반대하지 않습니다. 필요한 상황에서도 개입의 범위와 영향을 신중하게 검토해야 한다고 주장합니다. 따라서 두 글이 서로 완전히 모순된다고 보는 학생의 판단은 적절하지 않습니다." }
+];
+
+// 총점 진단 기준
+const diagnosisBands = [
+  { min:13, max:15, title:'최상위 비판 독해형', desc:'낯선 추상 어휘의 의미를 문맥 속에서 정확하게 파악하고, 여러 자료와 관점을 종합하여 근거의 타당성과 결론의 한계까지 판단할 수 있습니다.' },
+  { min:10, max:12, title:'상위 심화 독해형', desc:'6학년 수준의 고난도 비문학을 안정적으로 이해합니다. 다만 여러 조건이 얽힌 자료 해석이나 관점 종합 문항에서는 일부 어려움이 나타날 수 있습니다.' },
+  { min:7,  max:9,  title:'발전 가능 독해형', desc:'글의 중심 내용과 직접적인 정보는 대체로 파악하지만, 추상적인 교과 어휘나 여러 조건을 함께 고려해야 하는 추론·적용 문제에서 흔들릴 수 있습니다.' },
+  { min:4,  max:6,  title:'어휘·추론 보완형', desc:'익숙한 내용이나 직접 제시된 정보는 부분적으로 이해하지만, 고급 어휘가 포함된 비문학에서 문장 간 논리 관계를 연결하고 근거를 종합하는 연습이 필요합니다.' },
+  { min:0,  max:3,  title:'기초 문해력 지원형', desc:'고학년 비문학을 이해하는 데 필요한 핵심 어휘와 문맥 추론 능력을 우선적으로 보완할 필요가 있습니다. 짧은 설명문부터 핵심어와 중심 내용을 연결하는 연습이 필요합니다.' }
+];
+function getDiagnosis(score){ return diagnosisBands.find(b => score >= b.min && score <= b.max); }
+
+// 영역별 상담 멘트 (낮은 경우)
+const areaComments = {
+  "고급 어휘·개념 추론": "고학년 교과서와 비문학 글에서 사용하는 추상적인 어휘의 의미를 정확하게 구별하는 힘을 보완할 필요가 있습니다. '왜곡·유보·편중·잠식·딜레마·귀결'과 같은 어휘는 단순히 뜻을 외우는 것보다 실제 문장에서 어떤 상황을 설명하는 말인지 이해하는 것이 중요합니다.",
+  "과학·기술 문해력": "과학 지문에서는 결과만 이해하는 것보다 '어떤 조건에서 얻은 결과인지', '새로운 조건에서도 같은 결과가 나타나는지'를 판단하는 힘이 중요합니다. 자료를 읽은 뒤 결과와 조건을 따로 표시하고, 어떤 결론까지 내릴 수 있는지 확인하는 연습이 도움이 됩니다.",
+  "사회·공공 정책": "사회 현상을 한 가지 결과만으로 판단하기보다 정책의 직접적인 효과와 주변에 미치는 영향, 사람마다 다른 부담까지 함께 살펴보는 연습이 필요합니다. 특히 '수용성'과 '파급 효과'처럼 하나의 정책을 여러 관점에서 이해하게 하는 어휘를 익히면 사회 비문학 독해력이 크게 향상될 수 있습니다.",
+  "관점 비교·종합": "두 글의 주장이 다르다고 해서 바로 서로 반대되는 주장이라고 판단하기보다, 각각 어디까지 동의하고 어느 부분에서 차이가 나는지 구분하는 힘이 필요합니다. 각 글의 핵심 주장을 한 문장으로 정리한 뒤 공통점과 차이점을 비교하는 연습이 도움이 됩니다."
+};
+const areaGoodComments = {
+  "고급 어휘·개념 추론": "추상적인 개념어의 의미를 문맥 속에서 정확하게 구별하고 있습니다.",
+  "과학·기술 문해력": "결과가 어떤 조건에서 얻어졌는지, 다른 조건에서도 재현되는지를 꼼꼼하게 따져 판단하고 있습니다.",
+  "사회·공공 정책": "정책의 직접 효과뿐 아니라 주변 영향과 사람마다 다른 부담까지 함께 고려하는 균형 잡힌 시각을 갖추고 있습니다.",
+  "관점 비교·종합": "서로 다른 두 글의 주장에서 공통점과 차이점을 정확하게 구분하여 비교하고 있습니다."
+};
+const AREA_ORDER = ["고급 어휘·개념 추론","과학·기술 문해력","사회·공공 정책","관점 비교·종합"];
+
+function circledNum(i) {
+  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+  return nums[i] || (i + 1) + '.';
+}
+function shuffleArray(array) {
+  const a = [...array];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const TOTAL = 15;
+let userAnswers = {};
+let questionStatus = {};
+let currentQuestions = [];
+let currentGroups = [];
+let currentFilter = 'all';
+
+function buildGroups(data) {
+  const groups = [];
+  const groupMap = new Map();
+  data.forEach(q => {
+    if (q.passage) {
+      if (!groupMap.has(q.passage)) {
+        const g = { passage: q.passage, questions: [] };
+        groupMap.set(q.passage, g);
+        groups.push(g);
+      }
+      groupMap.get(q.passage).questions.push(q);
+    } else {
+      groups.push({ passage: null, questions: [q] });
+    }
+  });
+  return groups;
+}
+
+function initTest() {
+  const groups = buildGroups(rawData);
+  currentGroups = shuffleArray(groups).map(g => ({ passage: g.passage, questions: shuffleArray(g.questions) }));
+  currentQuestions = [];
+  currentGroups.forEach(g => g.questions.forEach(q => currentQuestions.push(q)));
+  userAnswers = {};
+  questionStatus = {};
+  currentFilter = 'all';
+  renderQuestions();
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions-A');
+  container.innerHTML = '';
+  let idx = 0;
+  currentGroups.forEach(g => {
+    let target = container;
+    if (g.passage) {
+      const startNum = idx + 1;
+      const endNum = idx + g.questions.length;
+      const rangeLabel = g.questions.length > 1 ? `[${startNum}~${endNum}]` : `[${startNum}]`;
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'passage-group';
+      groupDiv.innerHTML = `<div class="passage-range-label">${rangeLabel} 다음 글을 읽고 물음에 답하세요.</div><div class="passage-box">${g.passage}</div>`;
+      container.appendChild(groupDiv);
+      target = groupDiv;
+    }
+    g.questions.forEach(q => {
+      const index = idx++;
+      const div = document.createElement('div');
+      div.className = 'question-card';
+      div.dataset.index = index;
+      div.dataset.status = questionStatus[index] || 'unanswered';
+
+      const opts = shuffleArray(q.options);
+
+      div.innerHTML = `
+        <div class="question-header">
+          <div class="question-number">${index + 1}.</div>
+          <div class="question-text">${q.q}</div>
+        </div>
+        <div class="options">
+          ${opts.map((opt, oi) => `
+            <label class="option-row" data-value="${opt.replace(/"/g,'&quot;')}">
+              <input type="radio" name="q-A-${index}" value="${opt.replace(/"/g,'&quot;')}" onchange="selectOption(${index}, this)">
+              <span class="option-text">${circledNum(oi)} ${opt}</span>
+            </label>`).join('')}
+        </div>
+        <div class="hint-section" id="hint-${index}">
+          <div class="hint-title">💡 힌트 (영역: ${q.area})</div>
+          <div class="hint-content">
+            <div><strong>설명:</strong> ${q.explain}</div>
+            <div class="hint-answer"><strong>정답:</strong> ${q.answer}</div>
+          </div>
+        </div>
+      `;
+      target.appendChild(div);
+    });
+  });
+  applyFilter();
+  updateProgress();
+}
+
+function selectOption(index, el) {
+  const card = el.closest('.question-card');
+  card.querySelectorAll('.option-row').forEach(o => o.classList.remove('selected'));
+  const row = el.closest('.option-row');
+  row.classList.add('selected');
+  userAnswers[index] = el.value;
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = Object.keys(userAnswers).filter(k => userAnswers[k]).length;
+  document.getElementById('progressA').textContent = `${answered} / ${TOTAL} 문제 완료`;
+}
+
+function checkAnswers() {
+  let correctCount = 0;
+  let wrongQuestions = [];
+  const areaStats = {};
+  AREA_ORDER.forEach(a => areaStats[a] = { correct:0, total:0 });
+
+  const cards = document.querySelectorAll('#questions-A .question-card');
+
+  cards.forEach((card, index) => {
+    const q = currentQuestions[index];
+    const correctAnswer = q.answer;
+    const userAnswer = userAnswers[index];
+    areaStats[q.area].total++;
+
+    if (questionStatus[index] === 'correct') {
+      correctCount++;
+      areaStats[q.area].correct++;
+      return;
+    }
+
+    const opts = card.querySelectorAll('.option-row');
+    opts.forEach(opt => {
+      opt.classList.add('disabled');
+      opt.querySelector('input[type="radio"]').disabled = true;
+      const optText = opt.dataset.value;
+      if (optText === correctAnswer) opt.classList.add('correct');
+      if (optText === userAnswer && userAnswer !== correctAnswer) opt.classList.add('incorrect');
+    });
+
+    if (userAnswer === correctAnswer) {
+      correctCount++;
+      areaStats[q.area].correct++;
+      questionStatus[index] = 'correct';
+      card.dataset.status = 'correct';
+      card.classList.add('correct-card');
+    } else {
+      questionStatus[index] = 'wrong';
+      card.dataset.status = 'wrong';
+      card.classList.add('wrong');
+      wrongQuestions.push(index);
+
+      const hintBtn = document.createElement('button');
+      hintBtn.className = 'hint-btn';
+      hintBtn.textContent = '💡 힌트 보기';
+      hintBtn.onclick = () => toggleHint(index);
+      card.appendChild(hintBtn);
+    }
+  });
+
+  const percentage = Math.round((correctCount / TOTAL) * 100);
+  const diag = getDiagnosis(correctCount);
+  const resultDiv = document.getElementById('result-A');
+
+  let areaHtml = '';
+  AREA_ORDER.forEach(area => {
+    const st = areaStats[area];
+    if (st.total === 0) return;
+    const rate = st.correct / st.total;
+    const isLow = rate < 0.6;
+    const pct = Math.round(rate * 100);
+    const comment = isLow ? areaComments[area] : areaGoodComments[area];
+    areaHtml += `
+      <div class="area-row">
+        <div class="area-row-head">
+          <span class="area-name">${area}</span>
+          <span class="area-score ${isLow ? 'low':''}">${st.correct} / ${st.total} (${pct}%)</span>
+        </div>
+        <div class="area-bar-bg"><div class="area-bar-fill ${isLow?'low':''}" style="width:${pct}%;"></div></div>
+        <div class="area-comment">${comment}</div>
+      </div>`;
+  });
+
+  resultDiv.innerHTML = `
+    <h3>🎉 결과</h3>
+    <p>맞힌 문제: ${correctCount} / ${TOTAL}</p>
+    <p>정답률: ${percentage}%</p>
+    <div class="diagnosis-card">
+      <div class="diagnosis-title">📊 총점 진단 : ${correctCount}점 · ${diag.title}</div>
+      <div class="diagnosis-desc">${diag.desc}</div>
+      <div class="diagnosis-note">※ 이 평가는 심화 진단평가이므로 점수가 낮게 나오더라도 바로 낮은 문해력으로 해석해서는 안 됩니다.</div>
+    </div>
+    <div class="area-report">
+      <div class="area-report-title">🗂️ 영역별 상담 결과</div>
+      ${areaHtml}
+    </div>
+  `;
+  resultDiv.classList.add('show');
+
+  event.target.style.display = 'none';
+
+  if (wrongQuestions.length > 0) {
+    document.querySelector('.retry-btn').style.display = 'inline-block';
+    document.getElementById('filterA').classList.add('show');
+  }
+}
+
+function toggleHint(index) {
+  const h = document.getElementById(`hint-${index}`);
+  h.classList.toggle('show');
+}
+
+function retryWrong() {
+  const cards = document.querySelectorAll('#questions-A .question-card');
+  cards.forEach((card, index) => {
+    if (questionStatus[index] === 'wrong') {
+      card.classList.remove('wrong');
+      const h = document.getElementById(`hint-${index}`);
+      if (h) h.classList.remove('show');
+      const hb = card.querySelector('.hint-btn');
+      if (hb) hb.remove();
+      const opts = card.querySelectorAll('.option-row');
+      opts.forEach(o => {
+        o.classList.remove('selected','correct','incorrect','disabled');
+        const input = o.querySelector('input[type="radio"]');
+        input.disabled = false;
+        input.checked = false;
+      });
+      userAnswers[index] = '';
+      questionStatus[index] = 'retry';
+    }
+  });
+
+  document.getElementById('result-A').classList.remove('show');
+  document.querySelector('.submit-btn').style.display = 'inline-block';
+  event.target.style.display = 'none';
+  filterQuestions('wrong');
+}
+
+function filterQuestions(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('#filterA .filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  const cards = document.querySelectorAll('#questions-A .question-card');
+  cards.forEach((card, index) => {
+    if (currentFilter === 'all') {
+      card.style.display = 'block';
+    } else {
+      card.style.display = (questionStatus[index] === 'wrong' || questionStatus[index] === 'retry') ? 'block' : 'none';
+    }
+  });
+  document.querySelectorAll('#questions-A .passage-group').forEach(group => {
+    const anyVisible = Array.from(group.querySelectorAll('.question-card')).some(c => c.style.display !== 'none');
+    group.style.display = anyVisible ? 'block' : 'none';
+  });
+}
+
+function resetTest() {
+  initTest();
+  const resultDiv = document.getElementById('result-A');
+  resultDiv.classList.remove('show');
+  resultDiv.innerHTML = '';
+  document.querySelector('.submit-btn').style.display = 'inline-block';
+  document.querySelector('.retry-btn').style.display = 'none';
+  const filterDiv = document.getElementById('filterA');
+  filterDiv.classList.remove('show');
+  const fbtns = filterDiv.querySelectorAll('.filter-btn');
+  fbtns.forEach(b => b.classList.remove('active'));
+  fbtns[0].classList.add('active');
+}
+
+window.onload = initTest;
+</script>
+</body>
+</html>

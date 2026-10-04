@@ -1,0 +1,548 @@
+<title>2026 추석 인사 - 다온 솔루션 · 온에듀</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --sky-top: #070E1F;
+    --sky-mid: #0F1B33;
+    --sky-bottom: #1C2B4A;
+    --moon-core: #FFF8E1;
+    --moon-mid: #F0D680;
+    --moon-edge: #D4A853;
+    --glow-warm: rgba(232, 197, 100, 0.15);
+    --text-bright: #F5ECD7;
+    --text-soft: rgba(245, 236, 215, 0.7);
+    --accent-persimmon: #C75B2A;
+    --silhouette: #0A1220;
+    --reed-dark: #111A0E;
+    --reed-mid: #1A2D18;
+  }
+
+  body {
+    background: var(--sky-top);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    overflow: hidden;
+    gap: 20px;
+  }
+
+  .card-wrap {
+    position: relative;
+    width: min(420px, 92vw);
+    aspect-ratio: 3 / 5;
+    max-height: 88vh;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow:
+      0 0 80px rgba(212, 168, 83, 0.08),
+      0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  canvas#scene {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 10% 8%;
+    pointer-events: none;
+  }
+
+  .greeting-block {
+    text-align: center;
+    animation: fadeUp 1.8s ease-out 0.6s both;
+  }
+
+  .eyebrow {
+    font-size: clamp(0.65rem, 1.8vw, 0.8rem);
+    color: var(--moon-mid);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 1.2em;
+    opacity: 0.85;
+  }
+
+  .main-greeting {
+    font-size: clamp(1.5rem, 5.5vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+    text-wrap: balance;
+    margin-bottom: 0.3em;
+  }
+
+  .sub-greeting {
+    font-size: clamp(0.85rem, 2.6vw, 1.05rem);
+    color: var(--text-soft);
+    line-height: 1.8;
+    font-weight: 400;
+    margin-bottom: 2em;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--moon-edge), transparent);
+    margin: 0 auto 1.6em;
+  }
+
+  .from-block {
+    text-align: center;
+    animation: fadeUp 1.8s ease-out 1.2s both;
+  }
+
+  .from-label {
+    font-size: clamp(0.6rem, 1.6vw, 0.72rem);
+    color: var(--text-soft);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.6em;
+    opacity: 0.6;
+  }
+
+  .from-name {
+    font-size: clamp(0.82rem, 2.4vw, 0.95rem);
+    color: var(--moon-mid);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1.7;
+  }
+
+  .from-name span {
+    display: inline-block;
+    opacity: 0.45;
+    margin: 0 0.4em;
+  }
+
+  .dl-btn {
+    pointer-events: auto;
+    background: rgba(212, 168, 83, 0.15);
+    border: 1px solid rgba(212, 168, 83, 0.35);
+    color: #F0D680;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 10px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background 0.25s, border-color 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .dl-btn:hover {
+    background: rgba(212, 168, 83, 0.28);
+    border-color: rgba(212, 168, 83, 0.55);
+  }
+  .dl-btn svg { width: 15px; height: 15px; }
+
+  .save-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.85);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 20px;
+  }
+  .save-overlay.active { display: flex; }
+  .save-hint {
+    color: #F0D680;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .save-img {
+    max-width: 90vw;
+    max-height: 75vh;
+    border-radius: 14px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: rgba(245, 236, 215, 0.6);
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .close-btn:hover { color: #F5ECD7; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-height: 600px) {
+    .card-wrap { aspect-ratio: auto; height: 88vh; }
+  }
+</style>
+
+<div class="card-wrap" id="card">
+  <canvas id="scene"></canvas>
+  <div class="content">
+    <div class="greeting-block">
+      <div class="eyebrow">2 0 2 6  한 가 위</div>
+      <div class="main-greeting">
+        풍요로운 추석 명절<br>보내시길 바랍니다
+      </div>
+      <div class="sub-greeting">
+        넉넉한 마음과 따뜻한 정이<br>가득한 한가위 되세요
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="from-block">
+      <div class="from-label">FROM</div>
+      <div class="from-name">다온 솔루션 <span>·</span> 온에듀 대표</div>
+    </div>
+  </div>
+</div>
+
+<button class="dl-btn" onclick="showSaveImage()">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 3v10m0 0l-3.5-3.5M10 13l3.5-3.5M3 15v1.5A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5V15"/>
+  </svg>
+  이미지 저장 (PNG)
+</button>
+
+<div class="save-overlay" id="saveOverlay">
+  <button class="close-btn" onclick="closeSave()">&times;</button>
+  <div class="save-hint">아래 이미지를 우클릭(PC) 또는 길게 누르기(모바일)<br>→ "이미지를 다른 이름으로 저장"</div>
+  <img class="save-img" id="saveImg" alt="2026 추석 인사 카드">
+</div>
+
+<script>
+const C = document.getElementById('scene');
+const ctx = C.getContext('2d');
+let W, H, dpr, stars = [], reeds = [];
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const r = C.getBoundingClientRect();
+  W = r.width; H = r.height;
+  C.width = W * dpr; C.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  genStars();
+  genReeds();
+}
+
+function genStars() {
+  stars = [];
+  const count = Math.floor(W * H / 800);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H * 0.65,
+      r: Math.random() * 1.2 + 0.3,
+      a: Math.random() * 0.6 + 0.2,
+      speed: Math.random() * 0.008 + 0.003,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function genReeds() {
+  reeds = [];
+  const count = Math.floor(W / 4);
+  for (let i = 0; i < count; i++) {
+    const x = (i / count) * W + (Math.random() - 0.5) * 6;
+    const baseH = H;
+    const h = Math.random() * H * 0.22 + H * 0.06;
+    const hasTip = Math.random() > 0.5;
+    const curve = (Math.random() - 0.5) * 20;
+    const thickness = Math.random() * 1.5 + 0.8;
+    const sway = Math.random() * 3 + 1;
+    const phase = Math.random() * Math.PI * 2;
+    reeds.push({ x, baseH, h, hasTip, curve, thickness, sway, phase });
+  }
+}
+
+function drawSky(c) {
+  const g = c.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#070E1F');
+  g.addColorStop(0.45, '#0F1B33');
+  g.addColorStop(0.85, '#1C2B4A');
+  g.addColorStop(1, '#1F3050');
+  c.fillStyle = g;
+  c.fillRect(0, 0, W, H);
+}
+
+function drawStars(c, t) {
+  for (const s of stars) {
+    const twinkle = Math.sin(t * s.speed * 60 + s.phase) * 0.3 + 0.7;
+    c.globalAlpha = s.a * twinkle;
+    c.fillStyle = '#F5ECD7';
+    c.beginPath();
+    c.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    c.fill();
+  }
+  c.globalAlpha = 1;
+}
+
+function drawMoon(c) {
+  const mx = W * 0.5;
+  const my = H * 0.28;
+  const mr = Math.min(W, H) * 0.14;
+
+  const g3 = c.createRadialGradient(mx, my, mr, mx, my, mr * 5);
+  g3.addColorStop(0, 'rgba(232, 197, 100, 0.07)');
+  g3.addColorStop(0.4, 'rgba(232, 197, 100, 0.03)');
+  g3.addColorStop(1, 'transparent');
+  c.fillStyle = g3;
+  c.fillRect(0, 0, W, H);
+
+  const g2 = c.createRadialGradient(mx, my, mr * 0.5, mx, my, mr * 2.5);
+  g2.addColorStop(0, 'rgba(240, 214, 128, 0.18)');
+  g2.addColorStop(0.5, 'rgba(240, 214, 128, 0.06)');
+  g2.addColorStop(1, 'transparent');
+  c.fillStyle = g2;
+  c.beginPath();
+  c.arc(mx, my, mr * 2.5, 0, Math.PI * 2);
+  c.fill();
+
+  const g1 = c.createRadialGradient(mx - mr * 0.15, my - mr * 0.15, mr * 0.1, mx, my, mr);
+  g1.addColorStop(0, '#FFFEF5');
+  g1.addColorStop(0.3, '#FFF8E1');
+  g1.addColorStop(0.7, '#F0D680');
+  g1.addColorStop(1, '#D4A853');
+  c.fillStyle = g1;
+  c.beginPath();
+  c.arc(mx, my, mr, 0, Math.PI * 2);
+  c.fill();
+
+  c.globalAlpha = 0.06;
+  c.fillStyle = '#A08030';
+  const craters = [
+    { ox: -0.25, oy: -0.1, r: 0.18 },
+    { ox: 0.15, oy: 0.2, r: 0.12 },
+    { ox: -0.1, oy: 0.3, r: 0.09 },
+    { ox: 0.3, oy: -0.15, r: 0.07 },
+    { ox: 0.05, oy: -0.25, r: 0.1 },
+  ];
+  for (const cr of craters) {
+    c.beginPath();
+    c.arc(mx + cr.ox * mr, my + cr.oy * mr, cr.r * mr, 0, Math.PI * 2);
+    c.fill();
+  }
+  c.globalAlpha = 1;
+}
+
+function drawHills(c) {
+  c.fillStyle = '#0D1620';
+  c.beginPath();
+  c.moveTo(-W * 0.1, H * 0.88);
+  c.quadraticCurveTo(W * 0.25, H * 0.78, W * 0.55, H * 0.84);
+  c.quadraticCurveTo(W * 0.8, H * 0.79, W * 1.1, H * 0.86);
+  c.lineTo(W * 1.1, H);
+  c.lineTo(-W * 0.1, H);
+  c.fill();
+
+  c.fillStyle = '#0A1018';
+  c.beginPath();
+  c.moveTo(-W * 0.1, H * 0.92);
+  c.quadraticCurveTo(W * 0.15, H * 0.85, W * 0.4, H * 0.9);
+  c.quadraticCurveTo(W * 0.65, H * 0.84, W * 1.1, H * 0.9);
+  c.lineTo(W * 1.1, H);
+  c.lineTo(-W * 0.1, H);
+  c.fill();
+}
+
+function drawReeds(c, t) {
+  for (const r of reeds) {
+    const swayX = Math.sin(t * 0.0015 + r.phase) * r.sway;
+    const topX = r.x + r.curve + swayX;
+    const topY = r.baseH - r.h;
+
+    c.strokeStyle = '#0E170A';
+    c.lineWidth = r.thickness;
+    c.lineCap = 'round';
+    c.beginPath();
+    c.moveTo(r.x, r.baseH);
+    c.quadraticCurveTo(r.x + r.curve * 0.3, r.baseH - r.h * 0.5, topX, topY);
+    c.stroke();
+
+    if (r.hasTip && r.h > H * 0.1) {
+      c.strokeStyle = '#1A2510';
+      c.lineWidth = r.thickness * 0.6;
+      const tipLen = r.h * 0.18;
+      for (let j = 0; j < 5; j++) {
+        const angle = ((j - 2) / 2) * 0.3 + Math.sin(t * 0.002 + r.phase + j) * 0.05;
+        c.beginPath();
+        c.moveTo(topX, topY);
+        c.lineTo(topX + Math.sin(angle) * tipLen, topY - Math.cos(angle) * tipLen);
+        c.stroke();
+      }
+    }
+  }
+}
+
+function drawGroundFog(c) {
+  const g = c.createLinearGradient(0, H * 0.88, 0, H);
+  g.addColorStop(0, 'transparent');
+  g.addColorStop(0.5, 'rgba(20, 30, 50, 0.3)');
+  g.addColorStop(1, 'rgba(15, 22, 38, 0.6)');
+  c.fillStyle = g;
+  c.fillRect(0, H * 0.88, W, H * 0.12);
+}
+
+function drawCloud(c, t) {
+  c.globalAlpha = 0.025;
+  const cx = W * 0.7 + Math.sin(t * 0.0003) * W * 0.05;
+  const cy = H * 0.2;
+  const g = c.createRadialGradient(cx, cy, 0, cx, cy, W * 0.2);
+  g.addColorStop(0, '#D4A853');
+  g.addColorStop(1, 'transparent');
+  c.fillStyle = g;
+  c.fillRect(0, 0, W, H * 0.5);
+  c.globalAlpha = 1;
+}
+
+function drawText(c) {
+  const centerX = W * 0.5;
+
+  // eyebrow
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  c.fillStyle = '#F0D680';
+  c.globalAlpha = 0.85;
+  c.font = '500 ' + (W * 0.031) + 'px "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+  c.letterSpacing = '0.35em';
+  c.fillText('2 0 2 6   한 가 위', centerX, H * 0.605);
+  c.globalAlpha = 1;
+
+  // main greeting
+  c.fillStyle = '#F5ECD7';
+  c.font = '700 ' + (W * 0.085) + 'px "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+  c.fillText('풍요로운 추석 명절', centerX, H * 0.67);
+  c.fillText('보내시길 바랍니다', centerX, H * 0.73);
+
+  // sub greeting
+  c.fillStyle = 'rgba(245, 236, 215, 0.7)';
+  c.font = '400 ' + (W * 0.042) + 'px "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+  c.fillText('넉넉한 마음과 따뜻한 정이', centerX, H * 0.795);
+  c.fillText('가득한 한가위 되세요', centerX, H * 0.825);
+
+  // divider
+  const dg = c.createLinearGradient(centerX - 20, 0, centerX + 20, 0);
+  dg.addColorStop(0, 'transparent');
+  dg.addColorStop(0.5, '#D4A853');
+  dg.addColorStop(1, 'transparent');
+  c.strokeStyle = dg;
+  c.lineWidth = 1;
+  c.beginPath();
+  c.moveTo(centerX - 20, H * 0.865);
+  c.lineTo(centerX + 20, H * 0.865);
+  c.stroke();
+
+  // from label
+  c.fillStyle = 'rgba(245, 236, 215, 0.42)';
+  c.font = '400 ' + (W * 0.028) + 'px "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+  c.fillText('FROM', centerX, H * 0.9);
+
+  // from name
+  c.fillStyle = '#F0D680';
+  c.font = '500 ' + (W * 0.038) + 'px "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+  c.fillText('다온 솔루션  ·  온에듀 대표', centerX, H * 0.935);
+}
+
+function renderScene(c, t) {
+  c.clearRect(0, 0, W, H);
+  drawSky(c);
+  drawStars(c, t / 1000);
+  drawCloud(c, t);
+  drawMoon(c);
+  drawHills(c);
+  drawReeds(c, t);
+  drawGroundFog(c);
+}
+
+let startTime = null;
+function render(ts) {
+  if (!startTime) startTime = ts;
+  const t = ts - startTime;
+  renderScene(ctx, t);
+  requestAnimationFrame(render);
+}
+
+function showSaveImage() {
+  const EW = 1080;
+  const EH = 1800;
+
+  const oldW = W, oldH = H;
+  const oldStars = [...stars];
+  const oldReeds = [...reeds];
+  const oldDpr = dpr;
+
+  const ec = document.createElement('canvas');
+  ec.width = EW;
+  ec.height = EH;
+  const ectx = ec.getContext('2d');
+
+  W = EW; H = EH;
+  dpr = 1;
+  genStars();
+  genReeds();
+
+  renderScene(ectx, 2000);
+  drawText(ectx);
+
+  const rc = document.createElement('canvas');
+  rc.width = EW; rc.height = EH;
+  const rctx = rc.getContext('2d');
+  const radius = 36;
+  rctx.beginPath();
+  rctx.moveTo(radius, 0);
+  rctx.lineTo(EW - radius, 0);
+  rctx.quadraticCurveTo(EW, 0, EW, radius);
+  rctx.lineTo(EW, EH - radius);
+  rctx.quadraticCurveTo(EW, EH, EW - radius, EH);
+  rctx.lineTo(radius, EH);
+  rctx.quadraticCurveTo(0, EH, 0, EH - radius);
+  rctx.lineTo(0, radius);
+  rctx.quadraticCurveTo(0, 0, radius, 0);
+  rctx.closePath();
+  rctx.clip();
+  rctx.drawImage(ec, 0, 0);
+
+  W = oldW; H = oldH;
+  dpr = oldDpr;
+  stars = oldStars;
+  reeds = oldReeds;
+
+  document.getElementById('saveImg').src = rc.toDataURL('image/png');
+  document.getElementById('saveOverlay').classList.add('active');
+}
+
+function closeSave() {
+  document.getElementById('saveOverlay').classList.remove('active');
+}
+
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(render);
+</script>

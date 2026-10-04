@@ -134,23 +134,16 @@ include "../libs/header.php";
                                     <div class="d-flex align-items-end justify-content-end"
                                         style="margin-bottom: 10px;">
                                         <div class="input-group mb-3">
+                                            <span id="idPriceGroupField" style="display:none">
+                                                <span class="d-flex badge bg-light text-dark align-items-center">가격표</span>
+                                                <select class="form-select form-control-sm" id="idPriceGroup" style="width: 120px" onchange="showPriceGroup(this.value)"></select>
+                                                &nbsp;
+                                            </span>
                                             <span class="d-flex badge bg-light text-dark align-items-center">필터</span>
                                             &nbsp;
                                             <select class="form-select form-control-sm" id="idGrade"
                                                 data-placeholder="Choose Items" style="width: 120px">
-                                                <option val="va">전체</option>
-                                                <option val="v4">한자뚝0</option>
-                                                <option val="v5">한자뚝A</option>
-                                                <option val="v6">한자뚝B</option>
-                                                <option val="v7">한자파닉스</option>
-                                                <option val="v8">파자한자1</option>
-                                                <option val="v9">파자한자2</option>
-                                                <option val="v10">파자한자3</option>
-                                                <option val="v11">파자한자4</option>
-                                                <option val="v12">파자한자5</option>
-                                                <option val="v13">파자한자6</option>
-                                                <option val="v14">파자한자7</option>
-                                                <option val="v15">어휘의신</option>
+                                                <option value="va">전체</option>
                                             </select>
                                         </div>
                                     </div>
@@ -359,7 +352,8 @@ include "../libs/header.php";
     <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js">
     </script>
 
-    <script src="../js/common.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/roles.js"></script>
     <script src="../js/header.js"></script>
     <script src="../js/libpdf.js"></script>
     <script src="bookorder.js"></script>
@@ -367,9 +361,8 @@ include "../libs/header.php";
 
 
     <script>
-        let listprice2;
-        let data;
-        let sele = "가맹관리";
+        let listprice2 = [];
+        let priceGroups = {};   // 지사 그룹별 가격표 (가격표.xlsx → Server/price_catalog.json)
         var porId = "";
 
         // if (role != '1' && role != '2' && role != '3' && role != '9') {
@@ -387,50 +380,38 @@ include "../libs/header.php";
         else
             $("#idBtDelever").css('visibility', 'hidden');
 
-        async function updateTableData(response) {
-            try {
-                // const response = await fetch(`${url}?t=${new Date().getTime()}`);
-                // data = await response.json();
-
-                data = JSON.parse(response['success'][0]['price'])
-
-                if (role == "1")
-                    sele = "지사관리"
-                else if (role == "2")
-                    sele = "원관리"
-
-                listprice2 = [...data[sele]["한자뚝0"], ...data[sele]["한자뚝A"], ...data[sele]["한자뚝B"], ...data[sele]["한자파닉스"],
-                    ...data[sele]["파자한자1"], ...data[sele]["파자한자2"], ...data[sele]["파자한자3"], ...data[sele]["파자한자4"],
-                    ...data[sele]["파자한자5"], ...data[sele]["파자한자6"], ...data[sele]["파자한자7"], ...data[sele]["어휘의신"]
-                ];
-
-                table.setData(listprice2)
-                    .then(() => {
-                        console.log("테이블 데이터 업데이트 완료");
-                    })
-                    .catch(error => {
-                        console.error("데이터 설정 중 오류:", error);
-                    });
-            } catch (error) {
-                console.error("데이터 가져오기 실패:", error);
-            }
+        // 선택한 그룹의 가격표를 주문 테이블에 표시. uid = 교재 코드 (주문내역 → 학습 열람 권한에 사용)
+        function showPriceGroup(key) {
+            const group = priceGroups[key];
+            listprice2 = (group ? group.items : []).map(item => ({
+                uid: item.code,
+                grade: item.family,
+                title: item.title,
+                price: item.price,
+            }));
+            const families = [...new Set(listprice2.map(item => item.grade))];
+            document.getElementById("idGrade").replaceChildren(new Option("전체", "va"), ...families.map(family => new Option(family, family)));
+            table.setData(listprice2);
         }
-        dispErr = (xhr) => {
-            CallToast("price list 조회 실패!!", "error");
-        };
 
+        // 서버는 로그인한 지사 그룹의 가격표만 준다 (본사는 전체 → 가격표 선택 표시)
+        function updateTableData(response) {
+            priceGroups = (response.success && response.success.groups) || {};
+            const keys = Object.keys(priceGroups);
+            document.getElementById("idPriceGroup").replaceChildren(...keys.map(key => new Option(priceGroups[key].name, key)));
+            document.getElementById("idPriceGroupField").style.display = keys.length > 1 ? "contents" : "none";
+            if (keys.length === 0) CallToast("주문할 수 있는 가격표가 없습니다.", "error");
+            showPriceGroup(keys[0]);
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 테이블 초기화
-            //updateTableData('price.json')
             var options = {
-                functionName: "SGetListPrice",
-                otherData: {
-                    id: ""
-                },
+                functionName: "SGetPriceCatalog",
+                otherData: {},
             };
-            CallAjax("SMethods.php", "POST", options, updateTableData, dispErr);
-
+            CallAjax("SMethods.php", "POST", options, updateTableData, (e) => {
+                CallToast((e && e.responseJSON && e.responseJSON.error) || "가격표 조회 실패!!", "error");
+            });
         });
         orderToPdf = () => {
             var element = document.getElementById('idTableConfirm');
@@ -456,11 +437,7 @@ include "../libs/header.php";
 
         }
 
-        let rolename = "지사장";
-        if (role == 2)
-            rolename = "선생님"
-        else if (role == 3)
-            rolename = "가맹점"
+        const rolename = GP_ROLE.orderTitle(role); // js/roles.js
         document.getElementById("idOrdertext").innerHTML = (user + ` ${rolename}/구매`);
 
         const {

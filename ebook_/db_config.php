@@ -18,15 +18,15 @@ $isLocal  = (strpos($fullURL, "localhost") !== false)
 // 데이터베이스 설정
 define('DB_HOST', 'localhost');
 define('DB_CHARSET', 'utf8mb4');
-define('DB_NAME', 'happyzip1');
+define('DB_NAME', 'happyzip2');
 if ($isLocal) {
     define('DB_USER', 'root');                   // 데이터베이스 사용자명
     define('DB_PASS', 'manager');                // 데이터베이스 비밀번호 (XAMPP 기본값은 빈 문자열) 
 }
 else {
     // 운영 서버 데이터베이스 설정
-    define('DB_USER', 'happyzip1');
-    define('DB_PASS', 'skl329350281@');
+    define('DB_USER', 'happyzip2');
+    define('DB_PASS', 'skl32935028@');
 }
 
 

@@ -1058,9 +1058,10 @@ document.getElementById("idGrade").addEventListener("change", function () {
   //     selectedText +
   //     '" order by uid asc';
   // var res = alasql(sql, [listprice2]);
+  // 교재군(가격표 family) 으로 필터
   if (selectedText == "전체") {
     items = listprice2;
-  } else items = data[sele][selectedText];
+  } else items = listprice2.filter((item) => item.grade === selectedText);
 
   // res.forEach((el) => {
   //   var jarr = {

@@ -29,6 +29,7 @@ header("Expires: 0"); // Proxies
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <title>지사 및 원관리</title>
     <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/roles.js"></script>
     <script src="../js/role-nav.js" defer></script>
     <style>
         .gp-visitor-strip{background:#1f5233; color:#eafff0; font-size:.78rem; padding:6px 20px; display:flex; justify-content:flex-end; align-items:center; gap:10px;}
@@ -101,7 +102,8 @@ header("Expires: 0"); // Proxies
 
         .kgarden-form {
             display: grid;
-            grid-template-columns: 88px 82px 130px 130px 115px 100px 100px 80px minmax(180px, 1.5fr) 92px 72px;
+            /* 구분 과정 지사명 대표자명 전화 아이디 암호 [주소검색] 우편번호 주소 [등록] */
+            grid-template-columns: 124px 82px 130px 130px 115px 100px 100px 92px 80px minmax(180px, 1.5fr) 72px;
             gap: 8px;
             align-items: end;
             width: 100%;
@@ -195,6 +197,7 @@ header("Expires: 0"); // Proxies
         }
 
         .kgarden-table-wrap .tabulator {
+            width: 100%;
             border: 0;
             font-size: 14px;
         }
@@ -344,12 +347,12 @@ header("Expires: 0"); // Proxies
                             </select>
                         </div>
                         <div class="kgarden-field">
-                            <label for="idOwner">지사/가맹점</label>
-                            <input id="idOwner" type="text" placeholder="지사회사/가맹지점명">
+                            <label for="idOwner" id="idOwnerLabel">지사/가맹점</label>
+                            <input id="idOwner" type="text" placeholder="지사회사/가맹지점명" maxlength="30">
                         </div>
                         <div class="kgarden-field">
-                            <label for="idName">원/학원명</label>
-                            <input id="idName" type="text" placeholder="유치원명/학원명">
+                            <label for="idName" id="idNameLabel">원/학원명</label>
+                            <input id="idName" type="text" placeholder="유치원명/학원명" maxlength="20">
                         </div>
                         <div class="kgarden-field">
                             <label for="idMobile">전화번호</label>
@@ -357,12 +360,13 @@ header("Expires: 0"); // Proxies
                         </div>
                         <div class="kgarden-field">
                             <label for="idID">아이디</label>
-                            <input id="idID" type="text" placeholder="아이디">
+                            <input id="idID" type="text" placeholder="아이디" maxlength="30">
                         </div>
                         <div class="kgarden-field">
                             <label for="idPasswd">암호</label>
-                            <input id="idPasswd" type="text" placeholder="암호(영어)" pattern="^[a-zA-Z0-9\s]*$" required>
+                            <input id="idPasswd" type="text" placeholder="영문/숫자 4~30자" pattern="^[a-zA-Z0-9]{4,30}$" maxlength="30" required>
                         </div>
+                        <button class="btn btn-outline-primary kgarden-btn" type="button" onclick="execDaumPostcode('idZip','idAddr')">주소검색</button>
                         <div class="kgarden-field">
                             <label for="idZip">우편번호</label>
                             <input id="idZip" type="text" placeholder="우편번호">
@@ -371,7 +375,7 @@ header("Expires: 0"); // Proxies
                             <label for="idAddr">주소</label>
                             <input id="idAddr" type="text" placeholder="주소">
                         </div>
-                        <button class="btn btn-outline-primary kgarden-btn" type="button" onclick="execDaumPostcode('idZip','idAddr')">주소검색</button>
+
                         <button class="btn btn-success kgarden-btn" type="button" onclick="AddBranch()">등록</button>
                     </div>
                 </div>
@@ -400,24 +404,36 @@ header("Expires: 0"); // Proxies
     <script>
         var table;
 
+        // 로그인 role 별로 등록·관리할 수 있는 하위 계정 — role 정의는 js/roles.js
+        // 실제 권한 검사는 서버(Server/mgr_policy.php)에서 하며, 이 표와 같게 유지한다.
+        //   본사(9) → 유치원·학원·홈스쿨·화상수업·방과후 지사(1~5),  지사 → 자기 그룹 선생
+        //   grades: 구분 select 값 ('va' = 전체, 그 외 role 번호)
+        const MGR_POLICY = {
+            9: { title: '지사관리', grades: ['va', 1, 2, 3, 4, 5], ownerLabel: '지사명', nameLabel: '대표자명' },
+            1: { title: '유치원관리', grades: [10], ownerLabel: '유치원명', nameLabel: '선생님 이름' },
+            2: { title: '학원 등록', grades: [20], ownerLabel: '학원명', nameLabel: '선생님 이름' },
+            3: { title: '홈스쿨 선생님 등록', grades: [30], ownerLabel: '홈스쿨 지점명', nameLabel: '선생님 이름' },
+            4: { title: '화상수업 선생님 등록', grades: [40], ownerLabel: '화상수업 지점명', nameLabel: '선생님 이름' },
+            5: { title: '방과후 선생님 등록', grades: [50], ownerLabel: '방과후 지점명', nameLabel: '선생님 이름' },
+        };
+        const actorRole = Number(role);
+        const isAdmin = GP_ROLE.isAdmin(actorRole);
+        const policy = MGR_POLICY[actorRole];
+        const gradeSelect = document.getElementById('idGrade');
 
-        if (role != '1' && role != '9') {
-            CallToast("지사 관리 권한으로 로긴 하세요", "error");
-            window.location.href = "../index.php";
-            const selectElement = document.getElementById('idGrade');
-
-            // v4와 v6 옵션을 찾아 disabled로 설정
-            selectElement.querySelector('option[value="v4"]').disabled = false;
-            selectElement.querySelector('option[value="v6"]').disabled = false;
+        function roleName(value) {
+            return GP_ROLE.name(value);
         }
-        if (role == 1) {
-            // id가 'idGrade'인 select 요소를 선택
-            const selectElement = document.getElementById('idGrade');
 
-            // v4, v6, v7 옵션을 찾아 disabled로 설정
-            selectElement.querySelector('option[value="v4"]').disabled = true;
-            selectElement.querySelector('option[value="v6"]').disabled = true;
-            selectElement.querySelector('option[value="v7"]').disabled = true;
+        function mgrError(e, fallback) {
+            const message = (e && e.responseJSON && e.responseJSON.error) || fallback;
+            if (e && e.status === 401) {
+                alert(message);
+                localStorage.removeItem('infochaitalk');
+                window.location.href = '../index.php';
+                return;
+            }
+            CallToast(message, 'error');
         }
 
         function setAllOptions(isEnabled) {
@@ -476,168 +492,109 @@ header("Expires: 0"); // Proxies
             });
         }
 
-        setAllOptions(true); // 모든 옵션 활성화
-        //setOptionState('ca', true); // 'A' 옵션 비활성화
-        //updateOptions(['all'])
-
-
-        document.getElementById("brachname").innerHTML = "[" + user + "]" + "지사/원관리 리스트";
+        // 방과후(지사·선생)는 단계 과정, 선생님은 전체 과정, 그 외 지사는 0AB 고정
+        function applyClassOptions(grade) {
+            if (grade === '5' || grade === '50') {
+                setClassOptions(bangwahooClassOptions);
+                return;
+            }
+            setClassOptions(originalClassOptions);
+            if (!GP_ROLE.isTeacher(grade)) {
+                setAllOptions(false);
+                setOptionState('0AB', true);
+                setSelectedValue('0AB');
+            }
+        }
 
         document.getElementById('idPasswd').addEventListener('input', function(e) {
-            const englishOnly = /^[a-zA-Z0-9\s]*$/;
-            if (!englishOnly.test(e.target.value)) {
-                e.target.value = e.target.value.replace(/[^a-zA-Z0-9\s]/g, '');
-            }
+            e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
         });
 
         AddBranch = () => {
-
-            var selectElement = document.getElementById("idGrade"); // 지사 또는 원관리
-            var selectedValue = selectElement.value;
-
-            selectElement = document.getElementById("idClass"); // 지사 또는 원관리
-            var selectedClass = selectElement.value;
-
-            var id = $("#idID").val().trim(); // 아이디
-            var name = $("#idName").val().trim(); // 이름
-            var owner = $("#idOwner").val().trim(); // 지사명
-            var password = $("#idPasswd").val().trim();
-            var mobile = $("#idMobile").val().trim();
-            var addr = $("#idAddr").val().trim();
-            var zipcode = $("#idZip").val().trim();
-            var role = selectedValue == "v4" ? 1 :
-                selectedValue == "v5" ? 2 :
-                selectedValue == "v6" ? 3 :
-                selectedValue == "v7" ? 7 : 3 // 1 지사관리, 2 원관리, 3 가맹관리, 7 방과후
-            var rdate = "";
-
-            const formattedDate = formatDate();
-            if (rdate == undefined || rdate == "") rdate = formattedDate;
-
-            const requiredFields = [
-                { label: "아이디", value: id, elementId: "idID" },
-                { label: "유치원명/학원명", value: name, elementId: "idName" },
-                { label: "지사회사/가맹지점명", value: owner, elementId: "idOwner" },
-                { label: "암호", value: password, elementId: "idPasswd" },
-                { label: "전화번호", value: mobile, elementId: "idMobile" },
-                { label: "주소", value: addr, elementId: "idAddr" },
-                { label: "우편번호", value: zipcode, elementId: "idZip" },
-                { label: "사용자", value: user },
-                { label: "권한", value: role },
-                { label: "등록일", value: rdate },
-                { label: "과정", value: selectedClass, elementId: "idClass" },
-            ];
-            const missingFields = requiredFields.filter(field => field.value === undefined || field.value === null || String(field.value).trim() === "");
-
-            if (missingFields.length > 0) {
-                alert(`${missingFields.map(field => field.label).join(", ")}을(를) 다시 입력해 주세요.`);
-                const firstInput = missingFields.find(field => field.elementId);
-                if (firstInput) {
-                    document.getElementById(firstInput.elementId).focus();
-                }
+            const newRole = gradeSelect.value === 'va' ? null : Number(gradeSelect.value);
+            if (!newRole) {
+                alert('등록할 구분을 선택해 주세요.');
+                gradeSelect.focus();
                 return;
             }
 
-            var items = {
-                id: id,
-                name: name,
-                owner: owner,
-                password: password,
-                mobile: mobile,
-                addr: addr,
-                zipcode: zipcode,
-                mid: user,
-                role: role,
-                rdate: rdate,
-                class: selectedClass,
+            const items = {
+                id: $("#idID").val().trim(),
+                name: $("#idName").val().trim(),
+                owner: $("#idOwner").val().trim(),
+                password: $("#idPasswd").val().trim(),
+                mobile: $("#idMobile").val().trim(),
+                addr: $("#idAddr").val().trim(),
+                zipcode: $("#idZip").val().trim(),
+                role: newRole,
+                class: document.getElementById("idClass").value,
+            };
+
+            const requiredFields = [
+                { label: "아이디", value: items.id, elementId: "idID" },
+                { label: policy.nameLabel, value: items.name, elementId: "idName" },
+                { label: policy.ownerLabel, value: items.owner, elementId: "idOwner" },
+                { label: "암호", value: items.password, elementId: "idPasswd" },
+                { label: "전화번호", value: items.mobile, elementId: "idMobile" },
+                { label: "주소", value: items.addr, elementId: "idAddr" },
+                { label: "우편번호", value: items.zipcode, elementId: "idZip" },
+                { label: "과정", value: items.class, elementId: "idClass" },
+            ];
+            const missingFields = requiredFields.filter(field => String(field.value).trim() === "");
+
+            if (missingFields.length > 0) {
+                alert(`${missingFields.map(field => field.label).join(", ")}을(를) 다시 입력해 주세요.`);
+                document.getElementById(missingFields[0].elementId).focus();
+                return;
+            }
+            if (!/^[A-Za-z0-9]{4,30}$/.test(items.password)) {
+                alert('암호는 영문/숫자 4~30자로 입력해 주세요.');
+                document.getElementById('idPasswd').focus();
+                return;
             }
 
-            var data = {
-                "item": items
-            }
-
-            function getRoleName(role) {
-                switch (role) {
-                    case 1:
-                        return "지사관리";
-                    case 2:
-                        return "원관리";
-                    case 3:
-                        return "가맹관리";
-                    case 7:
-                        return "방과후";
-                    case 9:
-                        return "관리자";
-                    default:
-                        return "원생";
-                }
-            }
-
-            dispList = (resp) => {
-                if ('success' in resp) {
-                    CallToast('New Branch Manager added successfully!!', "success")
-                    //items['role'] = items['role'] == "1" ? "지사관리" : ( items['role'] == "2" ? "원관리" : (items['role'] == "9" ? "관리자" : "원생") );
-                    items['role'] = getRoleName(items['role'])
-                    table.addRow(items);
-                } else
-                    CallToast('New Branch Manager added falure!', "error")
-
-            }
-            dispErr = (xhr) => {
-                CallToast(`${id}은 이미등록 되있습니다. 다른 ID를 사용하세요`, "error")
-            }
-            jsdata = JSON.stringify(items);
             var options = {
                 functionName: 'SRegistermgr',
                 otherData: {
                     items
                 }
             };
-            CallAjax("SMethods.php", "POST", options, dispList, dispErr);
+            CallAjax("SMethods.php", "POST", options, (resp) => {
+                CallToast(`${items.id} 계정이 등록되었습니다.`, "success");
+                table.addRow({
+                    ...items,
+                    role: roleName(newRole),
+                    confirm: resp.confirm === 0 ? "미승인" : "승인",
+                    rdate: formatDate(),
+                });
+                updateRowCount(table.getDataCount());
+            }, (e) => mgrError(e, '등록에 실패했습니다.'));
         };
 
         UpdateBranch = () => {
-            var item = table.getSelectedData();
-            var items = [];
-            let confm = 0;
-                // 1. 선택된 항목이 있는지 확인
-            // if (role != '9') {
-            //     alert("승인 상태를 수정할 권한이 없습니다.");
-            //     return;
-            // }
-            if (!item || item.length === 0) {
-                // 선택된 항목이 없는 경우 메시지 표시
-                alert('선택된 지사나 원이 없습니다. 체크 박스를 선택해주세요.', "warning");
-                return; // 함수 실행 중단
+            const selected = table.getSelectedData();
+            if (!selected || selected.length === 0) {
+                alert('선택된 지사나 원이 없습니다. 체크 박스를 선택해주세요.');
+                return;
             }
 
-            item.forEach(el => {
-                let confm = el['confirm'] === "승인" ? 1 : 0;
-                var jarr = {
-                    "id": el['id'],
-                    "owner": el['owner'],
-                    "name": el['name'],
-                    "mobile": el['mobile'],
-                    "addr": el['addr'],
-                    "zipcode": el['zipcode'],
-                    "password": el['password'],
-                    "confirm": confm,
-                    "class": el['class'],
-                    "user": user,
+            // 승인 상태와 과정은 본사만 변경 (서버에서도 동일하게 검사)
+            const items = selected.map(el => {
+                const item = {
+                    id: el.id,
+                    owner: el.owner,
+                    name: el.name,
+                    mobile: el.mobile,
+                    addr: el.addr,
+                    zipcode: el.zipcode,
+                    password: el.password,
+                };
+                if (isAdmin) {
+                    item.confirm = el.confirm === "승인" ? 1 : 0;
+                    item.class = el.class;
                 }
-                items.push(jarr);
-            })
-            var data = {
-                "item": items
-            }
-
-            dispList = (resp) => {
-                CallToast('New Branch Manager Updated successfully!!', "success");
-                BranchList();
-            }
-            dispErr = (xhr) => {
-                CallToast('New Branch Manager Update falure!', "error")
-            }
+                return item;
+            });
 
             var options = {
                 functionName: 'SShowConfirmUpdate',
@@ -645,14 +602,14 @@ header("Expires: 0"); // Proxies
                     items
                 }
             };
-            CallAjax("SMethods.php", "POST", options, dispList, dispErr);
-
+            CallAjax("SMethods.php", "POST", options, () => {
+                CallToast('수정되었습니다.', "success");
+                BranchList();
+            }, (e) => mgrError(e, '수정에 실패했습니다.'));
         }
 
         function updateRowCount(cnt) {
-            // var count = tab.getDataCount();
-            //document.getElementById("row-count").innerText = `총 지사 수: ${cnt} 명`;
-            document.getElementById("table-header").innerText = `총 지사 수: ${cnt} 지사`;
+            document.getElementById("table-header").innerText = `총 ${isAdmin ? '지사' : '선생님'} 수: ${cnt}`;
         }
 
         function setUpdateButtonState() {
@@ -666,162 +623,50 @@ header("Expires: 0"); // Proxies
             setTimeout(setUpdateButtonState, 0);
         }
 
+        // 조회 범위는 서버가 로그인 세션 기준으로 결정 (본사: 전체, 그 외: 본인이 등록한 하위 계정)
         BranchList = () => {
-            var items = [];
-
-            var role = "";
-            dispList = (resp) => {
-                resp['success'].forEach(el => {
-
-                    switch (el['role']) {
-                        case "1":
-                            role = "지사관리"
-                            break;
-                        case "2":
-                            role = "원관리"
-                            break;
-                        case "3":
-                            role = "가맹관리"
-                            break;
-                        case "7":
-                            role = "방과후"
-                            break;
-                        case "9":
-                            role = "Admin"
-                            break
-                        default:
-                            role = "원생"
-                    }
-                    if (el['role'] == "1" || el['role'] == "2" || el['role'] == "3" || el['role'] == "7")
-                        var jarr = {
-                            "role": role,
-                            "id": el['id'],
-                            "name": el['name'],
-                            "owner": el['owner'],
-                            "mobile": el['mobile'],
-                            "addr": el['addr'],
-                            "zipcode": el['zipcode'],
-                            "password": el['password'],
-                            "rdate": el['rdate'],
-                            "class": el['class'],
-                            "confirm": el['confirm'] == 1 ? "승인" : "미승인",
-                        }
-                    items.push(jarr);
-                });
-                table.clearData();
-                table.setData(items);
-                var count = table.getDataCount();
-                updateRowCount(count);
-                setUpdateButtonState();
-            }
-            dispErr = (e) => {
-                alert("SShowMgr Error!" + e);
-            }
-
             var options = {
                 functionName: 'SShowMgr',
                 otherData: {
-                    role: "va", //전체
-                    id: user
+                    role: gradeSelect.value
                 }
             };
-
-            CallAjax("SMethods.php", "POST", options, dispList, dispErr);
+            CallAjax("SMethods.php", "POST", options, (resp) => {
+                const items = (resp.success || []).map(el => ({
+                    ...el,
+                    role: roleName(el.role),
+                    confirm: Number(el.confirm) === 1 ? "승인" : "미승인",
+                }));
+                table.setData(items);
+                updateRowCount(items.length);
+                setUpdateButtonState();
+            }, (e) => mgrError(e, '목록을 불러오지 못했습니다.'));
         }
 
-        BranchDelete = (cell) => {
-            var result = confirm("Are you sure to delete ??");
-            var id = cell._row.data['id'];
-            if (cell._row.data['role'] != "Admin" || role == "9") {
-                dispList = (resp) => {
-                    cell.delete();
-                }
-                dispErr = (xhr) => {
-                    alert("SDeleteMgr Error" + xhr.statusText);
-                }
-
-                var options = {
-                    functionName: 'SDeleteMgr',
-                    otherData: {
-                        id: id
-                    }
-                };
-
-                if (result) {
-                    CallAjax("SMethods.php", "POST", options, dispList, dispErr);
-                } else
-                    console.log("delete row cancel branchmgr Branch Delete r.260!!");
-            } else
+        BranchDelete = (row) => {
+            const data = row.getData();
+            if (data.role === GP_ROLE.name(GP_ROLE.ADMIN)) {
                 alert("admin관리자는  삭제 할 수 없습니다!!!!");
-
-        }
-
-        document.getElementById("idGrade").addEventListener("change", function() {
-            // 선택된 옵션 가져오기
-            var selectedOption = this.options[this.selectedIndex];
-            //const selectedOption = document.getElementById('idGrade');
-
-            // 선택된 옵션의 값(value) 가져오기
-            var selectedValue = selectedOption.value;
-
-            if (selectedValue === 'v7') {
-                // 방과후: 전체/1단계/2단계 전용 옵션으로 교체
-                setClassOptions(bangwahooClassOptions);
-            } else {
-                // 방과후 외: 원래 옵션으로 복원 후 활성화 제어
-                setClassOptions(originalClassOptions);
-                if (selectedOption.text != "원관리") {
-                    setAllOptions(false);
-                    setOptionState('0AB', true);
-                    setSelectedValue('0AB');
-                } else {
-                    setAllOptions(true);
-                }
+                return;
             }
-
-
-
-            // 선택된 옵션의 텍스트 가져오기
-            var selectedText = this.options[this.selectedIndex].text;
-
-            var items = [];
-            dispList = (resp) => {
-                resp['success'].forEach(el => {
-                    var jarr = {
-                        "role": el['role'] == "1" ? "지사관리" : (el['role'] == "2" ? "원관리" :
-                            (el['role'] == "3" ? "가맹관리" : (el['role'] == "7" ? "방과후" : "기타"))),
-                        "id": el['id'],
-                        "name": el['name'],
-                        "owner": el['owner'],
-                        "mobile": el['mobile'],
-                        "addr": el['addr'],
-                        "zipcode": el['zipcode'],
-                        "password": el['password'],
-                        "rdate": el['rdate'],
-                        "class": el['class'],
-                        "confirm": el['confirm'] == 1 ? "승인" : "미승인",
-                    }
-                    items.push(jarr);
-                });
-                table.clearData();
-                table.setData(items);
-                var count = table.getDataCount();
-                updateRowCount(count);
-                setUpdateButtonState();
-            }
-            dispErr = (e) => {
-                alert("SShowMgr Error!" + e);
-            }
+            if (!confirm(`${data.id} 계정을 삭제할까요?`)) return;
 
             var options = {
-                functionName: 'SShowMgr',
+                functionName: 'SDeleteMgr',
                 otherData: {
-                    role: selectedValue,
-                    id: user
+                    id: data.id
                 }
             };
+            CallAjax("SMethods.php", "POST", options, () => {
+                row.delete();
+                updateRowCount(table.getDataCount());
+                setUpdateButtonState();
+            }, (e) => mgrError(e, '삭제에 실패했습니다.'));
+        }
 
-            CallAjax("SMethods.php", "POST", options, dispList, dispErr);
+        gradeSelect.addEventListener("change", function() {
+            applyClassOptions(this.value);
+            BranchList();
         });
 
         var deleteIcon = function(cell, formatterParams) {
@@ -863,16 +708,9 @@ header("Expires: 0"); // Proxies
                     title: "권한",
                     field: "role",
                     width: "9%",
-                    editor: "input",
-                    editorParams: {
-                        autocomplete: "true",
-                        allowEmpty: true,
-                        listOnEmpty: true,
-                        valuesLookup: true,
-                    },
                 },
                 {
-                    title: "지사/가맹점명",
+                    title: policy ? policy.ownerLabel : "소속",
                     field: "owner",
                     width: "8%",
                     editor: "input",
@@ -888,6 +726,10 @@ header("Expires: 0"); // Proxies
                     title: "과정",
                     field: "class",
                     width: "5%",
+                    // 과정 변경은 본사만 가능
+                    editable: function() {
+                        return isAdmin;
+                    },
                     editor: "input",
                     editorParams: {
                         autocomplete: "true",
@@ -898,7 +740,7 @@ header("Expires: 0"); // Proxies
                     headerFilter: "input",
                 },
                 {
-                    title: "유치원/학원명",
+                    title: policy ? policy.nameLabel : "이름",
                     field: "name",
                     width: "8%",
                     editor: "input",
@@ -927,13 +769,6 @@ header("Expires: 0"); // Proxies
                     title: "아이디",
                     field: "id",
                     width: "8%",
-                    editor: "false",
-                    editorParams: {
-                        autocomplete: "true",
-                        allowEmpty: true,
-                        listOnEmpty: true,
-                        valuesLookup: true,
-                    },
                     headerFilter: "input",
                 },
                 {
@@ -963,7 +798,8 @@ header("Expires: 0"); // Proxies
                 {
                     title: "주소",
                     field: "addr",
-                    width: "25%",
+                    minWidth: 180,
+                    widthGrow: 1,
                     editor: "input",
                     editorParams: {
                         autocomplete: "true",
@@ -976,10 +812,9 @@ header("Expires: 0"); // Proxies
                     title: "승인",
                     field: "confirm",
                     width: "4%",
-                    // role이 '9'일 때만 에디터(select)가 활성화되도록 설정
-                    editable: function(cell) {
-                        // 전역 변수 role 또는 로그인 시 저장된 권한 변수를 확인
-                        return role == '9'; 
+                    // 승인 변경은 본사만 가능
+                    editable: function() {
+                        return isAdmin;
                     },
                     editor: "select",
                     editorParams: {
@@ -990,20 +825,12 @@ header("Expires: 0"); // Proxies
                     title: "등록일",
                     field: "rdate",
                     width: "7%",
-                    editor: "input",
-                    editorParams: {
-                        autocomplete: "true",
-                        allowEmpty: true,
-                        listOnEmpty: true,
-                        valuesLookup: true,
-                    },
                 },
                 {
                     title: "삭제",
                     formatter: deleteIcon,
                     width: 72,
                     minWidth: 72,
-                    frozen: true,
                     visible: true,
                     responsive: 0,
                     hozAlign: "center",
@@ -1024,7 +851,22 @@ header("Expires: 0"); // Proxies
             table.on("rowDeselected", setUpdateButtonState);
         }
 
-        BranchList();
+        if (policy) {
+            gradeSelect.replaceChildren(...policy.grades.map(value => new Option(value === 'va' ? '전체' : GP_ROLE.name(value), value)));
+            document.getElementById("brachname").textContent = `[${user}] ${policy.title} 리스트`;
+            document.title = policy.title;
+            document.getElementById("idOwnerLabel").textContent = policy.ownerLabel;
+            document.getElementById("idNameLabel").textContent = policy.nameLabel;
+            document.getElementById("idOwner").placeholder = policy.ownerLabel;
+            document.getElementById("idName").placeholder = policy.nameLabel;
+            if (!isAdmin && owner) document.getElementById("idOwner").value = owner;
+            applyClassOptions(gradeSelect.value);
+            BranchList();
+        } else {
+            CallToast("지사 관리 권한으로 로그인하세요", "error");
+            document.querySelectorAll('.kgarden-toolbar input, .kgarden-toolbar select, .kgarden-toolbar button, .kgarden-actions button')
+                .forEach(el => el.disabled = true);
+        }
         setUpdateButtonState();
 
         function DownloadExcel() {

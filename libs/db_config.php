@@ -10,7 +10,7 @@ $isLocal  = (strpos($fullURL, "localhost") !== false)
          || (strpos($fullURL, "10.") !== false);
 
 $host = 'localhost';      // 데이터베이스 서버 주소
-$db   = 'happyzip1';      // 데이터베이스 이름
+$db   = 'happyzip2';      // 데이터베이스 이름
 $charset = 'utf8mb4';     // 이모지 및 다국어 지원을 위한 설정
 
 if ($isLocal) {
@@ -19,8 +19,8 @@ if ($isLocal) {
 }
 else
 {
-    $user = 'happyzip1';           // 데이터베이스 사용자 계정
-    $pass = 'skl329350281@';        // 데이터베이스 비밀번호
+    $user = 'happyzip2';           // 데이터베이스 사용자 계정
+    $pass = 'skl32935028@';        // 데이터베이스 비밀번호
 }
 
 

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>후기 관리 | 글핀</title>
     <link rel="stylesheet" href="../role-nav.css?v=<?= filemtime(__DIR__ . '/../role-nav.css') ?>">
+    <script src="../js/roles.js"></script>
     <script src="../js/role-nav.js?v=<?= filemtime(__DIR__ . '/../js/role-nav.js') ?>" defer></script>
 <style>
   :root{--primary:#3da35d;--primary-dark:#2e7d46;--surface:#fff;--background:#f4f7f4;--text:#26301f;--muted:#6f786b;--danger:#c74646;--radius:16px;--space:16px;}

@@ -17,32 +17,8 @@
     }
 
     const basePath = root.dataset.basePath ?? '../';
-    const role = String(loginInfo?.role ?? '0').toLowerCase();
-    const user = String(loginInfo?.user ?? '').trim().toLowerCase();
-  const menus = {
-    admin: [
-      ['게시판', `${basePath}board/boardmgr.php`],
-      ['지사관리', `${basePath}purchase/branchmgr.php`],
-      ['주문관리', `${basePath}purchase/order.php`],
-      ['사용자관리', `${basePath}study/vol_manage.php`],
-      ['학습현황', `${basePath}study/study_stats.php`],
-      ['리뷰추가', `${basePath}reviews/admin_reviews.php`]
-    ],
-    branch: [
-      ['게시판', `${basePath}board/boardmgr.php`],
-      ['지사관리', `${basePath}purchase/branchmgr.php`],
-      ['주문관리', `${basePath}purchase/order.php`]
-    ],
-    teacher: [
-      ['게시판', `${basePath}board/boardmgr.php`],
-      ['유치원관리', `${basePath}purchase/kgardenmgr.php`]
-    ]
-  };
-
-    let items = [];
-  if (role === '9' || role === 'admin' || user === 'admin' || user === 'chaitalk') items = menus.admin;
-  else if (role === '1') items = menus.branch;
-  else if (role === '2') items = menus.teacher;
+    // role 별 메뉴는 js/roles.js 에 정의
+    const items = window.GP_ROLE ? GP_ROLE.menus(loginInfo.role, basePath) : [];
 
     root.className = 'role-nav';
   root.innerHTML = `

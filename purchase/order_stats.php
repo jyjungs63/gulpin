@@ -64,7 +64,7 @@ $use_range = ($date_from && $date_to
 if ($use_range) {
     $sql = "
     SELECT YEAR(rdate) AS year_num, MONTH(rdate) AS month_num, por_list
-    FROM   chaitalk_porlist
+    FROM   gulpin_porlist
     WHERE  rdate >= :date_from AND rdate < DATE_ADD(:date_to, INTERVAL 1 DAY)
       AND  confirm = 1
       AND  por_list IS NOT NULL
@@ -76,7 +76,7 @@ if ($use_range) {
 } else {
     $sql = "
     SELECT YEAR(rdate) AS year_num, MONTH(rdate) AS month_num, por_list
-    FROM   chaitalk_porlist
+    FROM   gulpin_porlist
     WHERE  YEAR(rdate) = :year
       AND  confirm = 1
       AND  por_list IS NOT NULL

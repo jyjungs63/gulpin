@@ -18,7 +18,7 @@ define('DB_HOST', 'localhost');
 define('DB_CHARSET', 'utf8mb4');
 
 if ($isLocal) {
-    define('DB_NAME', 'happyzip1');
+    define('DB_NAME', 'happyzip2');
     define('DB_USER', 'root');                   // 데이터베이스 사용자명
     define('DB_PASS', 'manager');                // 데이터베이스 비밀번호 (XAMPP 기본값은 빈 문자열) 
 }

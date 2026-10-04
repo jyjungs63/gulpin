@@ -254,9 +254,13 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/roles.js"></script>
+    <script src="../js/role-nav.js" defer></script>
 </head>
 
 <body class="kgarden-page">
+    <header id="roleNav"></header>
     <div class="kgarden-shell">
         <section class="content-header kgarden-heading">
             <div class="container-fluid">
@@ -282,13 +286,13 @@
                                 <button class="btn btn-primary kgarden-btn" type="button" onclick="listChild()">전체조회</button>
 
                                 <div class="kgarden-field">
-                                    <label for="idStudent">Step 선택</label>
+                                    <label for="idStudent">과정 선택</label>
                                     <select class="form-select form-control-sm" id="idStudent" data-placeholder="Choose Items">
                                         <option value="v0"></option>
                                         <!-- <option val="va">전체</option> -->
-                                        <option value="sb">한자뚝0</option>
-                                        <option value="s1">한자뚝A</option>
-                                        <option value="s2">한자뚝B</option>
+                                        <option value="sb">잼잼별</option>
+                                        <option value="s1">말잼별</option>
+                                        <option value="s2">글잼별</option>
                                         <!-- <option val="s3">7세-Step3</option> -->
                                     </select>
                                 </div>
@@ -327,7 +331,7 @@
                             <div class="kgarden-actions">
                                 <div id="table-header">총 학생 수: 0 명</div>
                                 <div class="kgarden-actions-right">
-                                    <button id="idSaveChildBtn" class="btn btn-outline-primary kgarden-btn" type="button" data-toggle="tooltip" title="원아 추가 하기" onclick="addClassMember(1)" disabled>
+                                    <button id="idSaveChildBtn" class="btn btn-outline-primary kgarden-btn" type="button" data-toggle="tooltip" title="원아 추가 하기" onclick="addClassMember()" disabled>
                                         <i class="fa-solid fa-user"></i> DB저장
                                     </button>
                                     <button id="idPrintChildBtn" class="btn btn-success kgarden-btn" type="button" data-toggle="tooltip" title="원아 프린트 하기" onclick="printClassMember()" disabled>
@@ -353,6 +357,19 @@
             user = "admin";
         }
 
+        // 유치원(10)·홈스쿨(30) 선생님 공용 — 서버: Server/student_policy.php (SIdStudents/SIdStudentMaxNo/SIdStudentSave)
+        const IS_HOMESCHOOL = GP_ROLE.group(role) === 3;
+        // [select value, 과정] — 서버 GP_ID_STUDENT_STEPS 와 같게 유지
+        //   유치원 과정 sb/s1/s2 = 선생님 과정 코드 0/A/B (STEP_OPTIONS)
+        const STEP_LIST = IS_HOMESCHOOL
+            ? [['급파한', '급파한'], ['홈스쿨', '홈스쿨']]
+            : [['sb', '잼잼별'], ['s1', '말잼별'], ['s2', '글잼별']];
+        // 예전 유치원 과정 이름 — 목록에서 새 이름으로 보이고, 그 행을 수정해 저장하면 바뀐다
+        const LEGACY_STEP = { '한자뚝0': '잼잼별', '한자뚝A': '말잼별', '한자뚝B': '글잼별' };
+        const WORD = IS_HOMESCHOOL
+            ? { student: '학생', owner: '선생님', obj: '학생을' }
+            : { student: '원아', owner: '유치원', obj: '원아를' };
+
         const STEP_OPTIONS = {
             '0': ['sb'],
             'A': ['s1'],
@@ -362,8 +379,14 @@
             'AB': ['s1', 's2'],
         };
 
-        applyStepOptions(clas);
-        document.getElementById("idHead").innerHTML = "[ " + user + " ]" + " 학생등록 관리리스트";
+        const stepSelect = document.getElementById('idStudent');
+        stepSelect.replaceChildren(new Option('', 'v0'), ...STEP_LIST.map(([value, text]) => new Option(text, value)));
+        if (!IS_HOMESCHOOL) applyStepOptions(clas);
+        document.getElementById("idHead").textContent = `[ ${user} ] ${IS_HOMESCHOOL ? '홈스쿨 ' : ''}학생등록 관리리스트`;
+        document.querySelector('label[for="idStudent"]').textContent = '과정 선택';
+        document.querySelector('label[for="idNumstudent"]').textContent = `${WORD.student}수`;
+        document.getElementById('idNumstudent').placeholder = `${WORD.student}수`;
+        document.querySelector('button[onclick="addChild()"]').textContent = `${WORD.student}아이디생성`;
 
         window.addEventListener('resize', function() {
             if (tab && tab.setHeight) {
@@ -387,6 +410,22 @@
             });
         }
 
+        function mgrError(e, fallback) {
+            const message = (e && e.responseJSON && e.responseJSON.error) || fallback;
+            if (e && e.status === 401) {
+                alert(message);
+                localStorage.removeItem('infochaitalk');
+                window.location.href = '../index.php';
+                return;
+            }
+            alert(message);
+            CallToast(message, 'error');
+        }
+
+        function request(functionName, otherData) {
+            return new Promise((resolve, reject) => CallAjax("SMethods.php", "POST", { functionName, otherData }, resolve, reject));
+        }
+
         function drawTable() {
             const editorParams = {
                 autocomplete: "true",
@@ -404,22 +443,20 @@
                 layout: "fitColumns",
                 selectable: true,
                 columns: [{
-                        title: "스텝",
+                        title: "과정",
                         field: "step",
                         width: "10%",
                         minWidth: 100,
-                        editor: "input",
+                        editor: "list",
                         headerHozAlign: "center",
-                        editorParams: editorParams
+                        editorParams: { values: STEP_LIST.map(([, text]) => text) }
                     },
                     {
-                        title: "유치원",
+                        title: WORD.owner,
                         field: "tid",
                         width: "10%",
                         minWidth: 120,
                         headerHozAlign: "center",
-                        editor: "input",
-                        editorParams: editorParams,
                         headerFilter: "input"
                     },
                     {
@@ -433,7 +470,7 @@
                         headerFilter: "input"
                     },
                     {
-                        title: "원아명",
+                        title: `${WORD.student}명`,
                         field: "name",
                         width: "20%",
                         minWidth: 140,
@@ -447,9 +484,10 @@
                         field: "id",
                         width: "20%",
                         minWidth: 150,
-                        editor: false,
+                        // 저장 전에만 아이디 변경 가능
+                        editor: "input",
+                        editable: (cell) => !cell.getRow().getData().saved,
                         headerHozAlign: "center",
-                        editorParams: editorParams,
                         headerFilter: "input"
                     },
                     {
@@ -478,6 +516,11 @@
                 paginationSize: 30,
                 footerElement: "<div id='table-footer-count' style='font-weight: bold;'></div>",
             });
+            tab.on("dataFiltered", (filters, rows) => updateRowCount(rows.length));
+            // 수정한 행만 저장한다
+            tab.on("cellEdited", (cell) => {
+                if (cell.getValue() !== cell.getOldValue()) cell.getRow().update({ dirty: true });
+            });
         }
 
         function getTableHeight() {
@@ -487,46 +530,54 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             drawTable();
-            showClass(user);
+            tab.on("tableBuilt", listChild);
         });
 
+        // 본인에게 등록된 학생 전체 — 과정/반 선택은 표 필터로 처리
         function listChild() {
-            listStudent("전체", 1);
+            stepSelect.value = 'v0';
+            request('SIdStudents', {}).then((res) => {
+                tab.clearFilter();
+                return tab.setData((res.success || []).map(r => ({ ...r, step: LEGACY_STEP[r.step] || r.step, saved: true })));
+            }).then(() => {
+                const count = tab.getDataCount();
+                updateRowCount(count);
+                setResultButtons(count > 0);
+                showClass();
+            }).catch((e) => mgrError(e, `${WORD.student} 목록을 불러오지 못했습니다.`));
         }
 
-        function ChildDelete(cell) {
-            const result = confirm("Are you sure to delete ??");
-            const id = cell._row.data['id'];
-            const dispList = () => {
-                CallToast('원아 삭제 successfully!!', "success")
-                cell.delete();
-            };
-            const dispErr = () => {
-                CallToast('원아 삭제 Error!!', "error")
-            };
-
-            const options = {
-                functionName: 'SRemoveChild',
-                otherData: {
-                    id: id
-                }
-            };
-
-            if (result) {
-                CallAjax("SMethods.php", "POST", options, dispList, dispErr);
-            } else {
-                CallToast("원아 삭제 취소 !!", "error");
+        function ChildDelete(row) {
+            const data = row.getData();
+            if (!confirm(`${data.name || data.id} ${WORD.obj} 삭제할까요?`)) {
+                return;
             }
+            const done = () => {
+                row.delete();
+                updateRowCount(tab.getDataCount("active"));
+                setResultButtons(tab.getDataCount() > 0);
+            };
+            // 저장 전 행은 화면에서만 지운다
+            if (!data.saved) {
+                done();
+                return;
+            }
+            request('STeacherStudentDelete', { id: data.id }).then(() => {
+                CallToast(`${data.id} 삭제되었습니다.`, "success");
+                done();
+                showClass();
+            }).catch((e) => mgrError(e, '삭제에 실패했습니다.'));
         }
 
-        document.getElementById("idStudent").addEventListener("change", function() {
-            listStudent(this.options[this.selectedIndex].text, 1);
+        stepSelect.addEventListener("change", function() {
+            if (this.value === 'v0') tab.clearFilter();
+            else tab.setFilter("step", "=", this.options[this.selectedIndex].text);
         });
 
         document.getElementById("idClass").addEventListener("change", function() {
             const classText = this.options[this.selectedIndex].text;
-
-            listStudent(classText, 2);
+            if (classText === '') tab.clearFilter();
+            else tab.setFilter("classnm", "=", classText);
             $("#idClassname").val(classText);
         });
 
@@ -542,47 +593,6 @@
             qi("idPrintChildBtn").disabled = !isEnabled;
         }
 
-        function listStudent(step, classText) {
-            const dispList = (res) => {
-                tab.setData(res['json']);
-                const count = tab.getDataCount();
-                updateRowCount(count);
-                setResultButtons(count > 0);
-                CallToast('Student list successfully!!', "success")
-            };
-            const dispErr = () => {
-                CallToast('Student list Error!!', "error")
-            };
-
-            const options = {
-                functionName: 'SShowStudentList',
-                otherData: {
-                    id: user,
-                    step: step,
-                    sel: classText,
-                }
-            };
-            CallAjax("SMethods.php", "POST", options, dispList, dispErr);
-
-        }
-
-        function checkExistID(id) {
-            let js;
-            const dispList = (res) => {
-                js = res['result'];
-            };
-            const dispErr = () => {
-                CallToast('Student list Error!!', "error")
-            };
-            const options = {
-                functionName: 'SCheckStudentID',
-                otherData: {
-                    id: id,
-                }
-            };
-            CallAjax2("SMethods.php", "POST", options, dispList, dispErr);
-            return js;
-        }
         const input = document.getElementById('idNick');
         const originalPlaceholder = input.placeholder;
 
@@ -606,33 +616,44 @@
             e.target.classList.remove('warning');
         });
 
-        function addChild() {
-            tab.clearData();
-
-            const select = document.getElementById('idStudent');
-            const selectedValue = select.options[select.selectedIndex].text;
-            const classname = $("#idClassname").val();
-            const nickname = $("#idNick").val();
-            const num = $("#idNumstudent").val();
-            let start = Number($("#idStartNum").val());
-
-            const isexist = checkExistID(nickname);
-            if (isexist > 0) {
-                start = Number(isexist) + 1;
-                $("#idStartNum").val((start.toString()));
-            }
-
-            if (isexist > 0 && !confirmDuplicateId(nickname, start)) {
-                alert(`${nickname} 은 다른 원에서 사용중입니다!  다른 아이디를 입력해서 원아 아이디를 생성해주세요`);
-                $("#idStartNum").val('');
-                return;
-            }
+        async function addChild() {
+            const selectedValue = stepSelect.value === 'v0' ? '' : stepSelect.options[stepSelect.selectedIndex].text;
+            const classname = $("#idClassname").val().trim();
+            const nickname = $("#idNick").val().trim();
+            const num = $("#idNumstudent").val().trim();
+            let start = Number($("#idStartNum").val()) || 1;
 
             if (!canCreateStudents(selectedValue, classname, nickname, num)) {
                 showCreateStudentAlerts(selectedValue, classname, nickname, num);
                 return;
             }
+            if (!/^[A-Za-z]{1,20}$/.test(nickname)) {
+                alert('시작아이디는 영문으로 입력해 주세요.');
+                return;
+            }
+            if (!(Number(num) > 0 && Number(num) <= 200)) {
+                alert(`${WORD.student}수는 1~200 사이로 입력해 주세요.`);
+                return;
+            }
 
+            let used;
+            try {
+                used = (await request('SIdStudentMaxNo', { id: nickname })).result;
+            } catch (e) {
+                mgrError(e, '아이디 확인에 실패했습니다.');
+                return;
+            }
+            if (used > 0 && start <= used) {
+                if (!confirmDuplicateId(nickname, used + 1)) {
+                    $("#idStartNum").val('');
+                    return;
+                }
+                start = used + 1;
+                $("#idStartNum").val(String(start));
+            }
+
+            tab.clearFilter();
+            tab.clearData();
             Array.from({
                 length: Number(num)
             }).forEach((_, index) => {
@@ -642,9 +663,12 @@
                     classnm: classname,
                     id: nickname + no,
                     passwd: nickname + no,
-                    step: selectedValue
+                    step: selectedValue,
+                    saved: false
                 });
             });
+            updateRowCount(tab.getDataCount());
+            setResultButtons(true);
         }
 
         function confirmDuplicateId(nickname, start) {
@@ -655,12 +679,12 @@
         }
 
         function canCreateStudents(step, classname, nickname, num) {
-            return step != "전체" && step != "" && classname != "" && nickname != "" && num != "";
+            return step != "" && classname != "" && nickname != "" && num != "";
         }
 
         function showCreateStudentAlerts(step, classname, nickname, num) {
             if (step == "") {
-                alert(" 생성 할 학생의 정보를 입력하세요/ Step [4세-Basic, 5세-Step1, 6세-Step2, 7세-Step3]  선택해주세요 !!.");
+                alert(` 생성 할 학생의 정보를 입력하세요/ 과정 [${STEP_LIST.map(([, text]) => text).join(', ')}] 선택해주세요 !!.`);
             }
             if (classname == "") {
                 alert(" 생성 할 학생의 정보를 입력하세요/  반을 입력 입력해 주세요 !!.");
@@ -669,106 +693,50 @@
                 alert(" 생성 할 학생의 정보를 입력하세요/ 생성할 ID를 입력해 주세요 !!.");
             }
             if (num == "") {
-                alert(" 생성 할 학생의 정보를 입력하세요/ 생성할 원아 총 수를 입력해주세요 !!.");
+                alert(` 생성 할 학생의 정보를 입력하세요/ 생성할 ${WORD.student} 총 수를 입력해주세요 !!.`);
             }
         }
 
-        function addClassMember(chos) {
-            const fun = chos == 2 ? "SupdateStudent" : "SinsertStudent";
-            const item = tab.getRows();
-            const items = [];
-
-            if (item.length === 0) {
-                alert("저장할 원아 정보를 먼저 입력해주세요.");
-                CallToast("저장할 원아 정보를 먼저 입력해주세요.", "error");
+        // 새로 만든 행은 생성, 수정한 행은 수정 (서버가 본인 학생인지 확인)
+        function addClassMember() {
+            const rows = tab.getData().filter(r => !r.saved || r.dirty);
+            if (rows.length === 0) {
+                alert(`새로 만들거나 수정한 ${WORD.student} 정보가 없습니다.`);
                 return;
             }
 
-            for (let i = 0; i < item.length; i++) {
-                const rowData = item[i].getData ? item[i].getData() : item[i]._row.data;
+            for (let i = 0; i < rows.length; i++) {
                 const missingFields = [];
-
-                if (!String(rowData['name'] || '').trim()) missingFields.push('원아명');
-                if (!String(rowData['id'] || '').trim()) missingFields.push('아이디');
-                if (!String(rowData['passwd'] || '').trim()) missingFields.push('비밀번호');
-
+                if (!String(rows[i].name || '').trim()) missingFields.push(`${WORD.student}명`);
+                if (!String(rows[i].id || '').trim()) missingFields.push('아이디');
+                if (!String(rows[i].passwd || '').trim()) missingFields.push('비밀번호');
+                if (!String(rows[i].step || '').trim()) missingFields.push('과정');
                 if (missingFields.length > 0) {
-                    const msg = `${i + 1}번째 행의 ${missingFields.join(', ')}을(를) 입력해주세요.`;
+                    const msg = `${rows[i].id || (i + 1) + '번째 행'}: ${missingFields.join(', ')}을(를) 입력해주세요.`;
                     alert(msg);
                     CallToast(msg, "error");
                     return;
                 }
-
-                items.push({
-                    "id": rowData['id'],
-                    "name": rowData['name'],
-                    "passwd": rowData['passwd'],
-                    "tid": user,
-                    "role": "0",
-                    "classnm": rowData['classnm'],
-                    "step": rowData['step'],
-                    "p_mobile": '',
-                    "mobile": '',
-                    "addr": '',
-                    "status": '1',
-                    "etc": '',
-                });
             }
 
-            const dispList = () => {
-                showClass(user);
-                if (chos == 1) {
-                    CallToast('New Student added successfully!!', "success")
-                } else {
-                    CallToast('New Student Update successfully!!', "success")
-                }
-            };
-            const dispErr = () => {
-                if (chos == 1) {
-                    alert(' 아이디가 이미 사용중입니다.')
-                    CallToast('아이디가 이미 사용중입니다!!', "error")
-                } else {
-                    CallToast('New Student  Update falure !!', "error")
-                }
-            };
-
-            const options = {
-                functionName: fun,
-                otherData: {
-                    items
-                }
-            };
-            CallAjax("SMethods.php", "POST", options, dispList, dispErr);
-
+            const items = rows.map(r => ({
+                id: String(r.id).trim(),
+                name: String(r.name).trim(),
+                passwd: String(r.passwd).trim(),
+                classnm: String(r.classnm || '').trim(),
+                step: r.step,
+            }));
+            request('SIdStudentSave', { items }).then((resp) => {
+                CallToast(`저장되었습니다. (생성 ${resp.created} / 수정 ${resp.updated})`, "success");
+                listChild();
+            }).catch((e) => mgrError(e, '저장에 실패했습니다.'));
         }
 
-        function showClass(tid) {
-            const dispList = (resp) => {
-                $("#idClass").empty();
-                const select = document.getElementById('idClass');
-                const option = document.createElement('option');
-                option.text = "";
-                option.value = "";
-                select.add(option);
-
-                resp['success'].forEach(el => {
-                    const option = document.createElement('option');
-                    option.text = el['classnm'];
-                    option.value = el['classnm'];
-                    select.add(option);
-                })
-            };
-
-            const dispErr = () => {};
-
-            const options = {
-                functionName: 'SShowClassList',
-                otherData: {
-                    id: tid,
-                    kgarden: ""
-                }
-            };
-            CallAjax("SMethods.php", "POST", options, dispList, dispErr);
+        // 반선택 목록 — 본인 학생의 반이름
+        function showClass() {
+            const select = document.getElementById('idClass');
+            const names = [...new Set(tab.getData().map(r => r.classnm).filter(Boolean))].sort();
+            select.replaceChildren(new Option('', ''), ...names.map(n => new Option(n, n)));
         }
 
         var page;

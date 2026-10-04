@@ -35,9 +35,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
     <link href="../common.css" rel="stylesheet">
+    <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/role-nav.js" defer></script>
 </head>
 
 <body style="background-color: #f4f6f9">
+    <header id="roleNav"></header>
     <div class="p-3">
         <section class="content-header" style="background-color: #f4f6f9">
             <div class="container-fluid">
@@ -128,10 +131,12 @@
                                                 </select>&nbsp;&nbsp;&nbsp;&nbsp;
                                                 <select class="form-select form-control-sm" id="idGrade2"
                                                 data-placeholder="Choose Items" style="width: 120px;">
-                                                    <option value="va">전체</option>
-                                                    <option value="v4">지사관리</option>
-                                                    <option value="v5" selected>원관리</option>
-                                                    <option value="v6">가맹관리</option>
+                                                    <option value="0" selected>전체</option>
+                                                    <option value="1">유치원지사</option>
+                                                    <option value="2">학원지사</option>
+                                                    <option value="3">홈스쿨지사</option>
+                                                    <option value="4">화상수업지사</option>
+                                                    <option value="5">방과후지사</option>
                                                 </select>&nbsp;&nbsp;
                                             </div>
                                         </h4>
@@ -179,6 +184,7 @@
             </div>
         </div>
     </div>
+    <script src="../js/roles.js"></script>
     <script src="../purchase/kgardenlist.js"></script>
     <?php
     include '../includescr.php';
@@ -282,7 +288,7 @@
                     var jarr = {
                         "id": el['id'],
                         "name": el['name'],
-                        "role": el['role'] == 1 ? "지사장" : (el['role'] == 2 ? "원관리" : "가맹관리"),
+                        "role": GP_ROLE.name(el['role']), // js/roles.js
                         "mobile": el['mobile'],
                         "addr": el['addr'],
                         "zipcode": el['zipcode'],
@@ -320,16 +326,9 @@
         confirmList2 = (value) => {
             var item = [];
             var sel = 0;
-            if (value != null) {
-                if (value == "전체")
-                    sel = 0;
-                else if (value == "지사관리")
-                    sel = 1;
-                else if (value == "원관리" )
-                    sel = 2;
-                else if (value == "가맹관리" )  
-                    sel = 3;
-            }
+            // 구분 select 값 = role 번호 (0 = 지사·선생 전체)
+            const selected = Array.from(document.getElementById("idGrade2").options).find(opt => opt.text === value);
+            if (selected) sel = Number(selected.value);
 
             var data = {
                 num: sel
@@ -340,7 +339,7 @@
                     var jarr = {
                         "id": el['id'],
                         "name": el['name'],
-                        "role": el['role'] == 1 ? "지사장" : (el['role'] == 2 ? "원관리" : "가맹관리"),
+                        "role": GP_ROLE.name(el['role']), // js/roles.js
                         "mobile": el['mobile'],
                         "addr": el['addr'],
                         "zipcode": el['zipcode'],

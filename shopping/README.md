@@ -19,7 +19,7 @@ HTML/CSS/Vanilla JavaScript로 만든 쇼핑몰 구매/관리 프론트엔드입
 ## 관리자 계정
 
 - 기존 `Slogon` 로그인을 사용합니다.
-- `chaitalk_user.role = 9` 또는 `admin/chaitalk` 계정이면 관리자 기능에 접근할 수 있습니다.
+- `gulpin_user.role = 9` 또는 `admin/chaitalk` 계정이면 관리자 기능에 접근할 수 있습니다.
 
 ## API
 

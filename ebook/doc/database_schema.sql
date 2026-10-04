@@ -6,7 +6,7 @@
 CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
 
-USE happyzip1;
+USE happyzip2;
 
 -- ========================================
 -- 1. 책 타입 테이블

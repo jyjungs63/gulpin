@@ -4,14 +4,19 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $location = "localhost";
 $host = $_SERVER['HTTP_HOST'] ?? '';
-$isLocal = stripos($host, 'localhost') !== false || strpos($host, '10.15') !== false || strpos($host, "jyjungs1963") !== false;;
+$isLocal = stripos($host, 'localhost') !== false
+    || stripos($host, '127.0.0.1') !== false
+    || stripos($host, '::1') !== false
+    || strpos($host, '10.15') !== false
+    || strpos($host, '192.168.') !== false
+    || strpos($host, 'jyjungs1963') !== false;
 
 try {
     if ($isLocal) {
         $dbHost = getenv('DB_HOST') ?: 'localhost';
         $dbUser = getenv('DB_USER') ?: 'root';
         $dbPass = getenv('DB_PASS') ?: 'manager';
-        $dbName = getenv('DB_NAME') ?: 'happyzip1';
+        $dbName = getenv('DB_NAME') ?: 'happyzip2';
     } else {
         $dbHost = getenv('DB_HOST') ?: 'localhost';
         $dbUser = getenv('DB_USER') ?: 'happyzip2';
@@ -22,7 +27,9 @@ try {
 
     $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
     $conn->set_charset('utf8mb4');
+    ensureBranchTables($conn);
     ensureShoppingTables($conn);
+    ensureStudentColumns($conn);
 } catch (mysqli_sql_exception $e) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
@@ -36,6 +43,38 @@ try {
         )
     ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
+}
+
+function ensureBranchTables(mysqli $conn): void
+{
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS gulpin_centers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            sido VARCHAR(50) NOT NULL,
+            gugun VARCHAR(50) NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            area VARCHAR(500) NOT NULL DEFAULT '',
+            dong TEXT NOT NULL,
+            address VARCHAR(500) NOT NULL,
+            phone VARCHAR(50) NOT NULL,
+            zip_code VARCHAR(20) NOT NULL DEFAULT '',
+            road_address VARCHAR(500) NOT NULL DEFAULT '',
+            address_detail VARCHAR(500) NOT NULL DEFAULT '',
+            INDEX idx_gulpin_centers_region (sido, gugun)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
+
+    // 기존 테이블에도 등록 폼의 주소 세부 항목을 보존할 컬럼을 추가합니다.
+    $conn->query("ALTER TABLE gulpin_centers ADD COLUMN IF NOT EXISTS zip_code VARCHAR(20) NOT NULL DEFAULT ''");
+    $conn->query("ALTER TABLE gulpin_centers ADD COLUMN IF NOT EXISTS road_address VARCHAR(500) NOT NULL DEFAULT ''");
+    $conn->query("ALTER TABLE gulpin_centers ADD COLUMN IF NOT EXISTS address_detail VARCHAR(500) NOT NULL DEFAULT ''");
+}
+
+// 선생님 학생관리(student_policy.php) 수업 시작/종료일
+function ensureStudentColumns(mysqli $conn): void
+{
+    $conn->query("ALTER TABLE gulpin_user ADD COLUMN IF NOT EXISTS sdate DATE NULL COMMENT '수업시작일'");
+    $conn->query("ALTER TABLE gulpin_user ADD COLUMN IF NOT EXISTS edate DATE NULL COMMENT '수업종료일'");
 }
 
 function ensureShoppingTables(mysqli $conn): void
@@ -67,7 +106,7 @@ function ensureShoppingTables(mysqli $conn): void
     ");
 
     $conn->query("
-        INSERT INTO chaitalk_user (id, name, password, role, confirm, status)
+        INSERT INTO gulpin_user (id, name, password, role, confirm, status)
         VALUES ('admin', '관리자', 'password', 9, 1, 1)
         ON DUPLICATE KEY UPDATE id = id
     ");

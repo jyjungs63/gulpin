@@ -1,4 +1,4 @@
--- happyzip1.book_types definition
+-- happyzip2.book_types definition
 
 CREATE TABLE `book_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -16,9 +16,9 @@ CREATE TABLE `book_types` (
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='책 타입 정보';
 
 
--- happyzip1.chaitalk_addrlist definition
+-- happyzip2.gulpin_addrlist definition
 
-CREATE TABLE `chaitalk_addrlist` (
+CREATE TABLE `gulpin_addrlist` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   `owner` varchar(30) DEFAULT NULL,
@@ -34,9 +34,9 @@ CREATE TABLE `chaitalk_addrlist` (
 ) ENGINE=InnoDB AUTO_INCREMENT=332 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.chaitalk_online_ma definition
+-- happyzip2.gulpin_online_ma definition
 
-CREATE TABLE `chaitalk_online_ma` (
+CREATE TABLE `gulpin_online_ma` (
   `id` varchar(30) NOT NULL,
   `name` varchar(20) DEFAULT NULL,
   `status` enum('all','partial','none') DEFAULT 'all',
@@ -46,9 +46,9 @@ CREATE TABLE `chaitalk_online_ma` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.chaitalk_parcel definition
+-- happyzip2.gulpin_parcel definition
 
-CREATE TABLE `chaitalk_parcel` (
+CREATE TABLE `gulpin_parcel` (
   `id` varchar(30) DEFAULT NULL COMMENT '지사 아이디',
   `name` varchar(45) DEFAULT NULL COMMENT '지사이름',
   `date` datetime DEFAULT current_timestamp(),
@@ -57,9 +57,9 @@ CREATE TABLE `chaitalk_parcel` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.chaitalk_porlist definition
+-- happyzip2.gulpin_porlist definition
 
-CREATE TABLE `chaitalk_porlist` (
+CREATE TABLE `gulpin_porlist` (
   `por_id` varchar(32) NOT NULL,
   `id` varchar(30) NOT NULL,
   `order` varchar(30) DEFAULT NULL,
@@ -82,9 +82,9 @@ CREATE TABLE `chaitalk_porlist` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.chaitalk_price definition
+-- happyzip2.gulpin_price definition
 
-CREATE TABLE `chaitalk_price` (
+CREATE TABLE `gulpin_price` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `price` longtext DEFAULT NULL,
   `rdate` date NOT NULL DEFAULT current_timestamp(),
@@ -92,9 +92,9 @@ CREATE TABLE `chaitalk_price` (
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.chaitalk_repository definition
+-- happyzip2.gulpin_repository definition
 
-CREATE TABLE `chaitalk_repository` (
+CREATE TABLE `gulpin_repository` (
   `num` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(45) NOT NULL,
   `id` varchar(20) NOT NULL,
@@ -106,9 +106,9 @@ CREATE TABLE `chaitalk_repository` (
 ) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.chaitalk_user definition
+-- happyzip2.gulpin_user definition
 
-CREATE TABLE `chaitalk_user` (
+CREATE TABLE `gulpin_user` (
   `id` varchar(30) NOT NULL,
   `name` varchar(20) NOT NULL,
   `owner` varchar(30) DEFAULT NULL,
@@ -118,11 +118,11 @@ CREATE TABLE `chaitalk_user` (
   `phone` varchar(20) DEFAULT NULL,
   `addr` varchar(64) DEFAULT NULL,
   `zipcode` varchar(12) DEFAULT NULL,
-  `role` int(2) DEFAULT NULL COMMENT '0:유치 1:지사장 2:선생 3:가맹 30:학원생 4:일반등록 7: 방과후9:어드민 ',
+  `role` int(3) DEFAULT NULL COMMENT '9:본사 1:유치원지사 10:유치원선생 100:유치원생 2:학원지사 20:학원선생 200:학원생 3:홈스쿨지사 30:홈스쿨선생 300:홈스쿨생 4:화상수업지사 40:화상수업선생 400:화상수업생 5:방과후지사 50:방과후선생 500:방과후생',
   `confirm` int(2) DEFAULT NULL COMMENT '계정 활성화 1  비활성화 0',
   `rdate` date NOT NULL DEFAULT current_timestamp(),
-  `tid` varchar(30) DEFAULT NULL COMMENT '유치원/학원 선생님',
-  `mid` varchar(30) DEFAULT NULL COMMENT '부모 지사장 아이디',
+  `tid` varchar(30) DEFAULT NULL COMMENT '학생의 담당 선생 아이디',
+  `mid` varchar(30) DEFAULT NULL COMMENT '생성한 부모(상위 단계) 아이디',
   `etc` varchar(20) DEFAULT NULL,
   `classnm` varchar(45) DEFAULT NULL COMMENT '유치원 및 학교이름',
   `step` varchar(20) DEFAULT NULL COMMENT '단계 및 학년',
@@ -131,7 +131,7 @@ CREATE TABLE `chaitalk_user` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.repository definition
+-- happyzip2.repository definition
 
 CREATE TABLE `repository` (
   `num` int(11) NOT NULL AUTO_INCREMENT,
@@ -145,7 +145,7 @@ CREATE TABLE `repository` (
 ) ENGINE=InnoDB AUTO_INCREMENT=304 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.study_record definition
+-- happyzip2.study_record definition
 
 CREATE TABLE `study_record` (
   `id` varchar(20) NOT NULL,
@@ -160,7 +160,7 @@ CREATE TABLE `study_record` (
 ) ENGINE=MyISAM AUTO_INCREMENT=32048 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 
 
--- happyzip1.system_config definition
+-- happyzip2.system_config definition
 
 CREATE TABLE `system_config` (
   `id` int(11) NOT NULL,
@@ -175,7 +175,7 @@ CREATE TABLE `system_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='시스템 설정';
 
 
--- happyzip1.system_config_categories definition
+-- happyzip2.system_config_categories definition
 
 CREATE TABLE `system_config_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -191,7 +191,7 @@ CREATE TABLE `system_config_categories` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='시스템 설정 카테고리';
 
 
--- happyzip1.books definition
+-- happyzip2.books definition
 
 CREATE TABLE `books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

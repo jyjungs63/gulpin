@@ -43,7 +43,7 @@ $isLocal  = (strpos($fullURL, "localhost") !== false)
 
 
     define('DB_HOST',    'localhost');
-    define('DB_NAME',    'happyzip1');
+    define('DB_NAME',    'happyzip2');
     define('DB_CHARSET', 'utf8mb4');
 
 if ($isLocal) {
@@ -52,8 +52,8 @@ if ($isLocal) {
 }
 else
 {
-    define('DB_USER',    'happyzip1');
-    define('DB_PASS',    'skl329350281@');
+    define('DB_USER',    'happyzip2');
+    define('DB_PASS',    'skl32935028@');
 }
 
 // ═══ DB 연결 ═══════════════════════════════════════════
@@ -80,7 +80,7 @@ function fetchOrders(string $from, string $to, bool $all): array
         if ($to   !== '') { $where[]  = 'p.rdate <= ?'; $params[] = $to   . ' 23:59:59'; }
     }
 
-    $sql  = "SELECT p.*, p.addr AS owner, p.addr AS user_addr FROM chaitalk_porlist p"
+    $sql  = "SELECT p.*, p.addr AS owner, p.addr AS user_addr FROM gulpin_porlist p"
           . (empty($where) ? '' : ' WHERE ' . implode(' AND ', $where))
           . " ORDER BY p.rdate ASC";
 

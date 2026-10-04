@@ -17,6 +17,7 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
     <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/roles.js"></script>
     <script src="../js/role-nav.js" defer></script>
     <style>
         body { background: #f4f6f9; }
@@ -216,7 +217,8 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
     // 로그인 체크
     (function() {
         const role = getRole();
-        if (!role || !['9','30','3','2'].includes(String(role))) {
+        // 본사·지사·선생만 (js/roles.js)
+        if (!role || !(GP_ROLE.isAdmin(role) || GP_ROLE.isBranch(role) || GP_ROLE.isTeacher(role))) {
             alert('접근 권한이 없습니다.');
             location.href = '../index.php';
         }
@@ -241,8 +243,8 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
     function load(month) {
         setSpinner(true);
         let url = API_URL + '?mode=study_stats' + (month ? '&month=' + encodeURIComponent(month) : '');
-        // role=2/3/30은 본인 ID 기반 필터링
-        if (['2','3','30'].includes(_userRole)) {
+        // 지사·선생은 본인 ID 기반 필터링 (지사: 소속 선생 학생 포함)
+        if (GP_ROLE.isBranch(_userRole) || GP_ROLE.isTeacher(_userRole)) {
             url += '&id=' + encodeURIComponent(_userId) + '&role=' + encodeURIComponent(_userRole);
         }
         fetch(url)

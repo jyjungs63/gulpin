@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>글핀 - 지점찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<style>
+  :root{
+    --brand:#2fa45c;
+    --brand-dark:#1f7a44;
+    --brand2:#17924f;
+    --ink:#1a1a1a;
+    --ink-soft:#767676;
+    --card-bg:#f5f5f5;
+    --line:#dcdcdc;
+    --naver:#03c75a;
+    --radius-lg:14px;
+    --content-w:660px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    background:#fff;
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- Header ---------- */
+  header.site{border-bottom:1px solid #ececec;}
+  .header-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 24px;
+  }
+  .logo-wrap img{height:34px; display:block;}
+  .promo{display:flex; align-items:center; gap:12px;}
+  .promo .promo-text{font-size:13px; color:var(--ink); text-align:right; line-height:1.4;}
+  .promo .promo-text b{font-weight:700;}
+  .promo .promo-text .arrow{color:var(--ink-soft);}
+  .promo-badge{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:#191919; color:#f5d000; border-radius:8px;
+    padding:6px 10px; font-size:10.5px; font-weight:800; line-height:1.3; text-align:center;
+    min-width:64px;
+  }
+  .promo-badge span:first-child{font-size:9px; color:#fff; font-weight:600;}
+
+  nav.tabs{
+    border-top:1px solid #ececec;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+  }
+  .tabs-left{display:flex; align-items:center;}
+  .tabs-right{display:flex; align-items:center; gap:16px;}
+  nav.tabs a{
+    position:relative;
+    padding:18px 4px 16px;
+    font-size:16px; font-weight:500; color:#444;
+  }
+  nav.tabs a.active{color:var(--ink); font-weight:700;}
+  nav.tabs a.active::after{
+    content:""; position:absolute; left:0; right:0; bottom:0;
+    height:2px; background:var(--ink);
+  }
+  nav.tabs .home-link{color:var(--brand-dark); font-weight:700;}
+  nav.tabs .home-link:hover{color:var(--brand);}
+  .btn-register{
+    display:flex; align-items:center; gap:6px;
+    background:var(--brand); color:#fff; border:none;
+    padding:10px 18px; border-radius:999px; font-weight:700; font-size:14.5px;
+  }
+  .btn-register:hover{background:var(--brand-dark);}
+  .btn-register svg{width:15px;height:15px; stroke:#fff;}
+  .hamburger{display:flex; flex-direction:column; gap:5px; padding:8px;}
+  .hamburger span{width:22px; height:2px; background:var(--brand); display:block; border-radius:2px;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:56px 24px 0; text-align:center;}
+  .hero h1{font-size:32px; font-weight:800; margin:0; color:var(--ink);}
+
+  /* ---------- Search ---------- */
+  .search-section{max-width:var(--content-w); margin:0 auto; padding:32px 24px 0;}
+  .search-label{
+    display:flex; align-items:center; gap:8px; font-size:17px; font-weight:700; margin-bottom:16px;
+  }
+  .search-icon{
+    width:28px; height:28px; border-radius:50%; background:var(--brand);
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .search-icon svg{width:14px;height:14px; stroke:#fff;}
+  .select-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .select-wrap{position:relative; width:270px; max-width:100%;}
+  .select-wrap select{
+    width:100%; appearance:none; -webkit-appearance:none;
+    padding:13px 38px 13px 16px;
+    border:1.6px solid #222; border-radius:8px;
+    font-size:15.5px; font-weight:600; color:var(--ink);
+    background:#fff;
+  }
+  .select-wrap select:focus{outline:2px solid var(--brand); outline-offset:1px;}
+  .select-wrap::after{
+    content:""; position:absolute; right:15px; top:50%; translate:0 -50%;
+    border:6px solid transparent; border-top-color:var(--brand); border-bottom:0;
+    pointer-events:none;
+  }
+
+  .result-summary{max-width:var(--content-w); margin:0 auto; padding:26px 24px 0; font-size:18px; color:var(--ink);}
+  .result-summary b{color:var(--brand); font-weight:800;}
+
+  /* ---------- Result list ---------- */
+  .result-list{max-width:var(--content-w); margin:0 auto; padding:20px 24px 70px; display:flex; flex-direction:column; gap:16px;}
+  .center-card{
+    background:var(--card-bg); border-radius:var(--radius-lg);
+    padding:26px 28px;
+    display:flex; flex-direction:column;
+  }
+  .card-top{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .center-card .info{flex:1; min-width:240px;}
+  .center-card h3{margin:0 0 6px; font-size:20px; font-weight:800; color:var(--ink);}
+  .center-card .desc{font-size:14px; color:var(--ink-soft); margin-bottom:14px;}
+  .center-card .meta{display:flex; flex-direction:column; gap:7px; margin-bottom:2px;}
+  .center-card .meta span{display:flex; align-items:center; gap:7px; font-size:14.5px; color:#444;}
+  .center-card .meta svg{width:15px;height:15px; stroke:var(--ink-soft); flex:none;}
+
+  .badge-btn{
+    align-self:flex-start;
+    font-size:13px; font-weight:600; color:#555;
+    background:#ececec; border:none;
+    padding:9px 16px; border-radius:999px; white-space:nowrap;
+  }
+  .badge-btn:hover{background:#e2e2e2;}
+
+  /* 카드 폭 전체를 기준으로 정확히 가운데 정렬 (배지 컬럼에 영향받지 않도록 .info 밖으로 분리) */
+  .card-buttons{display:flex; justify-content:center; gap:12px; width:100%; margin-top:20px;}
+  .card-buttons a, .card-buttons button{
+    flex:0 1 220px; text-align:center;
+    padding:13px 10px; border-radius:9px; font-weight:700; font-size:15px;
+    display:flex; align-items:center; justify-content:center; gap:7px;
+  }
+  .btn-call{background:var(--brand); color:#fff;}
+  .btn-call:hover{background:var(--brand-dark);}
+  .btn-loc{background:#fff; color:var(--ink); border:1.6px solid #ddd;}
+  .btn-loc:hover{border-color:var(--brand); color:var(--brand-dark);}
+  .btn-delete{background:#fff; color:#d33; border:1.6px solid #f0bcbc; cursor:pointer;}
+  .btn-delete:hover{background:#fff5f5; border-color:#d33;}
+  .card-buttons svg{width:16px;height:16px; stroke:currentColor;}
+
+  .empty-state{text-align:center; padding:60px 20px; color:var(--ink-soft);}
+  .empty-state svg{width:44px;height:44px; stroke:#ddd; margin-bottom:10px;}
+
+  footer{border-top:1px solid #ececec; padding:24px; text-align:center; color:var(--ink-soft); font-size:12.5px;}
+
+  /* ---------- Modal base (constrained to middle area, never full-screen) ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,20,20,0.55);
+    display:none; align-items:center; justify-content:center;
+    padding:20px; z-index:100;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:#fff; border-radius:16px; width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.25);
+    overflow:hidden; animation:pop .18s ease-out;
+    max-height:88vh; display:flex; flex-direction:column;
+  }
+  @keyframes pop{from{transform:scale(.96); opacity:0;} to{transform:scale(1); opacity:1;}}
+
+  .modal-dong{max-width:360px; text-align:center; padding:26px 24px 22px;}
+  .modal-dong h4{margin:0 0 10px; font-size:16px; font-weight:800;}
+  .modal-dong p{margin:0 0 18px; font-size:14px; color:var(--ink-soft); line-height:1.7;}
+  .modal-dong button{
+    width:100%; padding:13px; border-radius:10px; border:none;
+    background:var(--brand); color:#fff; font-weight:700; font-size:14.5px;
+  }
+
+  /* ---- 위치보기 modal (첨부3 크기/버튼 기준) ---- */
+  .modal-map{max-width:460px;}
+  .modal-map .bar{
+    background:var(--brand); color:#fff; padding:22px 26px; font-size:24px; font-weight:800;
+    display:flex; align-items:center; justify-content:space-between; flex:none;
+  }
+  .modal-map .bar button{
+    width:32px;height:32px;border-radius:50%; background:#fff; border:none; color:var(--brand);
+    font-size:16px; font-weight:800; display:flex; align-items:center; justify-content:center;
+  }
+  /* 네이버지도는 정책상 자사 페이지의 iframe 삽입을 차단하므로(X-Frame-Options),
+     실제 지도가 뜨지 않는 빈 화면 대신 클릭 시 네이버지도 새 탭으로 안전하게 연결되는
+     프리뷰 카드를 보여줍니다. */
+  .naver-map-area{
+    position:relative; height:220px; flex:none; overflow:hidden;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 26px, rgba(3,199,90,0.08) 26px, rgba(3,199,90,0.08) 27px),
+      repeating-linear-gradient(90deg, transparent, transparent 26px, rgba(3,199,90,0.08) 26px, rgba(3,199,90,0.08) 27px),
+      #eef7f0;
+  }
+  .naver-map-area a.map-click{position:absolute; inset:0; display:block;}
+  .naver-map-area .pin{
+    position:absolute; left:50%; top:50%; translate:-50% -100%;
+    display:flex; flex-direction:column; align-items:center; pointer-events:none;
+  }
+  .naver-map-area .pin .dot{
+    width:34px;height:34px;border-radius:50% 50% 50% 0; transform:rotate(-45deg);
+    background:var(--naver); border:3px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,.2);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .naver-map-area .pin .dot svg{transform:rotate(45deg); width:14px;height:14px; stroke:#fff; fill:#fff;}
+  .naver-map-area .pin .label{
+    margin-top:5px; background:#fff; padding:3px 10px; border-radius:8px;
+    font-size:12px; font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,.14); white-space:nowrap;
+  }
+  .naver-overlay-btn{
+    position:absolute; left:12px; bottom:12px; z-index:2; pointer-events:none;
+    display:flex; align-items:center; gap:6px;
+    background:#fff; border:1px solid var(--line); border-radius:999px;
+    padding:8px 14px; font-size:12.5px; font-weight:700; color:var(--ink);
+    box-shadow:0 4px 10px rgba(0,0,0,.12);
+  }
+  .naver-badge{
+    width:18px;height:18px;border-radius:5px; background:var(--naver); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex:none;
+  }
+  .modal-map .body{padding:22px 26px 26px;}
+  .modal-map .row{display:flex; align-items:flex-start; gap:8px; font-size:15px; margin-bottom:11px; color:#333;}
+  .modal-map .row svg{width:17px;height:17px; stroke:var(--ink-soft); margin-top:2px; flex:none;}
+  .modal-map .buttons{display:flex; gap:14px; margin-top:18px;}
+  .modal-map .buttons a, .modal-map .buttons button{
+    flex:1; padding:17px 10px; border-radius:9px; border:none; font-weight:800; font-size:17px;
+    display:flex; align-items:center; justify-content:center; gap:7px;
+  }
+  .modal-map .buttons svg{width:18px;height:18px;}
+  .modal-map .b-call{background:var(--brand); color:#fff;}
+  .modal-map .b-call:hover{background:var(--brand-dark);}
+  .modal-map .b-req{background:var(--brand2); color:#fff;}
+
+  .modal-consult{max-width:380px; padding:24px 24px 22px;}
+  .modal-consult h4{margin:0 0 4px; font-size:17px; font-weight:800;}
+  .modal-consult .sub{font-size:13px; color:var(--ink-soft); margin-bottom:16px;}
+  .modal-consult label{display:block; font-size:13px; font-weight:700; margin:12px 0 6px;}
+  .modal-consult input{width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:9px; font-size:14px;}
+  .modal-consult .send{
+    width:100%; margin-top:18px; padding:13px; border:none; border-radius:9px;
+    background:var(--brand2); color:#fff; font-weight:800; font-size:14.5px;
+  }
+
+  /* ---- 지점등록 modal ---- */
+  .modal-register{
+    width:min(960px, calc(100vw - 40px));
+    height:min(820px, 92vh);
+    min-width:420px;
+    min-height:420px;
+    max-width:calc(100vw - 40px);
+    max-height:calc(100vh - 40px);
+    resize:both;
+  }
+  .modal-register .bar{
+    background:var(--brand); color:#fff; padding:18px 24px; font-size:19px; font-weight:800;
+    display:flex; align-items:center; justify-content:space-between; flex:none;
+    cursor:move; user-select:none; touch-action:none;
+  }
+  .modal-register.is-dragging{animation:none;}
+  .modal-register.is-dragging .bar{cursor:grabbing;}
+  .modal-register .bar button{
+    width:30px;height:30px;border-radius:50%; background:#fff; border:none; color:var(--brand);
+    font-size:15px; font-weight:800; display:flex; align-items:center; justify-content:center;
+  }
+  .modal-register .body{padding:22px 24px 24px; overflow-y:auto;}
+
+  .addr-search-row{display:flex; gap:8px;}
+  .addr-search-row input{flex:1;}
+  .btn-postcode{
+    flex:none; background:var(--brand); color:#fff; border:none; border-radius:8px;
+    padding:0 16px; font-weight:700; font-size:13.5px; white-space:nowrap;
+  }
+  .btn-postcode:hover{background:var(--brand-dark);}
+
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; margin-top:16px;}
+  .form-grid .full{grid-column:1 / -1;}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:5px;}
+  .field input{
+    width:100%; padding:11px 12px; border:1.4px solid var(--line); border-radius:8px;
+    font-size:14px; color:var(--ink); background:#fff;
+  }
+  .field input:focus{outline:2px solid var(--brand); outline-offset:0; border-color:var(--brand);}
+  .field input[readonly]{background:#f7f7f7; color:#666;}
+
+  .register-actions{display:flex; align-items:center; gap:10px; margin-top:18px;}
+  .btn-save{background:var(--brand); color:#fff; border:none; padding:12px 22px; border-radius:8px; font-weight:700; font-size:14.5px;}
+  .btn-save:hover{background:var(--brand-dark);}
+  .btn-cancel{background:#fff; color:var(--ink-soft); border:1.4px solid var(--line); padding:12px 18px; border-radius:8px; font-weight:700; font-size:14.5px;}
+  .editing-flag{font-size:12.5px; color:var(--brand); font-weight:700; display:none;}
+  .editing-flag.show{display:inline-block;}
+
+  .register-list{margin-top:22px; border-top:1px dashed var(--line); padding-top:16px;}
+  .register-list-head{font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:8px;}
+  .admin-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .admin-table th, .admin-table td{text-align:left; padding:9px 10px; border-bottom:1px solid #eee; white-space:nowrap;}
+  .admin-table th{color:var(--ink-soft); font-weight:700; font-size:12px;}
+  .admin-table td.addr{white-space:nowrap; max-width:none;}
+  .admin-table .row-actions{display:flex; gap:6px;}
+  .admin-table .row-actions button{border:1px solid var(--line); background:#fff; border-radius:6px; padding:5px 9px; font-size:12px; font-weight:600;}
+  .admin-table .row-actions .del{color:#d33; border-color:#f3c8c8;}
+  .admin-table-scroll{max-height:190px; overflow:auto; border:1px solid var(--line); border-radius:8px;}
+
+  .toast{
+    position:fixed; left:50%; bottom:30px; translate:-50% 0;
+    background:var(--ink); color:#fff; padding:12px 20px; border-radius:999px;
+    font-size:14px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .25s, translate .25s;
+    z-index:200;
+  }
+  .toast.show{opacity:1; translate:-50% -8px;}
+
+  @media (max-width:640px){
+    .header-inner{flex-wrap:wrap; gap:10px;}
+    .select-wrap{width:100%;}
+    .form-grid{grid-template-columns:1fr;}
+    .center-card{padding:20px;}
+    .card-buttons a, .card-buttons button{flex:1 1 auto;}
+    .modal-register{
+      width:100%; height:auto; min-width:0; min-height:0;
+      max-width:100%; max-height:88vh; resize:none; transform:none !important;
+    }
+    .modal-register .bar{cursor:default; touch-action:auto;}
+    .modal-register .body{padding:14px 12px 16px;}
+    .admin-table{width:max-content; min-width:100%; font-size:11px;}
+    .admin-table th, .admin-table td{padding:7px 6px;}
+    .admin-table td.addr{max-width:180px; overflow:hidden; text-overflow:ellipsis; font-size:10px;}
+    .admin-table .row-actions{gap:3px;}
+    .admin-table .row-actions button{padding:4px 6px; font-size:10px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="header-inner">
+    <div class="logo-wrap"><img src="data:image/png;base64,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" alt="글핀 로고"></div>
+    <div class="promo">
+      <div class="promo-text">선생님과 함께 읽는<br><b>글핀 몰입독서</b> <span class="arrow">＞</span></div>
+      <div class="promo-badge"><span>완독</span>글핀<br>몰입독서</div>
+    </div>
+  </div>
+  <nav class="tabs">
+    <div class="tabs-left"><a href="index.php" class="home-link">⌂ 홈으로</a><a href="#" class="active">지점찾기</a></div>
+    <div class="tabs-right">
+      <button class="btn-register" type="button" onclick="openRegister()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        지점등록
+      </button>
+      <span class="hamburger"><span></span><span></span><span></span></span>
+    </div>
+  </nav>
+</header>
+
+<section class="hero"><h1>글핀 지점 찾기</h1></section>
+
+<section class="search-section">
+  <div class="search-label">
+    <span class="search-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </span>
+    지역별로 찾기
+  </div>
+  <div class="select-row">
+    <div class="select-wrap"><select id="sido"></select></div>
+    <div class="select-wrap"><select id="gugun"><option value="">시/군/구 선택</option></select></div>
+  </div>
+</section>
+
+<p class="result-summary wrap" id="resultSummary" style="padding-left:0;padding-right:0;"></p>
+<div class="result-list" id="resultList"></div>
+
+<footer>ⓒ 글핀. 본 페이지는 데모 화면이며 표시된 지점 정보는 실제와 다를 수 있습니다.</footer>
+
+<!-- 세부지역 안내 모달 -->
+<div class="overlay" id="dongOverlay">
+  <div class="modal modal-dong">
+    <h4 id="dongTitle"></h4>
+    <p id="dongList"></p>
+    <button type="button" onclick="closeModal('dongOverlay')">창닫기</button>
+  </div>
+</div>
+
+<!-- 위치보기 모달 -->
+<div class="overlay" id="mapOverlay">
+  <div class="modal modal-map">
+    <div class="bar">
+      <span id="mapTitle"></span>
+      <button type="button" onclick="closeModal('mapOverlay')" aria-label="닫기">✕</button>
+    </div>
+    <div class="naver-map-area">
+      <a class="map-click" id="naverOpenBtn" href="#" target="_blank" rel="noopener" aria-label="네이버지도에서 보기"></a>
+      <div class="pin">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4" fill="#fff" stroke="none"/></svg></div>
+        <div class="label" id="mapPinLabel"></div>
+      </div>
+      <span class="naver-overlay-btn"><span class="naver-badge">N</span> 네이버지도에서 크게 보기</span>
+    </div>
+    <div class="body">
+      <div class="row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span id="mapAddress"></span>
+      </div>
+      <div class="row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.8 2.1z"/></svg>
+        <span id="mapPhone"></span>
+      </div>
+      <div class="buttons">
+        <a class="b-call" id="mapCallBtn" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.8 2.1z"/></svg>
+          전화연결
+        </a>
+        <button class="b-req" type="button" onclick="openConsult()">상담신청</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 상담신청 모달 -->
+<div class="overlay" id="consultOverlay">
+  <div class="modal modal-consult">
+    <h4>상담 신청</h4>
+    <div class="sub" id="consultSub"></div>
+    <label for="cName">이름</label>
+    <input id="cName" type="text" placeholder="이름을 입력해 주세요">
+    <label for="cPhone">연락처</label>
+    <input id="cPhone" type="tel" placeholder="010-0000-0000">
+    <button class="send" type="button" onclick="submitConsult()">신청하기</button>
+  </div>
+</div>
+
+<!-- 지점등록 모달 -->
+<div class="overlay" id="registerOverlay">
+  <div class="modal modal-register">
+    <div class="bar">
+      <span>지점 등록</span>
+      <button type="button" onclick="closeModal('registerOverlay')" aria-label="닫기">✕</button>
+    </div>
+    <div class="body">
+      <div class="field">
+        <label>주소 검색</label>
+        <div class="addr-search-row">
+          <input id="fAddress" type="text" placeholder="주소찾기 버튼으로 검색해 주세요">
+          <button class="btn-postcode" type="button" onclick="openPostcode()">우편번호 · 주소찾기</button>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field"><label>우편번호</label><input id="fZip" type="text"></div>
+        <div class="field"><label>지부명</label><input id="fName" type="text" placeholder="예) 강남남지부"></div>
+        <div class="field"><label>시/도</label><input id="fSido" type="text"></div>
+        <div class="field"><label>시/군/구</label><input id="fGugun" type="text"></div>
+        <div class="field full"><label>상세주소 (동/호수 등)</label><input id="fAddressDetail" type="text" placeholder="예) 202호(일원동)"></div>
+        <div class="field full"><label>안내문구</label><input id="fArea" type="text" placeholder="예) 서울시 강남구 남부지역 관리지점"></div>
+        <div class="field full"><label>담당 동</label><input id="fDong" type="text" placeholder="예) 도곡동, 개포동, 일원동, 수서동, 세곡동"></div>
+        <div class="field"><label>전화번호</label><input id="fPhone" type="text" placeholder="예) 02-451-1930"></div>
+      </div>
+
+      <div class="register-actions">
+        <button class="btn-save" type="button" onclick="saveCenter()">저장하기</button>
+        <button class="btn-cancel" type="button" onclick="resetForm()">새 지점 입력</button>
+        <span class="editing-flag" id="editingFlag">✎ 기존 지점 수정 중</span>
+      </div>
+
+      <div class="register-list">
+        <div class="register-list-head" id="adminListHead">등록된 지점 (0)</div>
+        <div class="admin-table-scroll">
+          <table class="admin-table">
+            <thead><tr><th>지부명</th><th>지역</th><th class="addr">주소</th><th>전화</th><th>관리</th></tr></thead>
+            <tbody id="adminTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 주소 검색(Kakao 우편번호 서비스)은 별도의 작은 팝업창(window.open)으로 열립니다.
+     iframe/postMessage 방식이 아니라 실제 브라우저 팝업창을 사용하므로
+     중첩된 미리보기 환경에서도 안정적으로 선택 결과가 전달됩니다. -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   글핀 지점 데이터
+   ========================================================= */
+const DEFAULT_DATA = {"서울특별시": {"강남구": [{"name": "강남남지부", "area": "서울시 강남구 남부지역 관리지점", "dong": "도곡동, 개포동, 일원동, 수서동, 세곡동", "address": "서울시 강남구 일원로3길 18 202호(일원동)", "phone": "02-451-1930"}, {"name": "강남북지부", "area": "서울시 강남구 북부지역 관리지점", "dong": "역삼동, 삼성동, 청담동, 논현동", "address": "서울시 강남구 선릉로72길 10", "phone": "02-555-1909"}], "강동구": [{"name": "강동지부", "area": "서울시 강동구 관리지점", "dong": "천호동, 성내동, 길동, 명일동, 상일동", "address": "서울시 강동구 성내로 12", "phone": "02-478-2211"}], "강북구": [{"name": "강북지부", "area": "서울시 강북구 관리지점", "dong": "수유동, 미아동, 번동, 우이동", "address": "서울시 강북구 도봉로 89", "phone": "02-982-3344"}], "강서구": [{"name": "강서지부", "area": "서울시 강서구 관리지점", "dong": "화곡동, 등촌동, 염창동, 가양동, 방화동", "address": "서울시 강서구 화곡로 63", "phone": "02-2601-7788"}], "관악구": [{"name": "관악지부", "area": "서울시 관악구 관리지점", "dong": "봉천동, 신림동, 남현동", "address": "서울시 관악구 관악로 145", "phone": "02-874-5566"}], "광진구": [{"name": "광진지부", "area": "서울시 광진구 관리지점", "dong": "자양동, 구의동, 광장동, 화양동", "address": "서울시 광진구 능동로 90", "phone": "02-458-1122"}], "구로구": [{"name": "구로지부", "area": "서울시 구로구 관리지점", "dong": "구로동, 신도림동, 개봉동, 고척동", "address": "서울시 구로구 구로중앙로 30", "phone": "02-2686-9900"}], "금천구": [{"name": "금천지부", "area": "서울시 금천구 관리지점", "dong": "시흥동, 독산동, 가산동", "address": "서울시 금천구 시흥대로 328", "phone": "02-808-4433"}], "노원구": [{"name": "노원지부", "area": "서울시 노원구 관리지점", "dong": "상계동, 중계동, 하계동, 공릉동, 월계동", "address": "서울시 노원구 노원로 12", "phone": "02-935-2277"}], "도봉구": [{"name": "도봉지부", "area": "서울시 도봉구 관리지점", "dong": "방학동, 쌍문동, 창동, 도봉동", "address": "서울시 도봉구 마들로 656", "phone": "02-993-6611"}], "동대문구": [{"name": "동대문지부", "area": "서울시 동대문구 관리지점", "dong": "장안동, 이문동, 회기동, 답십리동", "address": "서울시 동대문구 왕산로 205", "phone": "02-2242-8899"}], "동작구": [{"name": "동작지부", "area": "서울시 동작구 관리지점", "dong": "노량진동, 상도동, 사당동, 흑석동", "address": "서울시 동작구 노량진로 32", "phone": "02-813-5544"}], "마포구": [{"name": "마포지부", "area": "서울시 마포구 관리지점", "dong": "공덕동, 서교동, 합정동, 망원동, 상암동", "address": "서울시 마포구 월드컵로 212", "phone": "02-322-7799"}], "서대문구": [{"name": "서대문지부", "area": "서울시 서대문구 관리지점", "dong": "신촌동, 홍제동, 남가좌동, 홍은동", "address": "서울시 서대문구 통일로 405", "phone": "02-393-6688"}], "서초구": [{"name": "서초지부", "area": "서울시 서초구 관리지점", "dong": "서초동, 방배동, 반포동, 잠원동", "address": "서울시 서초구 서초대로 301", "phone": "02-591-4433"}], "성동구": [{"name": "성동지부", "area": "서울시 성동구 관리지점", "dong": "성수동, 왕십리동, 금호동, 옥수동", "address": "서울시 성동구 왕십리로 115", "phone": "02-2295-8877"}], "성북구": [{"name": "성북지부", "area": "서울시 성북구 관리지점", "dong": "돈암동, 길음동, 정릉동, 장위동", "address": "서울시 성북구 동소문로 20", "phone": "02-916-3322"}], "송파구": [{"name": "송파지부", "area": "서울시 송파구 관리지점", "dong": "잠실동, 문정동, 가락동, 방이동, 오금동", "address": "서울시 송파구 백제고분로 435", "phone": "02-449-6677"}], "양천구": [{"name": "양천지부", "area": "서울시 양천구 관리지점", "dong": "목동, 신정동, 신월동", "address": "서울시 양천구 목동동로 257", "phone": "02-2649-1188"}], "영등포구": [{"name": "영등포지부", "area": "서울시 영등포구 관리지점", "dong": "영등포동, 여의도동, 당산동, 대림동", "address": "서울시 영등포구 영중로 15", "phone": "02-2632-2299"}], "용산구": [{"name": "용산지부", "area": "서울시 용산구 관리지점", "dong": "이촌동, 한남동, 서빙고동, 원효로동", "address": "서울시 용산구 백범로 90", "phone": "02-793-4411"}], "은평구": [{"name": "은평지부", "area": "서울시 은평구 관리지점", "dong": "불광동, 응암동, 갈현동, 진관동", "address": "서울시 은평구 은평로 195", "phone": "02-355-7722"}], "종로구": [{"name": "종로지부", "area": "서울시 종로구 관리지점", "dong": "청운동, 창신동, 이화동, 부암동", "address": "서울시 종로구 종로 175", "phone": "02-732-5588"}], "중구": [{"name": "중구지부", "area": "서울시 중구 관리지점", "dong": "신당동, 황학동, 을지로동, 명동", "address": "서울시 중구 퇴계로 213", "phone": "02-2265-3399"}], "중랑구": [{"name": "중랑지부", "area": "서울시 중랑구 관리지점", "dong": "면목동, 상봉동, 중화동, 묵동", "address": "서울시 중랑구 봉화산로 179", "phone": "02-437-6644"}]}, "경기도": {"수원시": [{"name": "수원지부", "area": "경기도 수원시 관리지점", "dong": "영통동, 매탄동, 인계동", "address": "경기도 수원시 영통구 광교로 145", "phone": "031-217-8800"}], "성남시": [{"name": "성남지부", "area": "경기도 성남시 관리지점", "dong": "분당동, 정자동, 서현동", "address": "경기도 성남시 분당구 판교로 240", "phone": "031-702-1155"}], "고양시": [{"name": "고양지부", "area": "경기도 고양시 관리지점", "dong": "일산동, 화정동, 마두동", "address": "경기도 고양시 일산동구 중앙로 1275", "phone": "031-902-3366"}]}, "인천광역시": {"남동구": [{"name": "인천남동지부", "area": "인천광역시 남동구 관리지점", "dong": "구월동, 간석동, 논현동", "address": "인천광역시 남동구 구월로 129", "phone": "032-464-7700"}], "부평구": [{"name": "인천부평지부", "area": "인천광역시 부평구 관리지점", "dong": "부평동, 산곡동, 청천동", "address": "인천광역시 부평구 부평대로 187", "phone": "032-521-9911"}]}, "강원도": {"춘천시": [{"name": "춘천지부", "area": "강원특별자치도 춘천시 관리지점", "dong": "석사동, 퇴계동, 후평동", "address": "강원특별자치도 춘천시 중앙로 60", "phone": "033-254-4488"}]}, "충청북도": {"청주시": [{"name": "청주지부", "area": "충청북도 청주시 관리지점", "dong": "상당구 일원, 흥덕구 일원", "address": "충청북도 청주시 상당구 상당로 82", "phone": "043-255-3377"}]}, "대전광역시": {"유성구": [{"name": "대전유성지부", "area": "대전광역시 유성구 관리지점", "dong": "봉명동, 궁동, 어은동", "address": "대전광역시 유성구 대학로 99", "phone": "042-822-6600"}]}, "충청남도": {"천안시": [{"name": "천안지부", "area": "충청남도 천안시 관리지점", "dong": "불당동, 두정동, 신부동", "address": "충청남도 천안시 서북구 불당로 234", "phone": "041-575-2211"}]}, "대구광역시": {"수성구": [{"name": "대구수성지부", "area": "대구광역시 수성구 관리지점", "dong": "범어동, 만촌동, 황금동", "address": "대구광역시 수성구 동대구로 351", "phone": "053-745-8899"}]}, "경상북도": {"포항시": [{"name": "포항지부", "area": "경상북도 포항시 관리지점", "dong": "죽도동, 두호동, 상대동", "address": "경상북도 포항시 남구 중앙로 90", "phone": "054-273-5511"}]}, "부산광역시": {"해운대구": [{"name": "부산해운대지부", "area": "부산광역시 해운대구 관리지점", "dong": "우동, 좌동, 재송동", "address": "부산광역시 해운대구 센텀중앙로 30", "phone": "051-731-4477"}]}, "울산광역시": {"남구": [{"name": "울산남지부", "area": "울산광역시 남구 관리지점", "dong": "삼산동, 신정동, 달동", "address": "울산광역시 남구 삼산로 200", "phone": "052-273-6622"}]}, "경상남도": {"창원시": [{"name": "창원지부", "area": "경상남도 창원시 관리지점", "dong": "상남동, 봉림동, 반송동", "address": "경상남도 창원시 성산구 창이대로 689", "phone": "055-282-9944"}]}, "광주광역시": {"서구": [{"name": "광주서지부", "area": "광주광역시 서구 관리지점", "dong": "치평동, 화정동, 상무동", "address": "광주광역시 서구 상무누리로 76", "phone": "062-373-1188"}]}, "전북특별자치도": {"전주시": [{"name": "전주지부", "area": "전북특별자치도 전주시 관리지점", "dong": "효자동, 삼천동, 서신동", "address": "전북특별자치도 전주시 완산구 홍산로 240", "phone": "063-227-5533"}]}, "전라남도": {"여수시": [{"name": "여수지부", "area": "전라남도 여수시 관리지점", "dong": "학동, 신월동, 문수동", "address": "전라남도 여수시 좌수영로 118", "phone": "061-654-2277"}]}, "제주특별자치도": {"제주시": [{"name": "제주지부", "area": "제주특별자치도 제주시 관리지점", "dong": "노형동, 연동, 이도동", "address": "제주특별자치도 제주시 도령로 40", "phone": "064-745-6633"}]}};
+// const DEFAULT_DATA = {"서울특별시": {"강남구": [{"name": "강남남지부", "area": "서울시 강남구 남부지역 관리지점", "dong": "도곡동, 개포동, 일원동, 수서동, 세곡동", "address": "서울시 강남구 일원로3길 18 202호(일원동)", "phone": "02-451-1930"}, {"name": "강남북지부", "area": "서울시 강남구 북부지역 관리지점", "dong": "역삼동, 삼성동, 청담동, 논현동", "address": "서울시 강남구 선릉로72길 10", "phone": "02-555-1909"}], "강동구": [{"name": "강동지부", "area": "서울시 강동구 관리지점", "dong": "천호동, 성내동, 길동, 명일동, 상일동", "address": "서울시 강동구 성내로 12", "phone": "02-478-2211"}], "강북구": [{"name": "강북지부", "area": "서울시 강북구 관리지점", "dong": "수유동, 미아동, 번동, 우이동", "address": "서울시 강북구 도봉로 89", "phone": "02-982-3344"}], "강서구": [{"name": "강서지부", "area": "서울시 강서구 관리지점", "dong": "화곡동, 등촌동, 염창동, 가양동, 방화동", "address": "서울시 강서구 화곡로 63", "phone": "02-2601-7788"}], "관악구": [{"name": "관악지부", "area": "서울시 관악구 관리지점", "dong": "봉천동, 신림동, 남현동", "address": "서울시 관악구 관악로 145", "phone": "02-874-5566"}], "광진구": [{"name": "광진지부", "area": "서울시 광진구 관리지점", "dong": "자양동, 구의동, 광장동, 화양동", "address": "서울시 광진구 능동로 90", "phone": "02-458-1122"}], "구로구": [{"name": "구로지부", "area": "서울시 구로구 관리지점", "dong": "구로동, 신도림동, 개봉동, 고척동", "address": "서울시 구로구 구로중앙로 30", "phone": "02-2686-9900"}], "금천구": [{"name": "금천지부", "area": "서울시 금천구 관리지점", "dong": "시흥동, 독산동, 가산동", "address": "서울시 금천구 시흥대로 328", "phone": "02-808-4433"}], "노원구": [{"name": "노원지부", "area": "서울시 노원구 관리지점", "dong": "상계동, 중계동, 하계동, 공릉동, 월계동", "address": "서울시 노원구 노원로 12", "phone": "02-935-2277"}], "도봉구": [{"name": "도봉지부", "area": "서울시 도봉구 관리지점", "dong": "방학동, 쌍문동, 창동, 도봉동", "address": "서울시 도봉구 마들로 656", "phone": "02-993-6611"}], "동대문구": [{"name": "동대문지부", "area": "서울시 동대문구 관리지점", "dong": "장안동, 이문동, 회기동, 답십리동", "address": "서울시 동대문구 왕산로 205", "phone": "02-2242-8899"}], "동작구": [{"name": "동작지부", "area": "서울시 동작구 관리지점", "dong": "노량진동, 상도동, 사당동, 흑석동", "address": "서울시 동작구 노량진로 32", "phone": "02-813-5544"}], "마포구": [{"name": "마포지부", "area": "서울시 마포구 관리지점", "dong": "공덕동, 서교동, 합정동, 망원동, 상암동", "address": "서울시 마포구 월드컵로 212", "phone": "02-322-7799"}], "서대문구": [{"name": "서대문지부", "area": "서울시 서대문구 관리지점", "dong": "신촌동, 홍제동, 남가좌동, 홍은동", "address": "서울시 서대문구 통일로 405", "phone": "02-393-6688"}], "서초구": [{"name": "서초지부", "area": "서울시 서초구 관리지점", "dong": "서초동, 방배동, 반포동, 잠원동", "address": "서울시 서초구 서초대로 301", "phone": "02-591-4433"}], "성동구": [{"name": "성동지부", "area": "서울시 성동구 관리지점", "dong": "성수동, 왕십리동, 금호동, 옥수동", "address": "서울시 성동구 왕십리로 115", "phone": "02-2295-8877"}], "성북구": [{"name": "성북지부", "area": "서울시 성북구 관리지점", "dong": "돈암동, 길음동, 정릉동, 장위동", "address": "서울시 성북구 동소문로 20", "phone": "02-916-3322"}], "송파구": [{"name": "송파지부", "area": "서울시 송파구 관리지점", "dong": "잠실동, 문정동, 가락동, 방이동, 오금동", "address": "서울시 송파구 백제고분로 435", "phone": "02-449-6677"}], "양천구": [{"name": "양천지부", "area": "서울시 양천구 관리지점", "dong": "목동, 신정동, 신월동", "address": "서울시 양천구 목동동로 257", "phone": "02-2649-1188"}], "영등포구": [{"name": "영등포지부", "area": "서울시 영등포구 관리지점", "dong": "영등포동, 여의도동, 당산동, 대림동", "address": "서울시 영등포구 영중로 15", "phone": "02-2632-2299"}], "용산구": [{"name": "용산지부", "area": "서울시 용산구 관리지점", "dong": "이촌동, 한남동, 서빙고동, 원효로동", "address": "서울시 용산구 백범로 90", "phone": "02-793-4411"}], "은평구": [{"name": "은평지부", "area": "서울시 은평구 관리지점", "dong": "불광동, 응암동, 갈현동, 진관동", "address": "서울시 은평구 은평로 195", "phone": "02-355-7722"}], "종로구": [{"name": "종로지부", "area": "서울시 종로구 관리지점", "dong": "청운동, 창신동, 이화동, 부암동", "address": "서울시 종로구 종로 175", "phone": "02-732-5588"}], "중구": [{"name": "중구지부", "area": "서울시 중구 관리지점", "dong": "신당동, 황학동, 을지로동, 명동", "address": "서울시 중구 퇴계로 213", "phone": "02-2265-3399"}], "중랑구": [{"name": "중랑지부", "area": "서울시 중랑구 관리지점", "dong": "면목동, 상봉동, 중화동, 묵동", "address": "서울시 중랑구 봉화산로 179", "phone": "02-437-6644"}]}, "경기도": {"수원시": [{"name": "수원지부", "area": "경기도 수원시 관리지점", "dong": "영통동, 매탄동, 인계동", "address": "경기도 수원시 영통구 광교로 145", "phone": "031-217-8800"}], "성남시": [{"name": "성남지부", "area": "경기도 성남시 관리지점", "dong": "분당동, 정자동, 서현동", "address": "경기도 성남시 분당구 판교로 240", "phone": "031-702-1155"}], "고양시": [{"name": "고양지부", "area": "경기도 고양시 관리지점", "dong": "일산동, 화정동, 마두동", "address": "경기도 고양시 일산동구 중앙로 1275", "phone": "031-902-3366"}]}, "인천광역시": {"남동구": [{"name": "인천남동지부", "area": "인천광역시 남동구 관리지점", "dong": "구월동, 간석동, 논현동", "address": "인천광역시 남동구 구월로 129", "phone": "032-464-7700"}], "부평구": [{"name": "인천부평지부", "area": "인천광역시 부평구 관리지점", "dong": "부평동, 산곡동, 청천동", "address": "인천광역시 부평구 부평대로 187", "phone": "032-521-9911"}]}, "강원도": {"춘천시": [{"name": "춘천지부", "area": "강원특별자치도 춘천시 관리지점", "dong": "석사동, 퇴계동, 후평동", "address": "강원특별자치도 춘천시 중앙로 60", "phone": "033-254-4488"}]}, "충청북도": {"청주시": [{"name": "청주지부", "area": "충청북도 청주시 관리지점", "dong": "상당구 일원, 흥덕구 일원", "address": "충청북도 청주시 상당구 상당로 82", "phone": "043-255-3377"}]}, "대전광역시": {"유성구": [{"name": "대전유성지부", "area": "대전광역시 유성구 관리지점", "dong": "봉명동, 궁동, 어은동", "address": "대전광역시 유성구 대학로 99", "phone": "042-822-6600"}]}, "충청남도": {"천안시": [{"name": "천안지부", "area": "충청남도 천안시 관리지점", "dong": "불당동, 두정동, 신부동", "address": "충청남도 천안시 서북구 불당로 234", "phone": "041-575-2211"}]}, "대구광역시": {"수성구": [{"name": "대구수성지부", "area": "대구광역시 수성구 관리지점", "dong": "범어동, 만촌동, 황금동", "address": "대구광역시 수성구 동대구로 351", "phone": "053-745-8899"}]}, "경상북도": {"포항시": [{"name": "포항지부", "area": "경상북도 포항시 관리지점", "dong": "죽도동, 두호동, 상대동", "address": "경상북도 포항시 남구 중앙로 90", "phone": "054-273-5511"}]}, "부산광역시": {"해운대구": [{"name": "부산해운대지부", "area": "부산광역시 해운대구 관리지점", "dong": "우동, 좌동, 재송동", "address": "부산광역시 해운대구 센텀중앙로 30", "phone": "051-731-4477"}]}, "울산광역시": {"남구": [{"name": "울산남지부", "area": "울산광역시 남구 관리지점", "dong": "삼산동, 신정동, 달동", "address": "울산광역시 남구 삼산로 200", "phone": "052-273-6622"}]}, "경상남도": {"창원시": [{"name": "창원지부", "area": "경상남도 창원시 관리지점", "dong": "상남동, 봉림동, 반송동", "address": "경상남도 창원시 성산구 창이대로 689", "phone": "055-282-9944"}]}, "광주광역시": {"서구": [{"name": "광주서지부", "area": "광주광역시 서구 관리지점", "dong": "치평동, 화정동, 상무동", "address": "광주광역시 서구 상무누리로 76", "phone": "062-373-1188"}]}, "전북특별자치도": {"전주시": [{"name": "전주지부", "area": "전북특별자치도 전주시 관리지점", "dong": "효자동, 삼천동, 서신동", "address": "전북특별자치도 전주시 완산구 홍산로 240", "phone": "063-227-5533"}]}, "전라남도": {"여수시": [{"name": "여수지부", "area": "전라남도 여수시 관리지점", "dong": "학동, 신월동, 문수동", "address": "전라남도 여수시 좌수영로 118", "phone": "061-654-2277"}]}, "제주특별자치도": {"제주시": [{"name": "제주지부", "area": "제주특별자치도 제주시 관리지점", "dong": "노형동, 연동, 이도동", "address": "제주특별자치도 제주시 도령로 40", "phone": "064-745-6633"}]}};
+let centersData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+const STORAGE_KEY = 'geulpin-centers-data';
+const BRANCH_API_URL = 'Server/branch_api.php';
+function isAdminUser(){
+  try{
+    const loginInfo = JSON.parse(localStorage.getItem('infochaitalk'));
+    const role = String(loginInfo?.role ?? '');
+    const user = String(loginInfo?.user ?? '').trim().toLowerCase();
+    return role === '9' || user === 'chaitalk';
+  }catch(error){
+    return false;
+  }
+}
+async function loadFromStorage(){
+  try{
+    const response = await fetch(BRANCH_API_URL, {cache:'no-store'});
+    if(!response.ok) throw new Error('branch database unavailable');
+    const payload = await response.json();
+    if(payload.data && Object.keys(payload.data).length){
+      centersData = payload.data;
+    }else{
+      await saveToStorage();
+    }
+  }catch(e){
+    try{
+      if(window.storage && window.storage.get){
+      const res = await window.storage.get(STORAGE_KEY);
+      if(res && res.value) centersData = JSON.parse(res.value);
+      }
+    }catch(storageError){ /* no persisted data yet, or storage unavailable — use defaults */ }
+  }
+  initSido();
+  renderAdminTable();
+}
+async function saveToStorage(){
+  try{
+    const response = await fetch(BRANCH_API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({data:centersData})
+    });
+    if(!response.ok) throw new Error('branch database unavailable');
+    return;
+  }catch(e){
+    try{
+      if(window.storage && window.storage.set) await window.storage.set(STORAGE_KEY, JSON.stringify(centersData));
+    }catch(storageError){ /* storage unavailable — data stays in-memory for this session */ }
+    }
+}
+
+const sidoSelect = document.getElementById('sido');
+const gugunSelect = document.getElementById('gugun');
+const resultSummary = document.getElementById('resultSummary');
+const resultList = document.getElementById('resultList');
+let sidoRequestId = 0;
+
+function initSido(){
+  const prevSido = sidoSelect.value;
+  sidoSelect.innerHTML = '';
+  Object.keys(centersData).forEach(sido=>{
+    const opt = document.createElement('option');
+    opt.value = sido; opt.textContent = sido;
+    sidoSelect.appendChild(opt);
+  });
+  sidoSelect.value = Object.keys(centersData).includes(prevSido) ? prevSido : Object.keys(centersData)[0];
+  onSidoChange();
+}
+async function onSidoChange(){
+  const sido = sidoSelect.value;
+  const prevGugun = gugunSelect.value;
+  gugunSelect.innerHTML = '<option value="">시/군/구 선택</option>';
+  const requestId = ++sidoRequestId;
+  resultList.innerHTML = '<div class="empty-state">지점 정보를 조회 중입니다.</div>';
+
+  try{
+    const response = await fetch(BRANCH_API_URL + '?sido=' + encodeURIComponent(sido), {cache:'no-store'});
+    if(!response.ok) throw new Error('branch database unavailable');
+    const payload = await response.json();
+    if(requestId !== sidoRequestId) return;
+    centersData[sido] = payload.data && payload.data[sido] ? payload.data[sido] : {};
+  }catch(e){
+    if(requestId !== sidoRequestId) return;
+    showToast('지점 정보를 불러오지 못했습니다.');
+    centersData[sido] = {};
+  }
+
+  Object.keys(centersData[sido] || {}).forEach(gu=>{
+    const opt = document.createElement('option');
+    opt.value = gu; opt.textContent = gu;
+    gugunSelect.appendChild(opt);
+  });
+  if(Object.keys(centersData[sido] || {}).includes(prevGugun)) gugunSelect.value = prevGugun;
+  renderResults();
+}
+function onGugunChange(){ renderResults(); }
+
+function collectCenters(sido, gugun){
+  const guData = centersData[sido] || {};
+  let list = [];
+  if(gugun){
+    (guData[gugun] || []).forEach((c, centerIndex)=> list.push(Object.assign({gu:gugun, centerIndex}, c)));
+  }else{
+    Object.keys(guData).forEach(gu=> guData[gu].forEach((c, centerIndex)=> list.push(Object.assign({gu, centerIndex}, c))));
+  }
+  return list;
+}
+
+function renderResults(){
+  const sido = sidoSelect.value;
+  const gugun = gugunSelect.value;
+  const list = collectCenters(sido, gugun);
+  const scopeLabel = gugun ? (sido + ' ' + gugun) : sido;
+  resultSummary.innerHTML = `<b>${scopeLabel}</b> 에 <b>${list.length}개</b>의 글핀 지점가 검색되었습니다.`;
+
+  resultList.innerHTML = '';
+  if(list.length === 0){
+    resultList.innerHTML = `
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div>검색된 지점가 없습니다.</div>
+      </div>`;
+    window.__currentList = [];
+    return;
+  }
+
+  list.forEach((c, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'center-card';
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="info">
+          <h3>${c.name}</h3>
+          <div class="desc">${c.area}</div>
+          <div class="meta">
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              ${c.address}
+            </span>
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.8 2.1z"/></svg>
+              ${c.phone}
+            </span>
+          </div>
+        </div>
+        <button class="badge-btn" type="button" onclick="openDong(${idx})">세부지역 안내</button>
+      </div>
+      <div class="card-buttons">
+        <a class="btn-call" href="tel:${c.phone.replace(/-/g,'')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.8 2.1z"/></svg>
+          전화연결
+        </a>
+        <a class="btn-loc" href="#" onclick="openMap(${idx}); return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          위치보기
+        </a>
+        ${isAdminUser() ? `<button class="btn-delete" type="button" onclick="deleteResultCenter(${idx})">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m3 0V4h8v2m-6 4v6m4-6v6"/></svg>
+          삭제
+        </button>` : ''}
+      </div>
+    `;
+    resultList.appendChild(card);
+  });
+  window.__currentList = list;
+}
+
+function openDong(idx){
+  const c = window.__currentList[idx];
+  document.getElementById('dongTitle').textContent = c.name + ' — ' + c.area;
+  document.getElementById('dongList').textContent = c.dong;
+  openModal('dongOverlay');
+}
+
+let currentMapCenter = null;
+function openMap(idx){
+  const c = window.__currentList[idx];
+  currentMapCenter = c;
+  document.getElementById('mapTitle').textContent = c.name;
+  document.getElementById('mapAddress').textContent = c.address;
+  document.getElementById('mapPhone').textContent = c.phone + ' (상담시간 : 평일 09:00~18:00)';
+  document.getElementById('mapCallBtn').href = 'tel:' + c.phone.replace(/-/g,'');
+  document.getElementById('mapPinLabel').textContent = c.name;
+  const naverUrl = 'https://map.naver.com/p/search/' + encodeURIComponent(c.address);
+  document.getElementById('naverOpenBtn').href = naverUrl;
+  openModal('mapOverlay');
+}
+
+function openConsult(){
+  document.getElementById('consultSub').textContent =
+    currentMapCenter ? currentMapCenter.name + '에 상담을 신청합니다.' : '';
+  openModal('consultOverlay');
+}
+function submitConsult(){
+  const name = document.getElementById('cName').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  if(!name || !phone){ showToast('이름과 연락처를 입력해 주세요.'); return; }
+  closeModal('consultOverlay');
+  closeModal('mapOverlay');
+  document.getElementById('cName').value='';
+  document.getElementById('cPhone').value='';
+  showToast('상담 신청이 접수되었습니다.');
+}
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(ov=>{
+  ov.addEventListener('click', (e)=>{
+    if(e.target === ov && ov.id !== 'registerOverlay') closeModal(ov.id);
+  });
+});
+
+/* 지점 등록 모달: 제목 표시줄 드래그 이동 */
+const registerModal = document.querySelector('#registerOverlay .modal-register');
+const registerModalBar = registerModal.querySelector('.bar');
+let registerDrag = null;
+
+registerModalBar.addEventListener('pointerdown', event=>{
+  if(event.button !== 0 || event.target.closest('button') || window.innerWidth <= 640) return;
+  const rect = registerModal.getBoundingClientRect();
+  registerDrag = {
+    pointerId:event.pointerId,
+    startX:event.clientX,
+    startY:event.clientY,
+    translateX:Number(registerModal.dataset.translateX || 0),
+    translateY:Number(registerModal.dataset.translateY || 0),
+    minX:20 - rect.left,
+    maxX:window.innerWidth - 20 - rect.right,
+    minY:20 - rect.top,
+    maxY:window.innerHeight - 20 - rect.bottom
+  };
+  registerModal.classList.add('is-dragging');
+  registerModalBar.setPointerCapture(event.pointerId);
+});
+
+registerModalBar.addEventListener('pointermove', event=>{
+  if(!registerDrag || event.pointerId !== registerDrag.pointerId) return;
+  const offsetX = Math.min(registerDrag.maxX, Math.max(registerDrag.minX, event.clientX - registerDrag.startX));
+  const offsetY = Math.min(registerDrag.maxY, Math.max(registerDrag.minY, event.clientY - registerDrag.startY));
+  const translateX = registerDrag.translateX + offsetX;
+  const translateY = registerDrag.translateY + offsetY;
+  registerModal.dataset.translateX = translateX;
+  registerModal.dataset.translateY = translateY;
+  registerModal.style.transform = `translate(${translateX}px, ${translateY}px)`;
+});
+
+function endRegisterDrag(event){
+  if(!registerDrag || event.pointerId !== registerDrag.pointerId) return;
+  registerDrag = null;
+  registerModal.classList.remove('is-dragging');
+}
+registerModalBar.addEventListener('pointerup', endRegisterDrag);
+registerModalBar.addEventListener('pointercancel', endRegisterDrag);
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+/* ---------------- 지점등록 (Daum/Kakao 우편번호 서비스) ---------------- */
+function openRegister(){
+  resetForm();
+  openModal('registerOverlay');
+  renderAdminTable();
+}
+
+// 서울/광역시/도 등 시·도 명칭 뒤에 오는 접미사로 주소 문자열에서 시/도, 시/군/구를 추정하는 보조 파서
+// (Daum 응답에 sido/sigungu 값이 비어 오는 예외적인 경우를 대비한 안전장치)
+function parseAddressRegion(address){
+  if(!address) return {sido:'', gugun:''};
+  const tokens = address.trim().split(/\s+/);
+  const sidoTok = tokens[0] || '';
+  const guTok = tokens[1] || '';
+  const sido = /(특별시|광역시|특별자치시|특별자치도|도)$/.test(sidoTok) ? sidoTok : sidoTok;
+  const gugun = /(시|군|구)$/.test(guTok) ? guTok : guTok;
+  return {sido, gugun};
+}
+
+// 주소 검색 (Kakao 우편번호 서비스)
+// 페이지 내부에 iframe으로 끼워 넣는 방식(embed)은 중첩된 미리보기/샌드박스 환경에서
+// 결과 선택 메시지가 부모 페이지로 전달되지 않는 경우가 있어,
+// 실제 브라우저 팝업창(window.open)을 여는 .open() 방식을 사용합니다.
+// -> 창 크기를 500x600으로 고정해 화면 전체가 아닌 중간 크기로만 뜨고,
+//    선택 즉시 콜백이 바로 이 페이지의 자바스크립트를 호출해 입력칸을 채웁니다.
+function openPostcode(){
+  if(!(window.daum && window.daum.Postcode)){
+    showToast('주소 검색 서비스를 불러오지 못했습니다. 네트워크 연결을 확인하거나 잠시 후 다시 시도해 주세요.');
+    return;
+  }
+  const w = 500, h = 600;
+  const left = Math.max(0, (window.screen.width - w) / 2);
+  const top = Math.max(0, (window.screen.height - h) / 2);
+
+  const postcode = new daum.Postcode({
+    oncomplete: function(data){
+      const roadAddr = data.roadAddress || data.jibunAddress || '';
+      let sido = data.sido || '';
+      let gugun = data.sigungu || '';
+      if(!sido || !gugun){
+        const guessed = parseAddressRegion(roadAddr);
+        sido = sido || guessed.sido;
+        gugun = gugun || guessed.gugun;
+      }
+      document.getElementById('fAddress').value = roadAddr;
+      document.getElementById('fZip').value = data.zonecode || '';
+      document.getElementById('fSido').value = sido;
+      document.getElementById('fGugun').value = gugun;
+      document.getElementById('fAddressDetail').focus();
+      showToast('주소와 우편번호가 자동으로 채워졌습니다.');
+    },
+    width: '100%',
+    height: '100%'
+  });
+
+  const opened = postcode.open({
+    left: left,
+    top: top,
+    popupTitle: '주소 검색 (Kakao)',
+    popupKey: 'geulpinAddressPopup'
+  });
+
+  // 팝업이 브라우저 팝업 차단 등으로 열리지 못한 경우를 대비한 안내
+  setTimeout(function(){
+    if(opened === false){
+      showToast('팝업이 차단되었습니다. 브라우저의 팝업 차단을 해제한 뒤 다시 시도해 주세요.');
+    }
+  }, 300);
+}
+
+let editingRef = null;
+function resetForm(){
+  editingRef = null;
+  ['fSido','fGugun','fName','fArea','fDong','fAddress','fAddressDetail','fPhone','fZip'].forEach(id=>{
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('editingFlag').classList.remove('show');
+}
+
+function saveCenter(){
+  const sido = document.getElementById('fSido').value.trim();
+  const gugun = document.getElementById('fGugun').value.trim();
+  const name = document.getElementById('fName').value.trim();
+  const area = document.getElementById('fArea').value.trim();
+  const dong = document.getElementById('fDong').value.trim();
+  const roadAddr = document.getElementById('fAddress').value.trim();
+  const detail = document.getElementById('fAddressDetail').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  const address = detail ? (roadAddr + ' ' + detail) : roadAddr;
+
+  if(!sido || !gugun || !name || !roadAddr || !phone){
+    showToast('주소검색, 지부명, 전화번호는 필수입니다.');
+    return;
+  }
+
+  const record = { name, area, dong, address, phone };
+
+  if(editingRef){
+    const old = centersData[editingRef.sido][editingRef.gu];
+    old.splice(editingRef.index, 1);
+    if(old.length === 0) delete centersData[editingRef.sido][editingRef.gu];
+    if(Object.keys(centersData[editingRef.sido]).length === 0) delete centersData[editingRef.sido];
+  }
+  if(!centersData[sido]) centersData[sido] = {};
+  if(!centersData[sido][gugun]) centersData[sido][gugun] = [];
+  centersData[sido][gugun].push(record);
+
+  saveToStorage();
+  initSido();
+  sidoSelect.value = sido; onSidoChange();
+  gugunSelect.value = gugun; renderResults();
+  renderAdminTable();
+  resetForm();
+  showToast('저장되었습니다. 검색 결과에 반영되었습니다.');
+}
+
+function editCenter(sido, gu, index){
+  const c = centersData[sido][gu][index];
+  document.getElementById('fSido').value = sido;
+  document.getElementById('fGugun').value = gu;
+  document.getElementById('fName').value = c.name;
+  document.getElementById('fArea').value = c.area;
+  document.getElementById('fDong').value = c.dong;
+  document.getElementById('fAddress').value = c.address;
+  document.getElementById('fAddressDetail').value = '';
+  document.getElementById('fPhone').value = c.phone;
+  editingRef = {sido, gu, index};
+  document.getElementById('editingFlag').classList.add('show');
+}
+function deleteCenter(sido, gu, index){
+  if(!isAdminUser()){
+    showToast('관리자만 지점을 삭제할 수 있습니다.');
+    return;
+  }
+  if(!confirm('이 지점을 삭제할까요?')) return;
+  centersData[sido][gu].splice(index, 1);
+  if(centersData[sido][gu].length === 0) delete centersData[sido][gu];
+  if(Object.keys(centersData[sido]).length === 0) delete centersData[sido];
+  saveToStorage();
+  initSido();
+  renderResults();
+  renderAdminTable();
+  showToast('삭제되었습니다.');
+}
+function deleteResultCenter(listIndex){
+  const center = (window.__currentList || [])[listIndex];
+  if(!center) return;
+  deleteCenter(sidoSelect.value, center.gu, center.centerIndex);
+}
+function renderAdminTable(){
+  const tbody = document.getElementById('adminTableBody');
+  tbody.innerHTML = '';
+  let count = 0;
+  Object.keys(centersData).forEach(sido=>{
+    Object.keys(centersData[sido]).forEach(gu=>{
+      centersData[sido][gu].forEach((c, index)=>{
+        count++;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${c.name}</td><td>${sido} ${gu}</td><td class="addr">${c.address}</td><td>${c.phone}</td>
+          <td class="row-actions">
+            <button onclick="editCenter('${sido}','${gu}',${index})">수정</button>
+            ${isAdminUser() ? `<button class="del" onclick="deleteCenter('${sido}','${gu}',${index})">삭제</button>` : ''}
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    });
+  });
+  document.getElementById('adminListHead').textContent = `등록된 지점 (${count})`;
+}
+
+sidoSelect.addEventListener('change', onSidoChange);
+gugunSelect.addEventListener('change', onGugunChange);
+
+loadFromStorage();
+</script>
+</body>
+</html>

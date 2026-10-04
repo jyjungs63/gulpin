@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS chaitalk_user (
+CREATE TABLE IF NOT EXISTS gulpin_user (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     owner TEXT DEFAULT '',
@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS chaitalk_user (
     rdate TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_chaitalk_user_login
-    ON chaitalk_user (id, status, confirm);
+CREATE INDEX IF NOT EXISTS idx_gulpin_user_login
+    ON gulpin_user (id, status, confirm);
 
 CREATE TABLE IF NOT EXISTS visitors (
     num INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS visitors (
     role INTEGER DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS chaitalk_addrlist (
+CREATE TABLE IF NOT EXISTS gulpin_addrlist (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     owner TEXT DEFAULT '',
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS chaitalk_addrlist (
     etc TEXT DEFAULT ''
 );
 
-CREATE TABLE IF NOT EXISTS chaitalk_parcel (
+CREATE TABLE IF NOT EXISTS gulpin_parcel (
     id TEXT DEFAULT '',
     name TEXT DEFAULT '',
     date TEXT DEFAULT (datetime('now', 'localtime')),
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS chaitalk_parcel (
     UNIQUE (id, date)
 );
 
-CREATE TABLE IF NOT EXISTS chaitalk_porlist (
+CREATE TABLE IF NOT EXISTS gulpin_porlist (
     por_id TEXT PRIMARY KEY,
     id TEXT NOT NULL,
     "order" TEXT DEFAULT '',
@@ -74,19 +74,19 @@ CREATE TABLE IF NOT EXISTS chaitalk_porlist (
     refund TEXT DEFAULT ''
 );
 
-CREATE INDEX IF NOT EXISTS idx_chaitalk_porlist_id
-    ON chaitalk_porlist (id);
+CREATE INDEX IF NOT EXISTS idx_gulpin_porlist_id
+    ON gulpin_porlist (id);
 
-CREATE INDEX IF NOT EXISTS idx_chaitalk_porlist_rdate
-    ON chaitalk_porlist (rdate);
+CREATE INDEX IF NOT EXISTS idx_gulpin_porlist_rdate
+    ON gulpin_porlist (rdate);
 
-CREATE TABLE IF NOT EXISTS chaitalk_price (
+CREATE TABLE IF NOT EXISTS gulpin_price (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     price TEXT DEFAULT '',
     rdate TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
 );
 
-CREATE TABLE IF NOT EXISTS chaitalk_repository (
+CREATE TABLE IF NOT EXISTS gulpin_repository (
     num INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     id TEXT NOT NULL,

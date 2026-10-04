@@ -2,7 +2,7 @@
 /**
  * export_excel.php
  * ─────────────────────────────────────────────────────
- * chaitalk_porlist 테이블을 조회하여 엑셀(xlsx)로 변환·다운로드
+ * gulpin_porlist 테이블을 조회하여 엑셀(xlsx)로 변환·다운로드
  *
  * 의존성 : PhpSpreadsheet (Composer)
  *   composer require phpoffice/phpspreadsheet
@@ -23,7 +23,7 @@ $isLocal  = (strpos($fullURL, "localhost") !== false)
 
 
     define('DB_HOST',    'localhost');
-    define('DB_NAME',    'happyzip1');
+    define('DB_NAME',    'happyzip2');
     define('DB_CHARSET', 'utf8mb4');
 
 if ($isLocal) {
@@ -32,8 +32,8 @@ if ($isLocal) {
 }
 else
 {
-    define('DB_USER',    'happyzip1');
-    define('DB_PASS',    'skl329350281@');
+    define('DB_USER',    'happyzip2');
+    define('DB_PASS',    'skl32935028@');
 }
 
 // ═══ DB 설정 (본인 환경에 맞게 수정) ═══════════════════
@@ -82,7 +82,7 @@ function fetchOrders(string $from, string $to, bool $all): array
         if ($to   !== '') { $where[]  = 'rdate <= ?'; $params[] = $to   . ' 23:59:59'; }
     }
 
-    $sql  = "SELECT * FROM chaitalk_porlist"
+    $sql  = "SELECT * FROM gulpin_porlist"
           . (empty($where) ? '' : ' WHERE ' . implode(' AND ', $where))
           . " ORDER BY rdate ASC";
 
@@ -271,7 +271,7 @@ function generateExcel(array $orders): void
 
     // ── 파일 다운로드 ─────────────────────────────────
     $fname = '주문현황_' . date('Y-m-d') . '.xlsx';
-    $tmp   = sys_get_temp_dir() . '/chaitalk_porlist_export.xlsx';
+    $tmp   = sys_get_temp_dir() . '/gulpin_porlist_export.xlsx';
     (new Xlsx($sp))->save($tmp);
 
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

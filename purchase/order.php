@@ -21,6 +21,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alasql/4.5.0/alasql.min.js"></script>
     <link rel="stylesheet" href="order.css">
     <link rel="stylesheet" href="../role-nav.css">
+    <script src="../js/roles.js"></script>
     <script src="../js/role-nav.js" defer></script>
     <style>
     </style>
@@ -67,13 +68,14 @@
                                     aria-labelledby="custom-tabs-one-home-tab">
 
                                     <div class="kgarden-form">
+                                        <div class="kgarden-field" id="idPriceGroupField" style="display:none">
+                                            <label for="idPriceGroup">가격표</label>
+                                            <select id="idPriceGroup" onchange="showPriceGroup(this.value)"></select>
+                                        </div>
                                         <div class="kgarden-field">
                                             <label for="idGrade">필터</label>
                                             <select id="idGrade" data-placeholder="Choose Items">
-                                                <option val="va">전체</option>
-                                                <option val="v4">한자뚝0</option>
-                                                <option val="v5">한자뚝A</option>
-                                                <option val="v6">한자뚝B</option>
+                                                <option value="va">전체</option>
                                             </select>
                                         </div>
                                     </div>
@@ -265,9 +267,8 @@
     <script src="acount.js"></script>
 
     <script>
-        let listprice2;
-        let data;
-        let sele = "가맹관리";
+        let listprice2 = [];
+        let priceGroups = {};   // 지사 그룹별 가격표 (가격표.xlsx → Server/price_catalog.json)
         var porId = "";
 
 
@@ -278,45 +279,38 @@
         else
             $("#idBtDelever").css('visibility', 'hidden');
 
-        async function updateTableData(response) {
-            try {
-                //const response = await fetch(`${url}?t=${new Date().getTime()}`);
-                // data = await response.json();
-
-                data = JSON.parse(response['success'][0]['price'])
-
-                if (role == "1")
-                    sele = "지사관리"
-                else if (role == "2")
-                    sele = "원관리"
-
-                listprice2 = [...data[sele]["한자뚝0"], ...data[sele]["한자뚝A"], ...data[sele]["한자뚝B"]];
-
-                table.setData(listprice2)
-                    .then(() => {
-                        console.log("테이블 데이터 업데이트 완료");
-                    })
-                    .catch(error => {
-                        console.error("데이터 설정 중 오류:", error);
-                    });
-            } catch (error) {
-                console.error("데이터 가져오기 실패:", error);
-            }
+        // 선택한 그룹의 가격표를 주문 테이블에 표시. uid = 교재 코드 (주문내역 → 학습 열람 권한에 사용)
+        function showPriceGroup(key) {
+            const group = priceGroups[key];
+            listprice2 = (group ? group.items : []).map(item => ({
+                uid: item.code,
+                grade: item.family,
+                title: item.title,
+                price: item.price,
+            }));
+            const families = [...new Set(listprice2.map(item => item.grade))];
+            document.getElementById("idGrade").replaceChildren(new Option("전체", "va"), ...families.map(family => new Option(family, family)));
+            table.setData(listprice2);
         }
 
-        dispErr = (xhr) => {
-            CallToast("price list 조회 실패!!", "error");
-        };
+        // 서버는 로그인한 지사 그룹의 가격표만 준다 (본사는 전체 → 가격표 선택 표시)
+        function updateTableData(response) {
+            priceGroups = (response.success && response.success.groups) || {};
+            const keys = Object.keys(priceGroups);
+            document.getElementById("idPriceGroup").replaceChildren(...keys.map(key => new Option(priceGroups[key].name, key)));
+            document.getElementById("idPriceGroupField").style.display = keys.length > 1 ? "" : "none";
+            if (keys.length === 0) CallToast("주문할 수 있는 가격표가 없습니다.", "error");
+            showPriceGroup(keys[0]);
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 테이블 초기화
             var options = {
-                functionName: "SGetListPrice",
-                otherData: {
-                    id: ""
-                },
+                functionName: "SGetPriceCatalog",
+                otherData: {},
             };
-            CallAjax("SMethods.php", "POST", options, updateTableData, dispErr);
+            CallAjax("SMethods.php", "POST", options, updateTableData, (e) => {
+                CallToast((e && e.responseJSON && e.responseJSON.error) || "가격표 조회 실패!!", "error");
+            });
         });
         orderToPdf = () => {
             var element = document.getElementById('idTableConfirm');
@@ -344,12 +338,8 @@
             //html2pdf(element, opt);
         }
 
-        let rolename = "지사장";
-        if (role == 2)
-            rolename = "선생님"
-        else
-            rolename = "가맹점"
-        document.getElementById("idOrdertext").innerHTML = (user + ` ${rolename}/구매`);
+        const rolename = GP_ROLE.orderTitle(role); // js/roles.js
+        document.getElementById("idOrdertext").innerHTML = (name + ` ${rolename}/구매`);
 
         const {
             PDFDocument,

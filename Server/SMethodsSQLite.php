@@ -1,6 +1,9 @@
 <?php
 
 require_once 'sqlite_compat.php';
+require_once 'mgr_policy.php'; // SShowMgr, SRegistermgr, SShowConfirmUpdate, SDeleteMgr
+require_once 'catalog.php';    // SGetPriceCatalog, SGetLearningAccess (가격표.xlsx)
+require_once 'student_policy.php'; // STeacherStudents/Save/Delete, SIdStudents/MaxNo/Save
 
 $urlFromGET = "";
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
@@ -23,7 +26,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             else if ("Slogon" == $functionName || "SRegister" == $functionName)
                 $functionName($_POST, $urlFromGET);
             else
-                $functionName($_POST['otherData']);
+                $functionName(isset($_POST['otherData']) ? $_POST['otherData'] : array());
         }
     }
 }
@@ -56,7 +59,7 @@ function CheckPasswd($login, $password)
     global $conn;
     $user = "";
     $login = sqlite_escape_string($conn, $login);
-    $rs = sqlite_query($conn, "select * from chaitalk_user where id='{$login}' ");
+    $rs = sqlite_query($conn, "select * from gulpin_user where id='{$login}' ");
 
     if ($rs) {
         $user = sqlite_fetch_assoc($rs);
@@ -79,6 +82,15 @@ function Slogon($data, $dest)
     if (!empty($Email) && !empty($Password)) {
 
         $res = CheckUser($Email, $Password);
+
+        // 초기 화면 영역(유치원/학원/홈스쿨·방과후·온라인)과 계정 그룹이 다르면 로그인하지 않는다
+        $area = (string) ($data['area'] ?? '');
+        if ($res && !gpCanUseArea((int) $res['role'], $area)) {
+            header('Content-Type: application/json');
+            $areaName = GP_AREA_NAMES[$area] ?? $area;
+            echo json_encode(array('falure' => 'area', 'message' => "{$areaName} 영역에서 로그인할 수 없는 계정입니다."), JSON_UNESCAPED_UNICODE);
+            return;
+        }
 
         if ($res) {
             sqlite_start_session();
@@ -126,7 +138,7 @@ function SetLogin($id)
 {
     global $conn;
     try {
-        $sql = "UPDATE chaitalk_user SET logstat = 1 , logdate = now()  WHERE id = '{$id}' ";
+        $sql = "UPDATE gulpin_user SET logstat = 1 , logdate = now()  WHERE id = '{$id}' ";
         if ($conn->query($sql) === TRUE) {
             $result = true;
         }
@@ -141,7 +153,7 @@ function CheckUser2($login)
     global $conn;
     $user = "";
     $login = sqlite_escape_string($conn, $login);
-    $rs = sqlite_query($conn, "select * from chaitalk_user where id='{$login}'");
+    $rs = sqlite_query($conn, "select * from gulpin_user where id='{$login}'");
 
     if ($rs) {
         $user = sqlite_fetch_assoc($rs);
@@ -156,7 +168,7 @@ function CheckUser($login, $password)
     global $conn;
     $user = "";
     $login = sqlite_escape_string($conn, $login);
-    $rs = sqlite_query($conn, "select * from chaitalk_user where id='{$login}' and status = 1 and confirm = 1 ");
+    $rs = sqlite_query($conn, "select * from gulpin_user where id='{$login}' and status = 1 and confirm = 1 ");
 
     if ($rs) {
         $user = sqlite_fetch_assoc($rs);
@@ -175,49 +187,9 @@ function CheckUser($login, $password)
 
 function SRegister($data, $dest)
 {
-
-    $id       = $data['id'];
-    $name     = $data['name'];
-    $password = $data['password'];
-    $mobile   = $data['mobile'];
-    $addr     = $data['addr'];
-    $zipcode  = $data['zipcode'];
-
-    $role = 0;
-    if (isset($data['idrolebm']))   // 지사장
-        $role = 1;
-    if (isset($data['idrolet']))     // 원장, 선생님
-        $role = 2;
-    if (isset($data['idrolesite']))     // 가맹
-        $role = 3;
-    if (isset($data['idroleother']))     // 일반 유료 회원
-        $role = 4;
-
-    global $conn;
-
-    try {
-
-        $id = sqlite_escape_string($conn, $id);
-
-        $sqlstring = "insert into chaitalk_user (id, name, password, mobile, addr, zipcode, role, confirm) 
-        values ( '{$id}', '{$name}','{$password}', '{$mobile} ','{$addr}', '{$zipcode}', $role , 1)";
-
-        $res = sqlite_query($conn, $sqlstring);
-
-        $conn->close();
-    } catch (Exception $e) {
-        echo json_encode($e->getMessage());
-    }
-
+    // 계정은 바로 위 단계(본사 → 지사 → 선생 → 학생)가 생성한다 — Server/roles.php
     header('Content-Type: application/json');
-    if ($res === TRUE) {
-        $result = true;
-        //header('location: ../login/login.php');
-        echo json_encode(array('success' => '../login/login.php'));
-    } else {
-        $result = json_encode(array("falure: " => $conn->error));
-        echo $result;
-    }
+    echo json_encode(array('falure' => '계정은 소속 지사/선생님이 등록합니다. 담당자에게 문의하세요.'), JSON_UNESCAPED_UNICODE);
 }
 
 function SstudentList($data)
@@ -229,7 +201,7 @@ function SstudentList($data)
 
     global $conn;
 
-    $sqlString = "SELECT name FROM chaitalk_user u where u.tid = '{$tid}' and role = {$role}";
+    $sqlString = "SELECT name FROM gulpin_user u where u.tid = '{$tid}' and role = {$role}";
 
     $rows = array();
 
@@ -264,13 +236,13 @@ function SShowOrderList($data)
 
     global $conn;
 
-    //$sqlString = "SELECT p.*, u.name FROM chaitalk_porlist p chaitalk_user u where confirm = 0";
+    //$sqlString = "SELECT p.*, u.name FROM gulpin_porlist p gulpin_user u where confirm = 0";
     if ($id == "admin")
-        $sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id order by p.rdate ";
-    //$sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id and p.confirm = 0";
+        $sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id order by p.rdate ";
+    //$sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id and p.confirm = 0";
     else
-        $sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id and  u.id = '{$id}' order by p.rdate";
-    //$sqlString = "SELECT p.*, u.owner bname FROM chaitalk_porlist p , chaitalk_user u where u.id = p.id and p.confirm = 0 and u.id = '{$id}'";
+        $sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id and  u.id = '{$id}' order by p.rdate";
+    //$sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id and p.confirm = 0 and u.id = '{$id}'";
 
     $rows = array();
 
@@ -319,7 +291,7 @@ function SPorDetailList($data)
         die("Connection failed: " . $conn->connect_error);
     }
 
-    $stmt = "select * from chaitalk_porlist where por_id='{$pid}' ";
+    $stmt = "select * from gulpin_porlist where por_id='{$pid}' ";
 
     try {
 
@@ -390,7 +362,7 @@ function SPorDetailListRangeSort($data)
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-    $tsql = "select p.*, u.owner owner from chaitalk_porlist p ,  chaitalk_user u  where u.id = p.id and ";
+    $tsql = "select p.*, u.owner owner from gulpin_porlist p ,  gulpin_user u  where u.id = p.id and ";
 
     if ($id == "admin" || $id == "chaitalk") {
 
@@ -442,9 +414,9 @@ function SPorDetailListRangeSort($data)
         }
         array_push($ret,  array('list' => $rows));
         $nstart = substr($start, 0, 7);
-        $stmt = "select * from chaitalk_parcel where  DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
+        $stmt = "select * from gulpin_parcel where  DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
         if ($id != "전지사")
-            $stmt = "select * from chaitalk_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
+            $stmt = "select * from gulpin_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
 
         $rs1 = sqlite_query($conn, $stmt);
         $rows = [];
@@ -489,7 +461,7 @@ function SPorDetailListRange($data)
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-    $tsql = "select p.*, u.owner owner from chaitalk_porlist p ,  chaitalk_user u  where u.id = p.id and ";
+    $tsql = "select p.*, u.owner owner from gulpin_porlist p ,  gulpin_user u  where u.id = p.id and ";
 
 
     if ($name == "전지사")
@@ -531,9 +503,9 @@ function SPorDetailListRange($data)
         }
         array_push($ret,  array('list' => $rows));
         $nstart = substr($start, 0, 7);
-        $stmt = "select * from chaitalk_parcel where  DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
+        $stmt = "select * from gulpin_parcel where  DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
         if ($id != "전지사")
-            $stmt = "select * from chaitalk_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
+            $stmt = "select * from gulpin_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
 
         $rs1 = sqlite_query($conn, $stmt);
         $rows = [];
@@ -572,21 +544,21 @@ function SPorAddParcel($data)
 
         // check id, date exist
 
-        //$stmt = "select * from chaitalk_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$start}' ";
-        $stmt = "select * from chaitalk_parcel where id='{$id}' and `date` = '{$start} 00:00:00' ";
+        //$stmt = "select * from gulpin_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$start}' ";
+        $stmt = "select * from gulpin_parcel where id='{$id}' and `date` = '{$start} 00:00:00' ";
 
         $rs1 = sqlite_query($conn, $stmt);
 
         if ($rs1->num_rows > 0) {
-            $sql = "UPDATE chaitalk_parcel SET price =  {$price}  WHERE  id = '{$id}' and  `date` = '{$start} 00:00:00'";
-            //$sql = "UPDATE chaitalk_parcel SET price =  {$price}  WHERE  id = '{$id}' and  DATE_FORMAT(`date`,'%Y-%m') = '{$start}'";
+            $sql = "UPDATE gulpin_parcel SET price =  {$price}  WHERE  id = '{$id}' and  `date` = '{$start} 00:00:00'";
+            //$sql = "UPDATE gulpin_parcel SET price =  {$price}  WHERE  id = '{$id}' and  DATE_FORMAT(`date`,'%Y-%m') = '{$start}'";
             $res = $conn->query($sql);
         } // update
         else {
-            $sqlstring = "insert into chaitalk_parcel (id, name, price) 
+            $sqlstring = "insert into gulpin_parcel (id, name, price) 
             values ( '{$id}', '{$name}',{$price} )";
             if ($start != "")
-                $sqlstring = "insert into chaitalk_parcel (id, name, price, `date`) 
+                $sqlstring = "insert into gulpin_parcel (id, name, price, `date`) 
             values ( '{$id}', '{$name}', {$price}, '{$start}' )";
 
             $res = sqlite_query($conn, $sqlstring);
@@ -605,77 +577,6 @@ function SPorAddParcel($data)
     }
 }
 
-function SShowMgr($data)
-{
-    sqlite_start_session();
-
-    global $conn;
-
-    $role = $data['role'];
-    $id   = $data['id'];
-
-    try {
-
-        if ($role == "va") {
-            if ($id == 'admin' || $id == "chaitalk")
-                $sqlString = "SELECT * FROM chaitalk_user where role IN (1, 2, 3, 7) and status = 1 ";
-            else
-                $sqlString = "SELECT * FROM chaitalk_user where mid = '" . $id . "'  and status = 1";
-        } else if ($role == "v4")
-            if ($id == 'admin' || $id == "chaitalk")
-                $sqlString = "SELECT * FROM chaitalk_user where role = 1  and status = 1";
-            else
-                $sqlString = "SELECT * FROM chaitalk_user where role = 1 and mid = '" . $id . "'  and status = 1";
-        else  if ($role == "v5")
-            if ($id == 'admin' || $id == "chaitalk")
-                $sqlString = "SELECT * FROM chaitalk_user where role = 2  ";
-            else
-                $sqlString = "SELECT * FROM chaitalk_user where role = 2 and mid = '" . $id . "' and status = 1";
-        else  if ($role == "v6")
-            if ($id == 'admin' || $id == "chaitalk")
-                $sqlString = "SELECT * FROM chaitalk_user where role = 3  ";
-            else
-                $sqlString = "SELECT * FROM chaitalk_user where role = 3 and mid = '" . $id . "'  and status = 1";
-        else  if ($role == "v7")
-            if ($id == 'admin' || $id == "chaitalk")
-                $sqlString = "SELECT * FROM chaitalk_user where role = 7  ";
-            else
-                $sqlString = "SELECT * FROM chaitalk_user where role = 7 and mid = '" . $id . "'  and status = 1";
-
-        $rs = sqlite_query($conn, $sqlString);
-        $rows = array();
-
-        $i = 0;
-
-        while ($row = sqlite_fetch_array($rs)) {
-            array_push(
-                $rows,
-                array(
-                    'id'        => $row['id'],
-                    'name'      => $row['name'],
-                    'owner'     => $row['owner'],
-                    'password'  => $row['password'],
-                    'mobile'    => $row['mobile'],
-                    'addr'      => $row['addr'],
-                    'zipcode'   => $row['zipcode'],
-                    'confirm'   => $row['confirm'],
-                    'rdate'     => $row['rdate'],
-                    'role'     => $row['role'],
-                    'class'     => $row['etc'],
-                )
-            );
-        }
-        $conn->close();
-        $result["rows"] = $rows;
-
-        header('Content-Type: application/json');
-        echo json_encode(array("success" => $rows));
-    } catch (Exception $e) {
-        header('Content-Type: application/json');
-        echo json_encode(array("Error: " => $e->getMessage()));
-    }
-}
-
 function SShowAddr($data)
 {
     sqlite_start_session();
@@ -687,7 +588,7 @@ function SShowAddr($data)
     try {
 
 
-        $sqlString = "SELECT * FROM chaitalk_addrlist where mid = '" . $id . "'  order by rdate desc";
+        $sqlString = "SELECT * FROM gulpin_addrlist where mid = '" . $id . "'  order by rdate desc";
 
 
         $rs = sqlite_query($conn, $sqlString);
@@ -710,7 +611,7 @@ function SShowAddr($data)
             );
         }
 
-        $sqlString2 = "SELECT * FROM chaitalk_user where mid = '" . $id . "'";
+        $sqlString2 = "SELECT * FROM gulpin_user where mid = '" . $id . "'";
         $rs = sqlite_query($conn, $sqlString2);
 
         while ($row = sqlite_fetch_array($rs)) {
@@ -750,7 +651,7 @@ function SRemoveChild($data)
 
     try {
 
-        $sql = "DELETE FROM chaitalk_user WHERE id = '" . $id . "'";
+        $sql = "DELETE FROM gulpin_user WHERE id = '" . $id . "'";
 
         if ($conn->query($sql) === TRUE) {
             $res = true;
@@ -777,7 +678,7 @@ function SRemoveAddress($data)    // 프로그램 update 필요함
 
     try {
 
-        $sql = "DELETE FROM chaitalk_addrlist WHERE id = '" . $id . "'";
+        $sql = "DELETE FROM gulpin_addrlist WHERE id = '" . $id . "'";
 
         if ($conn->query($sql) === TRUE) {
             $res = true;
@@ -805,7 +706,7 @@ function SRemovPorID($data)    // 프로그램 update 필요함
 
     try {
 
-        $sql = "DELETE FROM chaitalk_porlist WHERE por_id = '" . $id . "'";
+        $sql = "DELETE FROM gulpin_porlist WHERE por_id = '" . $id . "'";
 
         if ($conn->query($sql) === TRUE) {
             $res = true;
@@ -840,9 +741,9 @@ function SRemovPorID($data)    // 프로그램 update 필요함
 //     $res = "";
 
 //     try {
-//         $sql = "UPDATE chaitalk_porlist  confirm={$status}, invoice='{$invoice}' WHERE por_id='{$id}'";
+//         $sql = "UPDATE gulpin_porlist  confirm={$status}, invoice='{$invoice}' WHERE por_id='{$id}'";
 
-//         //$sql = "UPDATE chaitalk_porlist SET confirm = 1  WHERE  por_id = '{$id}'";
+//         //$sql = "UPDATE gulpin_porlist SET confirm = 1  WHERE  por_id = '{$id}'";
 
 //         if ($conn->query($sql) === TRUE) {
 //             $res = true;
@@ -866,7 +767,7 @@ function SAddDelever($data)
     $res = "";
 
     try {
-        $sql = "UPDATE chaitalk_porlist SET confirm = ?, invoice = ?, refund = ? WHERE por_id = ?";
+        $sql = "UPDATE gulpin_porlist SET confirm = ?, invoice = ?, refund = ? WHERE por_id = ?";
         $stmt = $conn->prepare($sql);
 
         // 빈 문자열이면 NULL 처리
@@ -891,81 +792,6 @@ function SAddDelever($data)
     echo json_encode($res);
 }
 
-
-function SDeleteMgr($data)
-{
-    sqlite_start_session();
-
-    $id  = $data["id"];
-
-    global $conn;
-    $res = "";
-
-    try {
-
-        $sql = "DELETE FROM chaitalk_user WHERE id = '" . $id . "'";
-
-        if ($conn->query($sql) === TRUE) {
-            $res = true;
-        } else {
-            $res =  json_encode(array("Error deleting record: " . $conn->error));
-        }
-
-        $conn->close();
-    } catch (Exception $e) {
-        echo json_encode($e->getMessage());
-    }
-
-
-    echo json_encode($res);
-}
-
-function SRegistermgr($data)
-{
-
-    sqlite_start_session();
-    $result = "";
-
-    //$json = file_get_contents('php://input');
-    // $arr = json_decode($data, true); 
-    // $row = $arr['item'];
-
-    $id       = $data['items']['id'];
-    $name     = $data['items']['name'];
-    $owner     = $data['items']['owner'];
-    $password = $data['items']['password'];
-    $mobile   = $data['items']['mobile'];
-    $addr     = $data['items']['addr'];
-    $zipcode  = $data['items']['zipcode'];
-    // $idrolebm = $data['items']['idrolebm'];
-    $mid      = $data['items']['mid'];
-    $role     = $data['items']['role'];
-    $confirm = 1;
-    if (isset($data['items']['confirm']))
-        $confirm = (int) $data['items']['confirm'];
-    $class = $data['items']['class'];
-    $error = "";
-
-    try {
-        global $conn;
-
-        $sqlstring = "insert into chaitalk_user (id, name,owner, password, mobile, addr, zipcode, role, mid, confirm,etc) 
-                    values ( '{$id}', '{$name}','{$owner}', '{$password}', '{$mobile} ','{$addr}', '{$zipcode}', $role, '{$mid}', $confirm ,'{$class}')";
-
-        $res = sqlite_query($conn, $sqlstring);
-
-        $conn->close();
-    } catch (Exception $e) {
-        $error = $e->getMessage();
-    }
-
-    header('Content-Type: application/json');
-    if ($res === TRUE) {
-        echo json_encode(array("success" => $res));
-    } else {
-        echo json_encode(array("Error" => $error));
-    }
-}
 
 function SRegistermgr2($data)
 {
@@ -993,7 +819,7 @@ function SRegistermgr2($data)
     try {
         global $conn;
 
-        $sqlstring = "insert into chaitalk_addrlist ( name, owner,  mobile, addr, zipcode,  mid ) 
+        $sqlstring = "insert into gulpin_addrlist ( name, owner,  mobile, addr, zipcode,  mid ) 
                     values (  '{$name}','{$owner}', '{$mobile} ','{$addr}', '{$zipcode}',  '{$mid}' )";
 
         $res = sqlite_query($conn, $sqlstring);
@@ -1019,12 +845,12 @@ function SShowConfirm($data)
 
     global $conn;
     
-    $sqlString = "SELECT *  FROM chaitalk_user where role > 0 AND role < 9  order by rdate desc";
+    $sqlString = "SELECT *  FROM gulpin_user where role IN (1, 2, 3, 4, 5, 10, 20, 30, 40, 50) order by rdate desc";
 
     if ($num == "2")
-        $sqlString = "SELECT *  FROM chaitalk_user where (role > 0 AND role < 9 ) and confirm = 0  or confirm is null order by rdate desc";
+        $sqlString = "SELECT *  FROM gulpin_user where role IN (1, 2, 3, 4, 5, 10, 20, 30, 40, 50) and (confirm = 0 or confirm is null) order by rdate desc";
     else if ($num == "1")
-        $sqlString = "SELECT *  FROM chaitalk_user where (role > 0 AND role < 9 )  and confirm = 1 order by rdate desc";
+        $sqlString = "SELECT *  FROM gulpin_user where role IN (1, 2, 3, 4, 5, 10, 20, 30, 40, 50) and confirm = 1 order by rdate desc";
 
 
     $rs = sqlite_query($conn, $sqlString);
@@ -1068,9 +894,9 @@ function SShowConfirm2($data)
     global $conn;
     
     if ( $num == "0" )
-        $sqlString = "SELECT *  FROM chaitalk_user where role > 0 AND role < 9  order by rdate desc";
+        $sqlString = "SELECT *  FROM gulpin_user where role IN (1, 2, 3, 4, 5, 10, 20, 30, 40, 50) order by rdate desc";
     else
-        $sqlString = "SELECT *  FROM chaitalk_user where role = " .$num. " order by rdate desc";
+        $sqlString = "SELECT *  FROM gulpin_user where role = " . (int) $num . " order by rdate desc";
 
 
 
@@ -1107,74 +933,6 @@ function SShowConfirm2($data)
     echo json_encode($rows);
 }
 
-function SShowConfirmUpdate($data)
-{
-    sqlite_start_session();
-
-    // $json = file_get_contents('php://input');
-    // $arr = json_decode($json, true);
-
-    $arr = $data;
-    $user = $data['items'][0]['user'] || "";
-    //$user =  "";
-    $id = "";
-    global $conn;
-    $result = "";
-
-    // if (isset($data['owner']))   //
-    //     $owner    = $data['owner'];
-    // else
-    //     $owner = '';
-
-    // if (isset($data['addr']))   //
-    //     $addr    = $data['addr'];
-    // else
-    //     $addr = '';   
-    // if (isset($data['zipcode']))   //
-    //     $zipcode    = $data['zipcode'];
-    // else
-    //     $zipcode = '';    
-    // if (isset($data['mobile']))   //
-    //     $mobile    = $data['mobile'];
-    // else
-    //     $mobile = '';    
-
-
-    try {
-        foreach ($arr['items'] as $row) {
-            if ($user == "chaitalk" || $user == "admin") {
-                $sql = "UPDATE chaitalk_user SET id = '" . $row['id'] . "'
-                ,name = '" . $row['name'] . "' 
-                ,owner = '" . $row['owner'] . "'
-                ,password = '" . $row['password'] . "' 
-                ,confirm = " . $row['confirm'] . " 
-                ,mobile = '" . $row['mobile'] . "'
-                ,addr = '" . $row['addr'] . "'
-                ,etc = '" . $row['class'] . "'
-                WHERE id = '" . $row['id'] . "'";
-            } else {
-                $sql = "UPDATE chaitalk_user SET id = '" . $row['id'] . "'
-                ,name = '" . $row['name'] . "' 
-                ,owner = '" . $row['owner'] . "'
-                ,password = '" . $row['password'] . "' 
-                ,confirm = " . $row['confirm'] . " 
-                ,mobile = '" . $row['mobile'] . "'
-                ,addr = '" . $row['addr'] . "'
-                WHERE id = '" . $row['id'] . "'";
-            }
-            if ($conn->query($sql) === TRUE) {
-                $result = true;
-            }
-        }
-
-        $conn->close();
-    } catch (Exception $e) {
-        $result = $e->getMessage();
-    }
-
-    echo json_encode(array("result: " => $result));
-}
-
 function SShowConfirmUpdatePOR($data)
 {
     sqlite_start_session();
@@ -1190,7 +948,7 @@ function SShowConfirmUpdatePOR($data)
 
         $id = $arr['data']['id'];
         $por_id = $arr['data']['porid'];
-        $sql = "UPDATE chaitalk_porlist SET confirm = 1  WHERE  por_id = '{$por_id}'";
+        $sql = "UPDATE gulpin_porlist SET confirm = 1  WHERE  por_id = '{$por_id}'";
 
         if ($conn->query($sql) === TRUE) {
             $result = true;
@@ -1222,39 +980,39 @@ function SShowStudentList($data)
     if ($tid == "admin") {
         if ($sel == '1') {
             if ($step == '전체')
-                $sqlString = "SELECT *  FROM chaitalk_user where  role = 0";
+                $sqlString = "SELECT *  FROM gulpin_user where  role = 100";
             else
-                //$sqlString = "SELECT *  FROM chaitalk_user where  step = '{$step}' and role = 0 and tid='{$kgarden}'";
-                $sqlString = "SELECT *  FROM chaitalk_user au, (select id from chaitalk_user ) u where u.id = au.tid and role = 0 and step='{$step}'";
+                //$sqlString = "SELECT *  FROM gulpin_user where  step = '{$step}' and role = 100 and tid='{$kgarden}'";
+                $sqlString = "SELECT *  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100 and step='{$step}'";
         } else if ($sel == '2') {
 
-            //$sqlString = "SELECT *  FROM chaitalk_user where classnm = '{$step}' and role = 0 and tid='{$kgarden}'";
-            $sqlString = "SELECT *  FROM chaitalk_user au, (select id from chaitalk_user ) u where u.id = au.tid and role = 0 and classnm='{$step}'";
+            //$sqlString = "SELECT *  FROM gulpin_user where classnm = '{$step}' and role = 100 and tid='{$kgarden}'";
+            $sqlString = "SELECT *  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100 and classnm='{$step}'";
         } else if ($sel == '3')
-            //$sqlString = "SELECT *  FROM chaitalk_user where tid = '{$step}' and role = 0";
+            //$sqlString = "SELECT *  FROM gulpin_user where tid = '{$step}' and role = 100";
             if ($step == '전체')
-                //$sqlString = "SELECT *  FROM chaitalk_user where  role = 0";
-                $sqlString = "SELECT * , u.owner FROM chaitalk_user au, (select id uid, owner from chaitalk_user  ) u where u.uid = au.tid and role = 0";
+                //$sqlString = "SELECT *  FROM gulpin_user where  role = 100";
+                $sqlString = "SELECT * , u.owner FROM gulpin_user au, (select id uid, owner from gulpin_user  ) u where u.uid = au.tid and role = 100";
             else
-                $sqlString =  "SELECT au.*  FROM chaitalk_user au, (select id from chaitalk_user ) u where u.id = au.tid and role = 0";
+                $sqlString =  "SELECT au.*  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100";
     } else {
         if ($sel == '1') {
             if ($step == '전체')
-                $sqlString = "SELECT *  FROM chaitalk_user where tid = '{$tid}' ";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' ";
             else
-                $sqlString = "SELECT *  FROM chaitalk_user where tid = '{$tid}' and step = '{$step}'";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and step = '{$step}'";
         } else if ($sel == '2')
-            $sqlString = "SELECT *  FROM chaitalk_user where tid = '{$tid}' and classnm = '{$step}'";
+            $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and classnm = '{$step}'";
         else if ($sel == '3')
             if ($step == '전체')
-                $sqlString = "SELECT *  FROM chaitalk_user where tid = '{$tid}' ";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' ";
             else
-                $sqlString = "SELECT *  FROM chaitalk_user where tid = '{$tid}' and owner = '{$step}'";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and owner = '{$step}'";
         else if ($sel == '4')
             if ($step == '전체')
-                $sqlString = "SELECT *  FROM chaitalk_user where tid = '{$tid}' ";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' ";
             else
-                $sqlString = "SELECT *  FROM chaitalk_user where tid = '{$tid}' and status = 1";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and status = 1";
     }
     $rows = array();
 
@@ -1303,7 +1061,7 @@ function SShowStudyList($data)
     $start = $data['start'];
     $end = $data['end'];
 
-    $tsql = "select u.id id, u.name name , s.volume v, s.step s, s.uid uid, count(u.id) cnt from study_record s, chaitalk_user u where ";
+    $tsql = "select u.id id, u.name name , s.volume v, s.step s, s.uid uid, count(u.id) cnt from study_record s, gulpin_user u where ";
     if ($step == '전체')
         $sqlString = $tsql . "u.id = s.id and u.tid = '{$tid}'  and  s.rdate >= '{$start}' and s.rdate <= '{$end}'  group by id";
     else
@@ -1344,7 +1102,7 @@ function SCheckStudentID($data)
     $result = 0;
     $id = $data['id'];
 
-    $sql = "select id from  chaitalk_user where id like '{$id}%' and role = 0";
+    $sql = "select id from  gulpin_user where id like '{$id}%' and role IN (100, 200, 300, 400, 500)";
 
     $rows = array();
 
@@ -1391,7 +1149,7 @@ function SShowStudyList2($data)
     $start = $data['start'];
     $end = $data['end'];
 
-    $tsql = "select u.id id, u.name name ,u.classnm classnm, s.volume v, s.step s, s.uid uid, count(u.id) cnt from study_record s, chaitalk_user u where ";
+    $tsql = "select u.id id, u.name name ,u.classnm classnm, s.volume v, s.step s, s.uid uid, count(u.id) cnt from study_record s, gulpin_user u where ";
     if ($classnm == '전체' || $classnm == "")
         $sqlString = $tsql . "u.id = s.id and u.tid = '{$tid}' and  s.rdate >= '{$start}' and s.rdate <= '{$end}' group by id";
     else
@@ -1433,11 +1191,11 @@ function SShowClassList($data)
 
     global $conn;
 
-    $sqlString = "select DISTINCT classnm from chaitalk_user where tid = '{$tid}'";
+    $sqlString = "select DISTINCT classnm from gulpin_user where tid = '{$tid}'";
 
     if ($tid == "admin")
-        //$sqlString = "select DISTINCT classnm from chaitalk_user where tid = '{$kgarden}' and classnm is not null";
-        $sqlString = "SELECT DISTINCT classnm FROM chaitalk_user au, (select id from chaitalk_user ) u where u.id = au.tid and role = 0";
+        //$sqlString = "select DISTINCT classnm from gulpin_user where tid = '{$kgarden}' and classnm is not null";
+        $sqlString = "SELECT DISTINCT classnm FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100";
     $rows = array();
 
     $i = 0;
@@ -1472,10 +1230,10 @@ function SShowKgardenList($data)
 
     global $conn;
 
-    $sqlString = "select DISTINCT owner from chaitalk_user where mid = '{$tid}' and owner is not null and role=2";
+    $sqlString = "select DISTINCT owner from gulpin_user where mid = '{$tid}' and owner is not null and role=10";
 
     if ($tid == "admin")
-        $sqlString = "select DISTINCT owner from chaitalk_user where owner is not null and role=2";
+        $sqlString = "select DISTINCT owner from gulpin_user where owner is not null and role=10";
     $rows = array();
 
     $i = 0;
@@ -1522,9 +1280,9 @@ function SinsertStudent($data)
             $tid     = $conn->real_escape_string($row['tid']);
             $classnm = $conn->real_escape_string($row['classnm']);
             $step    = $conn->real_escape_string($row['step']);
-            $role    = 0;
+            $role    = 100; // 유치원생
             $confirm = 1;
-            $sql = "INSERT INTO chaitalk_user (id, name, password, role, tid, classnm, rdate, step, confirm)
+            $sql = "INSERT INTO gulpin_user (id, name, password, role, tid, classnm, rdate, step, confirm)
                     VALUES ('{$id}', '{$name}', '{$password}', {$role}, '{$tid}', '{$classnm}', NOW(), '{$step}', {$confirm})
                     ON DUPLICATE KEY UPDATE
                         name     = VALUES(name),
@@ -1569,7 +1327,7 @@ function SupdateStudent($data)
             $step = $row['step'];
             $role = 0;
             $confirm = 1;
-            $sql = "update chaitalk_user set  
+            $sql = "update gulpin_user set  
                     name     = '" . $row['name'] . "',
                     password = '" . $row['passwd'] . "',                     
                     classnm  = '" . $row['classnm'] . "',
@@ -1599,6 +1357,8 @@ function SmanageStudent($data)
     $result = "";
 
     try {
+        // 학생 role 은 담당 선생 role 로 결정 (학원 20→200, 홈스쿨 30→300, 화상수업 40→400, 방과후 50→500)
+        $teacherRoles = array();
         foreach ($data['items'] as $row) {
             $id = $row['id'];
             $name = $row['name'];
@@ -1606,7 +1366,11 @@ function SmanageStudent($data)
             $tid = $row['tid'];
             $classnm = $row['classnm'];
             $step = $row['step'];
-            $role = 30;
+            if (!isset($teacherRoles[$tid])) {
+                $teacher = gpMgrQuery('SELECT role FROM gulpin_user WHERE id = ?', array($tid));
+                $teacherRoles[$tid] = gpStudentRoleOf((int) ($teacher[0]['role'] ?? 0)) ?? 200;
+            }
+            $role = $teacherRoles[$tid];
             $p_mobile = $row['p_mobile'];
             $mobile  = $row['mobile'];
             $addr  = $row['addr'];
@@ -1615,19 +1379,19 @@ function SmanageStudent($data)
             $confirm = 1;
 
             // ID 존재 여부 확인
-            $checkSql = "SELECT COUNT(*) as count FROM chaitalk_user WHERE id = '{$id}' AND tid = '{$tid}'";
+            $checkSql = "SELECT COUNT(*) as count FROM gulpin_user WHERE id = '{$id}' AND tid = '{$tid}'";
             $checkResult = $conn->query($checkSql);
             $exists = $checkResult->fetch_assoc()['count'] > 0;
 
             // 존재 여부에 따라 쿼리 생성
             if (!$exists) {
                 // INSERT
-                $sql = "INSERT INTO chaitalk_user (id, name, password, role, tid, classnm, rdate, step, confirm, p_mobile, mobile, addr, etc) 
+                $sql = "INSERT INTO gulpin_user (id, name, password, role, tid, classnm, rdate, step, confirm, p_mobile, mobile, addr, etc) 
                         VALUES ('{$id}', '{$name}', '{$password}', {$role}, '{$tid}', '{$classnm}', NOW(), '{$step}', {$confirm}, '{$p_mobile}', '{$mobile}', '{$addr}', '{$etc}')";
                 $action = "created";
             } else {
                 // UPDATE
-                $sql = "UPDATE chaitalk_user 
+                $sql = "UPDATE gulpin_user 
                         SET name = '{$name}', 
                             password = '{$password}', 
                             classnm = '{$classnm}', 
@@ -1690,7 +1454,7 @@ function SUploadBoardPDF($data) {
     try {
         // DB INSERT 먼저 수행 (파일 업로드 실패와 무관하게 처리)
         $sqlstring = "
-            INSERT INTO chaitalk_porlist (id, por_id, por_list, rdate, `order`, addr, mobile, pdfname, zip)
+            INSERT INTO gulpin_porlist (id, por_id, por_list, rdate, `order`, addr, mobile, pdfname, zip)
             VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?)
         ";
         $stmt = $conn->prepare($sqlstring);
@@ -1730,7 +1494,7 @@ function SUploadBoardPDF($data) {
                 }
 
                 // 파일 업로드 성공 후 DB 업데이트 (pdfname 업데이트)
-                $updateSql = "UPDATE chaitalk_porlist SET pdfname = ? WHERE id = ? AND por_id = ?";
+                $updateSql = "UPDATE gulpin_porlist SET pdfname = ? WHERE id = ? AND por_id = ?";
                 $updateStmt = $conn->prepare($updateSql);
                 if ($updateStmt) {
                     $updateStmt->bind_param("sss", $pdfname, $id, $porid);
@@ -1804,7 +1568,7 @@ function SUploadBoard($data)
         $jsarr = json_encode($rows, JSON_UNESCAPED_UNICODE);
         try {
 
-            $sqlstring = "insert into chaitalk_repository ( title, id, contents, `desc`, rdate, cate ) values ( '$content', '$user',  '$jsarr', '$desc',  NOW(), '$cate')";
+            $sqlstring = "insert into gulpin_repository ( title, id, contents, `desc`, rdate, cate ) values ( '$content', '$user',  '$jsarr', '$desc',  NOW(), '$cate')";
             $res = sqlite_query($conn,  $sqlstring);
 
             if ($res === TRUE) {
@@ -1837,7 +1601,7 @@ function SUdateBoard($data)
     if (!empty($user)) {
         try {
             // Update query
-            $sqlstring = "UPDATE chaitalk_repository 
+            $sqlstring = "UPDATE gulpin_repository 
                           SET title = '$content', 
                               `desc` = '$desc', 
                               cate = '$cate', 
@@ -1875,11 +1639,11 @@ function SShowBoardList($data)
     try {
         if ($cate == "1") {
             if ($num == "전체")
-                $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM chaitalk_repository order by num desc";
+                $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository order by num desc";
             else
-                $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM chaitalk_repository where cate = '$num' order by num desc";
+                $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository where cate = '$num' order by num desc";
         } else
-            $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM chaitalk_repository where num = $num order by num desc";
+            $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository where num = $num order by num desc";
 
         $rs = sqlite_query($conn, $sqlString);
         $rows = array();
@@ -1921,7 +1685,7 @@ function SDeleteBoardlist($data)
     $cont = "";
 
     try {
-        $sql = "SELECT contents from chaitalk_repository WHERE num = " . $num . "";
+        $sql = "SELECT contents from gulpin_repository WHERE num = " . $num . "";
 
         $rs = sqlite_query($conn, $sql);
 
@@ -1941,7 +1705,7 @@ function SDeleteBoardlist($data)
             }
         }
 
-        $sql = "DELETE FROM chaitalk_repository WHERE num = '" . $num . "'";
+        $sql = "DELETE FROM gulpin_repository WHERE num = '" . $num . "'";
 
         if ($conn->query($sql) === TRUE) {
             $res = true;
@@ -1992,7 +1756,7 @@ function SGetListPrice($data)
 
     global $conn;
 
-    $sqlString = "select MAX(price) price from chaitalk_price";
+    $sqlString = "select MAX(price) price from gulpin_price";
 
     $rows = array();
 
