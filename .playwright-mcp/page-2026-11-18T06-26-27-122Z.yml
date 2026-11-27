@@ -1,0 +1,161 @@
+- generic [active] [ref=f4e1]:
+  - banner [ref=f4e2]:
+    - generic [ref=f4e3]:
+      - link "🏠 Home" [ref=f4e4] [cursor=pointer]:
+        - /url: ../index.php
+      - generic [ref=f4e5]: 본사님 환영합니다
+      - navigation "관리 메뉴" [ref=f4e6]:
+        - link "게시판" [ref=f4e7] [cursor=pointer]:
+          - /url: ../board/boardmgr.php
+        - link "지사관리" [ref=f4e8] [cursor=pointer]:
+          - /url: ../purchase/branchmgr.php
+        - link "주문관리" [ref=f4e9] [cursor=pointer]:
+          - /url: ../purchase/order.php
+        - link "주문현황" [ref=f4e10] [cursor=pointer]:
+          - /url: ../purchase/homeorderstatus.php
+        - link "학생관리" [ref=f4e11] [cursor=pointer]:
+          - /url: ../purchase/branchstudents.php
+        - link "사용자권한관리" [ref=f4e12] [cursor=pointer]:
+          - /url: ../study/vol_manage.php
+        - link "학습현황" [ref=f4e13] [cursor=pointer]:
+          - /url: ../study/study_stats.php
+        - link "admin" [ref=f4e14] [cursor=pointer]:
+          - /url: ../login/adminLogin.php
+        - link "리뷰추가" [ref=f4e15] [cursor=pointer]:
+          - /url: ../reviews/admin_reviews.php
+        - link "비밀번호 변경" [ref=f4e16] [cursor=pointer]:
+          - /url: ../login/changepw.php
+        - link "로그아웃" [ref=f4e17] [cursor=pointer]:
+          - /url: "#"
+  - generic [ref=f4e18]:
+    - generic [ref=f4e21]:
+      - heading "본사 지사장/구매" [level=5] [ref=f4e23]
+      - list [ref=f4e25]:
+        - listitem [ref=f4e26]:
+          - link "Home" [ref=f4e27] [cursor=pointer]:
+            - /url: ../index.php
+        - listitem [ref=f4e28]:
+          - text: /
+          - link "이전" [ref=f4e29] [cursor=pointer]:
+            - /url: javascript:window.history.back();
+    - generic [ref=f4e31]:
+      - tablist [ref=f4e33]:
+        - listitem [ref=f4e34]:
+          - tab "주문" [selected] [ref=f4e35] [cursor=pointer]
+        - listitem [ref=f4e36]:
+          - tab "주문내역" [ref=f4e37] [cursor=pointer]
+        - listitem [ref=f4e38]:
+          - tab "방문수업 주문내역" [ref=f4e39] [cursor=pointer]
+      - tabpanel "주문" [ref=f4e42]:
+        - generic [ref=f4e44]:
+          - generic [ref=f4e45]: 필터
+          - combobox "필터" [ref=f4e46]:
+            - option "전체" [selected]
+        - heading "주문할 상품 선택" [level=5] [ref=f4e47]
+        - grid [ref=f4e49]:
+          - rowgroup [ref=f4e50]:
+            - rowgroup [ref=f4e51]:
+              - row "단계 품명 단가(원) 수량(개) 합계(원)" [ref=f4e52]:
+                - columnheader "단계" [ref=f4e53]
+                - columnheader "품명" [ref=f4e60]
+                - columnheader "단가(원)" [ref=f4e67]
+                - columnheader "수량(개)" [ref=f4e74]
+                - columnheader "합계(원)" [ref=f4e81]
+                - columnheader [ref=f4e88]
+          - generic [ref=f4e95]:
+            - rowgroup
+          - row [ref=f4e98]:
+            - gridcell [ref=f4e99]
+            - gridcell [ref=f4e100]
+            - gridcell [ref=f4e101]
+            - gridcell "0" [ref=f4e102]
+            - gridcell "0" [ref=f4e103]
+            - gridcell [ref=f4e104]
+        - button "장바구니" [disabled] [ref=f4e106] [cursor=pointer]
+        - heading "주문한 상품 확정" [level=5] [ref=f4e109]
+        - grid [ref=f4e111]:
+          - rowgroup [ref=f4e112]:
+            - rowgroup [ref=f4e113]:
+              - row "단계 품명 단가(원) 수량(개) 합계(원)" [ref=f4e114]:
+                - columnheader "단계" [ref=f4e115]
+                - columnheader "품명" [ref=f4e122]
+                - columnheader "단가(원)" [ref=f4e129]
+                - columnheader "수량(개)" [ref=f4e136]
+                - columnheader "합계(원)" [ref=f4e143]
+                - columnheader [ref=f4e150]
+          - generic [ref=f4e157]:
+            - rowgroup
+          - row [ref=f4e160]:
+            - gridcell [ref=f4e161]
+            - gridcell [ref=f4e162]
+            - gridcell [ref=f4e163]
+            - gridcell "0" [ref=f4e164]
+            - gridcell "0" [ref=f4e165]
+            - gridcell [ref=f4e166]
+  - generic [ref=f4e168]:
+    - generic [ref=f4e169]:
+      - generic [ref=f4e170]:
+        - heading "배송지 확정" [level=5] [ref=f4e171]
+        - generic [ref=f4e172]:
+          - generic [ref=f4e173]:
+            - generic [ref=f4e174]: 지사명
+            - textbox "지사명" [ref=f4e175]
+          - generic [ref=f4e176]:
+            - generic [ref=f4e177]: 배송지명
+            - textbox "배송지명" [ref=f4e178]
+          - generic [ref=f4e179]:
+            - generic [ref=f4e180]: 전화
+            - textbox "전화" [ref=f4e181]
+          - generic [ref=f4e182]:
+            - generic [ref=f4e183]: 배송지주소
+            - textbox "배송지주소" [ref=f4e184]
+          - generic [ref=f4e185]:
+            - generic [ref=f4e186]: 우편번호
+            - textbox "우편번호" [ref=f4e187]
+          - button "주소찾기" [ref=f4e188] [cursor=pointer]
+          - button "배송지추가" [ref=f4e189] [cursor=pointer]
+      - generic [ref=f4e190]:
+        - heading "배송지 선택" [level=5] [ref=f4e191]
+        - grid [ref=f4e193]:
+          - rowgroup [ref=f4e194]:
+            - rowgroup [ref=f4e195]:
+              - row "No 지사명 배송지명 배송지주소 우편번호 전화 등록일" [ref=f4e196]:
+                - columnheader "No" [ref=f4e197]
+                - columnheader "지사명" [ref=f4e204]
+                - columnheader "배송지명" [ref=f4e211]
+                - columnheader "배송지주소" [ref=f4e218]
+                - columnheader "우편번호" [ref=f4e225]
+                - columnheader "전화" [ref=f4e232]
+                - columnheader "등록일" [ref=f4e239]
+                - columnheader [ref=f4e246]
+          - generic [ref=f4e253]:
+            - rowgroup
+    - generic [ref=f4e254]:
+      - generic [ref=f4e255]:
+        - heading "구매내역서" [level=5] [ref=f4e256]
+        - generic [ref=f4e257]:
+          - button "구매내역서확인" [disabled]
+          - button "수정(재작성)" [disabled]
+          - button "구매완료" [disabled]
+          - button "카드결제" [disabled]
+      - generic [ref=f4e258]:
+        - paragraph [ref=f4e259]:
+          - text: 결제 금액(택배비 포함)과 배송 정보를 확인해 주세요. 교재 합계 100,000원 미만은 택배비 4,500원이 추가됩니다. 구매내역서 확인 후 카드결제 또는 계좌 입금으로 결제할 수 있습니다. 상품을 받은 날부터 7일 이내 청약철회할 수 있으며, 자세한 내용은
+          - link "교환·반품·환불 안내" [ref=f4e260] [cursor=pointer]:
+            - /url: ../policy/refund.php
+          - text: 를 확인해 주세요.
+        - generic [ref=f4e261]:
+          - checkbox "[필수] 주문 내용과 결제 금액을 확인했으며 이용약관·환불 안내에 동의합니다." [ref=f4e262]
+          - text: "[필수] 주문 내용과 결제 금액을 확인했으며"
+          - link "이용약관" [ref=f4e263] [cursor=pointer]:
+            - /url: ../policy/terms.php
+          - text: ·
+          - link "환불 안내" [ref=f4e264] [cursor=pointer]:
+            - /url: ../policy/refund.php
+          - text: 에 동의합니다.
+        - generic [ref=f4e265]:
+          - 'checkbox "[필수] 배송을 위한 개인정보(배송지명, 전화, 주소) 수집·이용에 동의합니다. (목적: 배송·주문 관리, 보유기간: 5년 — 전자상거래법, 개인정보처리방침)" [ref=f4e266]'
+          - text: "[필수] 배송을 위한 개인정보(배송지명, 전화, 주소) 수집·이용에 동의합니다. (목적: 배송·주문 관리, 보유기간: 5년 — 전자상거래법,"
+          - link "개인정보처리방침" [ref=f4e267] [cursor=pointer]:
+            - /url: ../policy/privacy.php
+          - text: )

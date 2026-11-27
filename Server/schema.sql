@@ -66,6 +66,7 @@ CREATE TABLE `gulpin_porlist` (
   `addr` varchar(128) DEFAULT NULL,
   `mobile` varchar(45) DEFAULT NULL,
   `por_list` text NOT NULL,
+  `pg_amount` int DEFAULT NULL,
   `rdate` datetime NOT NULL DEFAULT current_timestamp(),
   `confirm` int(1) DEFAULT 0 COMMENT '0 -  물품준비 10- 배송중 1 - 배송완료  2 - 입금완료  99 - 환불처리 999-환불완료',
   `pdfname` varchar(45) NOT NULL,
@@ -112,9 +113,14 @@ CREATE TABLE `gulpin_user` (
   `id` varchar(30) NOT NULL,
   `name` varchar(20) NOT NULL,
   `owner` varchar(30) DEFAULT NULL,
-  `password` varchar(30) NOT NULL,
+  `password` varchar(255) NOT NULL COMMENT '본사·지사·선생님: 해시, 학생: 평문 (password_policy.php)',
+  `password_admin_view` text DEFAULT NULL COMMENT 'PG 도입 전 관리자 확인용 암호화 사본',
   `mobile` varchar(20) DEFAULT NULL,
   `p_mobile` varchar(20) DEFAULT NULL,
+  `birthday` date DEFAULT NULL COMMENT '생년월일',
+  `birth_year` smallint unsigned DEFAULT NULL COMMENT '출생년도',
+  `material_code` varchar(64) DEFAULT NULL COMMENT '학생별 선택 교재 코드',
+  `material_auto_month` char(7) DEFAULT NULL COMMENT '다음 단계 자동 변경을 처리한 달 YYYY-MM',
   `phone` varchar(20) DEFAULT NULL,
   `addr` varchar(64) DEFAULT NULL,
   `zipcode` varchar(12) DEFAULT NULL,
@@ -127,6 +133,7 @@ CREATE TABLE `gulpin_user` (
   `classnm` varchar(45) DEFAULT NULL COMMENT '유치원 및 학교이름',
   `step` varchar(20) DEFAULT NULL COMMENT '단계 및 학년',
   `status` int(2) NOT NULL DEFAULT 1 COMMENT '학원 아이디 1 등원/ 0 퇴원 ',
+  `pw_temp` tinyint(1) NOT NULL DEFAULT 0 COMMENT '임시 비밀번호 — 다음 로그인 때 변경',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 

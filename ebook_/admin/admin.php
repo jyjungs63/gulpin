@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../_private/admin_auth.php'; ?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>

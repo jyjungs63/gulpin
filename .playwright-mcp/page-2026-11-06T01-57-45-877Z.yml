@@ -1,0 +1,23 @@
+- generic [ref=f1e2]:
+  - generic [ref=f1e3]:
+    - generic [ref=f1e4]: 말잼별글잼별
+    - generic [ref=f1e5]: 방문자님 환영합니다
+  - banner [ref=f1e6]:
+    - generic [ref=f1e7] [cursor=pointer]: 🏠 Home
+    - navigation [ref=f1e9]:
+      - generic [ref=f1e10] [cursor=pointer]: 로그인
+  - generic [ref=f1e11]:
+    - img "말잼별글잼별 - 지구팡의 대모험" [ref=f1e14]
+    - generic [ref=f1e15]:
+      - button "0 잼잼별" [ref=f1e16] [cursor=pointer]:
+        - generic [ref=f1e17]:
+          - generic [ref=f1e18]: "0"
+          - generic [ref=f1e19]: 잼잼별
+      - button "1 말잼별" [ref=f1e20] [cursor=pointer]:
+        - generic [ref=f1e21]:
+          - generic [ref=f1e22]: "1"
+          - generic [ref=f1e23]: 말잼별
+      - button "2 글잼별" [ref=f1e24] [cursor=pointer]:
+        - generic [ref=f1e25]:
+          - generic [ref=f1e26]: "2"
+          - generic [ref=f1e27]: 글잼별

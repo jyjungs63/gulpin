@@ -1,4 +1,55 @@
 var table, table1, porTable;
+
+function adminViewPassword(id) {
+  const dialog = document.createElement('dialog');
+  dialog.style.cssText = 'border:0;border-radius:12px;padding:24px;width:min(440px,92vw)';
+  dialog.innerHTML = `<form style="display:grid;gap:12px">
+    <h5>사용자 비밀번호 확인</h5>
+    <p class="password-target"></p>
+    <p role="alert" class="password-error" style="color:#b91c1c"></p>
+    <label class="password-result" hidden>사용자 비밀번호<input readonly autocomplete="off" class="form-control"></label>
+    <div><button type="submit" class="btn btn-primary">다시 조회</button>
+    <button type="button" class="btn btn-secondary password-close">닫기</button></div>
+  </form>`;
+  dialog.querySelector('.password-target').textContent = id;
+  const form = dialog.querySelector('form');
+  const submit = form.querySelector('[type=submit]');
+  let closed = false;
+  dialog.addEventListener('close', () => {
+    closed = true;
+    form.reset();
+    dialog.remove();
+  });
+  dialog.querySelector('.password-close').onclick = () => dialog.close();
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (submit.disabled) return;
+    submit.disabled = true;
+    dialog.querySelector('.password-error').textContent = '';
+    dialog.querySelector('.password-result').hidden = true;
+    dialog.querySelector('.password-result input').value = '';
+    CallAjax('SMethods.php', 'POST', { functionName: 'SAdminViewPassword', otherData: { id } }, (resp) => {
+      if (closed) return;
+      dialog.querySelector('.password-result input').value = resp.password;
+      dialog.querySelector('.password-result').hidden = false;
+      submit.disabled = false;
+    }, (error) => {
+      if (closed) return;
+      dialog.querySelector('.password-error').textContent = error?.responseJSON?.error || '확인에 실패했습니다.';
+      submit.disabled = false;
+    });
+  });
+  document.body.appendChild(dialog);
+  dialog.showModal();
+  form.requestSubmit();
+}
+
+function adminResetPassword(id) {
+  if (!confirm(`${id} 계정의 비밀번호를 재설정할까요?\n임시 비밀번호가 발급되고, 다음 로그인 때 새 비밀번호로 바꾸게 됩니다.`)) return;
+  CallAjax("SMethods.php", "POST", { functionName: "SResetPassword", otherData: { id } }, (resp) => {
+    prompt(`${id} 임시 비밀번호입니다. 계정 주인에게 전달해 주세요.\n(이 창을 닫으면 다시 볼 수 없습니다)`, resp.temp);
+  }, (e) => CallToast((e && e.responseJSON && e.responseJSON.error) || "비밀번호 재설정에 실패했습니다.", "error"));
+}
 var items = [];
 var myModal;
 var deleteIcon = function (cell, formatterParams) {
@@ -80,11 +131,18 @@ document.addEventListener("DOMContentLoaded", function () {
         editor: true,
       },
       {
+        // 확인은 로그인한 본사 세션에만 허용하며 PG 적용 시 서버 설정으로 차단한다.
         title: "비밀번호",
-        field: "password",
-
-        width: "10%",
-        editor: false,
+        width: "13%",
+        hozAlign: "center",
+        headerSort: false,
+        formatter: () => "<button type='button' data-password-action='view' class='btn btn-sm btn-outline-primary' style='padding:0 6px;font-size:12px'>확인</button> <button type='button' data-password-action='reset' class='btn btn-sm btn-outline-secondary' style='padding:0 6px;font-size:12px'>재설정</button>",
+        cellClick: function (e, cell) {
+          e.stopPropagation();
+          const action = e.target.closest('[data-password-action]')?.dataset.passwordAction;
+          if (action === 'view') adminViewPassword(cell.getRow().getData().id);
+          if (action === 'reset') adminResetPassword(cell.getRow().getData().id);
+        },
       },
       {
         title: "등록일",

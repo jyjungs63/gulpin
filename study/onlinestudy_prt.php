@@ -682,6 +682,7 @@ header("Expires: 0");
         if (GP_ROLE.isAcademyStudent(role) || GP_ROLE.isBranch(role) || GP_ROLE.isTeacher(role)) {
             // ── 관리자 계정 ──────────────────────────────
             let cl = getClass();
+            if (cl === "전체") cl = "0AB"; // 과정 전체 = 잼잼별·말잼별·글잼별
 
             if ((cl === "" || cl === undefined) && GP_ROLE.isAcademyStudent(role)) {
                 if (stepp && stepp.includes("0")) $("#basic0").prop('disabled', false);

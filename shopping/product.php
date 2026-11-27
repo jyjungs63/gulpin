@@ -12,6 +12,7 @@
         <nav>
             <a href="index.php">상품</a>
             <a href="cart.php">장바구니 <span id="cartCount">0</span></a>
+            <a href="orders.php">주문내역</a>
             <a href="admin.php">Admin</a>
         </nav>
     </header>
@@ -19,6 +20,8 @@
     <main class="container">
         <article id="productDetail" class="detail"></article>
     </main>
+
+    <?php $gpFooterBase = '../'; include __DIR__ . '/../libs/footer.php'; ?>
 
     <script src="../js/common.js"></script>
     <script src="js/api.js"></script>

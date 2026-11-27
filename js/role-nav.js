@@ -38,6 +38,13 @@
     menu.appendChild(link);
     });
 
+    if (window.GP_ROLE && !GP_ROLE.isStudent(loginInfo.role)) {
+      const changePw = document.createElement('a');
+      changePw.href = `${basePath}login/changepw.php`;
+      changePw.textContent = '비밀번호 변경';
+      menu.appendChild(changePw);
+    }
+
     const logout = document.createElement('a');
   logout.href = '#';
   logout.className = 'role-nav__logout';
@@ -48,6 +55,14 @@
     window.location.href = `${basePath}index.php`;
   });
     menu.appendChild(logout);
+
+    // 현재 페이지 메뉴를 선택 상태로 표시
+    menu.querySelectorAll('a:not(.role-nav__logout)').forEach(link => {
+      if (link.pathname === location.pathname) {
+        link.classList.add('is-active');
+        link.setAttribute('aria-current', 'page');
+      }
+    });
 
     const toggle = root.querySelector('.role-nav__toggle');
     toggle.addEventListener('click', () => {

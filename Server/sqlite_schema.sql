@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS gulpin_porlist (
     addr TEXT DEFAULT '',
     mobile TEXT DEFAULT '',
     por_list TEXT NOT NULL,
+    pg_amount INTEGER,
     rdate TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
     confirm INTEGER DEFAULT 0,
     pdfname TEXT DEFAULT '',

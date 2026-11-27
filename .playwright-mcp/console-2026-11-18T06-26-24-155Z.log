@@ -1,0 +1,2 @@
+[     252ms] [LOG] [DB] connected: mariadb (SMethods.php) @ http://localhost:3001/js/common.js:89
+[     584ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3001/Server/SMethods.php:0

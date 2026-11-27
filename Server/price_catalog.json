@@ -4,7 +4,7 @@
  "videoAccessMonths": 6,
  "groups": {
   "homeschool": {
-   "name": "홈스쿨",
+   "name": "방문수업",
    "items": [
     {
      "code": "L1-A",
@@ -195,8 +195,8 @@
     },
     {
      "code": "SO1-A",
-     "family": "홈스쿨",
-     "title": "홈스쿨 1단계 A",
+     "family": "방문수업",
+     "title": "방문수업 1단계 A",
      "step": 1,
      "unit": "A",
      "price": 25000,
@@ -216,8 +216,8 @@
     },
     {
      "code": "SO1-B",
-     "family": "홈스쿨",
-     "title": "홈스쿨 1단계 B",
+     "family": "방문수업",
+     "title": "방문수업 1단계 B",
      "step": 1,
      "unit": "B",
      "price": 25000,
@@ -237,8 +237,8 @@
     },
     {
      "code": "SO1-C",
-     "family": "홈스쿨",
-     "title": "홈스쿨 1단계 C",
+     "family": "방문수업",
+     "title": "방문수업 1단계 C",
      "step": 1,
      "unit": "C",
      "price": 25000,
@@ -258,8 +258,8 @@
     },
     {
      "code": "SO1-D",
-     "family": "홈스쿨",
-     "title": "홈스쿨 1단계 D",
+     "family": "방문수업",
+     "title": "방문수업 1단계 D",
      "step": 1,
      "unit": "D",
      "price": 25000,
@@ -279,8 +279,8 @@
     },
     {
      "code": "SO1-E",
-     "family": "홈스쿨",
-     "title": "홈스쿨 1단계 E",
+     "family": "방문수업",
+     "title": "방문수업 1단계 E",
      "step": 1,
      "unit": "E",
      "price": 25000,
@@ -300,8 +300,8 @@
     },
     {
      "code": "SO2-A",
-     "family": "홈스쿨",
-     "title": "홈스쿨 2단계 A",
+     "family": "방문수업",
+     "title": "방문수업 2단계 A",
      "step": 2,
      "unit": "A",
      "price": 28000,
@@ -321,8 +321,8 @@
     },
     {
      "code": "SO2-B",
-     "family": "홈스쿨",
-     "title": "홈스쿨 2단계 B",
+     "family": "방문수업",
+     "title": "방문수업 2단계 B",
      "step": 2,
      "unit": "B",
      "price": 28000,
@@ -342,8 +342,8 @@
     },
     {
      "code": "SO2-C",
-     "family": "홈스쿨",
-     "title": "홈스쿨 2단계 C",
+     "family": "방문수업",
+     "title": "방문수업 2단계 C",
      "step": 2,
      "unit": "C",
      "price": 28000,
@@ -363,8 +363,8 @@
     },
     {
      "code": "SO2-D",
-     "family": "홈스쿨",
-     "title": "홈스쿨 2단계 D",
+     "family": "방문수업",
+     "title": "방문수업 2단계 D",
      "step": 2,
      "unit": "D",
      "price": 28000,
@@ -384,8 +384,8 @@
     },
     {
      "code": "SO2-E",
-     "family": "홈스쿨",
-     "title": "홈스쿨 2단계 E",
+     "family": "방문수업",
+     "title": "방문수업 2단계 E",
      "step": 2,
      "unit": "E",
      "price": 28000,

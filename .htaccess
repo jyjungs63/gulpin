@@ -1,0 +1,21 @@
+# 내부 설정, 작업 산출물과 주문 원본은 직접 제공하지 않는다.
+<FilesMatch "(?i)^(?:\..*|.*\.(?:sql|sqlite(?:-[a-z]+)?|sqlite3|db|env|log|bak|xlsx|pptx))$">
+    Require all denied
+</FilesMatch>
+
+# http 접속을 https 로 강제 이동 (localhost 개발 환경은 제외)
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^(?:_private|\.git|\.agents|\.codex|\.claude|\.vscode|\.playwright-mcp|doc|tests)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:assets/por/uploads|Server/uploads)(?:/|$) - [F,L,NC]
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:\d+)?$
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# 말잼별글잼별(유치원 전용) 별도 도메인 — 2차스팩 1)
+#   새 도메인의 첫 화면(/, /index.php)만 maljam/index.php 로 연결한다. 현재 도메인은 HTTP_HOST 가 달라 영향 없음.
+#   새 도메인의 문서 루트는 maljam/ 이 아니라 사이트 최상위 폴더여야 한다 (공용 파일을 ../ 로 참조).
+RewriteCond %{HTTP_HOST} ^(www\.)?geulpinkid\.co\.kr$ [NC]
+RewriteRule ^(index\.php)?$ maljam/index.php [L]
+</IfModule>

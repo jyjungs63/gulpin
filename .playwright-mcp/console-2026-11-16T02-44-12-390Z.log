@@ -1,0 +1,10 @@
+[     352ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3001/favicon.ico:0
+[     827ms] [ERROR] Pattern attribute value [A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40} is not a valid regular expression: Uncaught SyntaxError: Invalid regular expression: /[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40}/v: Invalid character in character class @ http://localhost:3001/maljam/:0
+[     871ms] [LOG] [DB] connected: mariadb (SMethods.php?dest=) @ http://localhost:3001/js/common.js?v=1784378092:89
+[    2863ms] [LOG] [DB] connected: mariadb (SMethods.php) @ http://localhost:3001/js/common.js:89
+[    2866ms] TypeError: Cannot set properties of null (setting 'textContent')
+    at http://localhost:3001/purchase/branchmgr.php:1082:62
+    at http://localhost:3001/purchase/branchmgr.php:1084:7
+[   18701ms] [ERROR] Pattern attribute value [A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40} is not a valid regular expression: Uncaught SyntaxError: Invalid regular expression: /[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40}/v: Invalid character in character class @ http://localhost:3001/maljam/:0
+[   18752ms] [LOG] [DB] connected: mariadb (SMethods.php?dest=) @ http://localhost:3001/js/common.js?v=1784378092:89
+[   26206ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://localhost:3001/Server/SMethods.php:0

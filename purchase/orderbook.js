@@ -636,10 +636,10 @@ listPor = (por_id) => {
     }
 
     _pdfname = res[0]["pdfname"];
-    let loc = window.origin.includes("localhost")
-      ? window.origin + "/chaitalk_home"
-      : window.origin;
-    document.getElementById("pdfDiv").src = loc + "/Server/uploads/" + _pdfname;
+    const preview = new URL("order-document.php", location.href);
+    preview.searchParams.set("id", res[0].por_id);
+    if (getServerDbType() === "sqlite") preview.searchParams.set("db", "sqlite");
+    document.getElementById("pdfDiv").src = _pdfname ? preview.href : "about:blank";
   };
   dispErr = (error) => {
     CallToast("SPorDetailList falure!", "error");

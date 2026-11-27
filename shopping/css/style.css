@@ -255,6 +255,141 @@ textarea {
     display: none !important;
 }
 
+.actions[hidden],
+.actions [hidden] {
+    display: none;
+}
+
+/* 주문/결제 (cart.php, orders.php, payment/*.php) */
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+.checkout {
+    margin-top: 24px;
+}
+
+.checkout h2 {
+    margin: 10px 0 0;
+    font-size: 18px;
+}
+
+.checkout a,
+.agree a {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.zip-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.summary {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+}
+
+.summary div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.summary dd {
+    margin: 0;
+}
+
+.summary .total {
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.agree {
+    display: grid;
+    gap: 10px;
+}
+
+label.check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-weight: 400;
+}
+
+label.check.all {
+    font-weight: 800;
+}
+
+label.check input {
+    width: 18px;
+    margin: 3px 0 0;
+}
+
+.agree-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.agree-table th,
+.agree-table td {
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    text-align: left;
+}
+
+.agree-table th {
+    width: 90px;
+    background: var(--bg);
+}
+
+.pay {
+    min-height: 52px;
+    font-size: 17px;
+}
+
+.orders-head {
+    margin-top: 36px;
+}
+
+.order p {
+    margin-bottom: 6px;
+}
+
+.order-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.badge {
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #edf2f7;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.badge-paid {
+    background: #e3f4e8;
+    color: #1d7a3a;
+}
+
+.badge-canceled {
+    background: #fbe9e7;
+    color: var(--danger);
+}
+
 @media (max-width: 720px) {
     .topbar,
     .page-head {

@@ -22,7 +22,7 @@ header("Expires: 0"); // Proxies
     <script src="../js/header.js"></script>
     <title>학생관리</title>
     <link rel="stylesheet" href="../role-nav.css">
-    <script src="../js/roles.js"></script>
+    <script src="../js/roles.js?v=<?= filemtime(__DIR__ . '/../js/roles.js') ?>"></script>
     <script src="../js/role-nav.js" defer></script>
     <style>
         :root {
@@ -306,7 +306,7 @@ header("Expires: 0"); // Proxies
         // 과정 => 교재 [{code, title, step}] — 서버가 선생님 그룹 가격표(Server/price_catalog.json)에서 내려준다
         let COURSES = {};
         let ITEMS = {};   // 교재 코드 => {family, title}
-        const courseOf = (code) => (ITEMS[code] || {}).family || '';
+        const courseOf = (code) => GP_ROLE.courseLabel((ITEMS[code] || {}).family);
         const titleOf = (code) => (ITEMS[code] || {}).title || code || '';
 
         function setCourses(courses) {
@@ -333,7 +333,7 @@ header("Expires: 0"); // Proxies
 
         // 단계 option 메뉴 — 교재군(optgroup) / 교재(title), 값은 교재 코드
         const stepGroups = () => Object.entries(COURSES).map(([family, items]) => ({
-            label: family,
+            label: GP_ROLE.courseLabel(family),
             options: items.map(it => ({ label: it.title, value: it.code })),
         }));
 
@@ -366,7 +366,7 @@ header("Expires: 0"); // Proxies
             const chips = [];
             if (resp.branch) chips.push(['', `지사 : ${resp.branch}`]);
             if (resp.academy) chips.push(['', `학원 : ${resp.academy}`]);
-            chips.push(['sub', `선생님 : ${resp.teacher || user}`]);
+            chips.push(['sub', `교사 : ${resp.teacher || user}`]);
             document.getElementById('idAffiliation').replaceChildren(...chips.map(([cls, text]) => {
                 const s = document.createElement('span');
                 s.className = cls;
@@ -527,7 +527,7 @@ header("Expires: 0"); // Proxies
         if (GP_ROLE.isTeacher(role)) {
             table.on("tableBuilt", listStudents);
         } else {
-            CallToast("선생님 계정으로 로그인하세요", "error");
+            CallToast("교사 계정으로 로그인하세요", "error");
             document.querySelectorAll('.kgarden-toolbar input, .kgarden-toolbar select, .kgarden-toolbar button').forEach(el => el.disabled = true);
         }
 

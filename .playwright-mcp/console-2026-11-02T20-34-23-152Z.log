@@ -1,0 +1,16 @@
+[     837ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ http://localhost:3001/index.php:0
+[   15799ms] TypeError: Cannot read properties of null (reading 'clientWidth')
+    at renderReviews (http://localhost:3001/index.php:1236:27)
+    at moveReview (http://localhost:3001/index.php:1243:5)
+    at http://localhost:3001/index.php:1248:69
+[   20799ms] TypeError: Cannot read properties of null (reading 'clientWidth')
+    at renderReviews (http://localhost:3001/index.php:1236:27)
+    at moveReview (http://localhost:3001/index.php:1243:5)
+    at http://localhost:3001/index.php:1248:69
+[   20847ms] TypeError: Cannot set properties of null (setting 'disabled')
+    at render (http://localhost:3001/index.php:1212:49)
+    at http://localhost:3001/index.php:1225:66
+[   25789ms] TypeError: Cannot read properties of null (reading 'clientWidth')
+    at renderReviews (http://localhost:3001/index.php:1236:27)
+    at moveReview (http://localhost:3001/index.php:1243:5)
+    at http://localhost:3001/index.php:1248:69

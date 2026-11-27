@@ -12,6 +12,7 @@
         <nav>
             <a href="index.php">상품</a>
             <a href="cart.php">장바구니 <span id="cartCount">0</span></a>
+            <a href="orders.php">주문내역</a>
             <a href="admin.php">Admin</a>
         </nav>
     </header>
@@ -51,11 +52,22 @@
             </form>
 
             <div id="adminProducts" class="list"></div>
+
+            <div class="page-head orders-head">
+                <div>
+                    <h1>주문 관리</h1>
+                    <p>결제 완료 주문은 결제취소로 카드 승인을 취소(환불)합니다. 거래 기록은 5년간 보관됩니다.</p>
+                </div>
+            </div>
+            <div id="adminOrders" class="list"></div>
         </section>
     </main>
 
+    <?php $gpFooterBase = '../'; include __DIR__ . '/../libs/footer.php'; ?>
+
     <script src="../js/common.js"></script>
+    <script src="../js/payment.js?v=2"></script>
     <script src="js/api.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="js/admin.js?v=2"></script>
 </body>
 </html>

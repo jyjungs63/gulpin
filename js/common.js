@@ -141,7 +141,7 @@ async function createFetchError(response, responseText) {
 
 async function requestJson(fucName, fntype = "POST", options, retFn, errFn, config = {}) {
   const method = String(fntype).toUpperCase();
-  const headers = {};
+  const headers = { ...config.headers };
   const fetchOptions = { method, headers };
   const body = toRequestBody(options);
   const controller = config.timeout ? new AbortController() : null;

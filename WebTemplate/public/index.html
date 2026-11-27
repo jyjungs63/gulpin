@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="유치원생과 초등학생을 위한 한글, 수학, 관찰 놀이. 아이의 첫 배움을 도토리 배움터에서 시작하세요.">
+  <meta name="theme-color" content="#fbfaf6">
+  <title>도토리 배움터 · 유치원 · 초등 온라인 학습</title>
+  <link rel="icon" href="/assets/acorn.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="#main"><img src="/assets/acorn.svg" width="38" height="38" alt="">도토리 배움터</a>
+      <nav aria-label="주 메뉴">
+        <a href="#activities">학습 활동</a>
+        <a href="#parents">보호자 안내</a>
+      </nav>
+      <button class="button outline" type="button" data-account>보호자 로그인</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="age-label"><span aria-hidden="true"></span> 유치원 · 초등 온라인 학습</p>
+        <h1 id="hero-title">작은 호기심이<br><em>큰 배움</em>이 되는 곳<span>.</span></h1>
+        <p class="hero-text">한글, 수학, 관찰 놀이까지.<br>아이의 눈높이에 맞춘 짧은 활동으로 매일 조금씩 배워요.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#activities">학습 둘러보기 <span aria-hidden="true">→</span></a>
+          <button class="button quiet" type="button" data-account>보호자 로그인</button>
+        </div>
+        <p class="guest-note"><span aria-hidden="true">✓</span> 로그인 없이 맛보기 활동을 해볼 수 있어요.</p>
+      </div>
+      <figure class="hero-figure">
+        <img src="/assets/reading-fox.webp" width="1200" height="800" alt="보라색 책을 펼쳐 읽는 안경 쓴 여우">
+      </figure>
+    </section>
+
+    <section class="activities" id="activities" aria-labelledby="activities-title">
+      <div class="wrap">
+        <div class="section-row">
+          <div>
+            <h2 id="activities-title">오늘은 무엇을 배울까요?</h2>
+            <p>아이에게 맞는 단계를 고르고 좋아하는 활동부터 시작해요.</p>
+          </div>
+          <div class="filters" role="group" aria-label="학습 단계">
+            <button type="button" aria-pressed="true" data-stage="kindergarten">유치원</button>
+            <button type="button" aria-pressed="false" data-stage="elementary">초등</button>
+          </div>
+        </div>
+        <div class="lesson-grid" id="lesson-grid"></div>
+        <noscript><p>학습 활동과 로그인을 이용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
+      </div>
+    </section>
+
+    <section class="wrap parent-section" id="parents" aria-labelledby="parent-title">
+      <div class="parent-box">
+        <div>
+          <h2 id="parent-title">보호자와 함께하는 배움</h2>
+          <p>보호자 계정으로 로그인하면 완료한 활동을 저장하고 다시 볼 수 있어요.</p>
+        </div>
+        <button class="button primary" type="button" data-account>보호자 로그인</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="#main"><img src="/assets/acorn.svg" width="28" height="28" alt="">도토리 배움터</a><a href="#main">맨 위로 ↑</a></div></footer>
+
+  <dialog id="lesson-dialog" aria-labelledby="lesson-title">
+    <div class="dialog-body">
+      <form method="dialog" class="close-form"><button class="close" aria-label="학습 창 닫기">×</button></form>
+      <p class="dialog-label" id="lesson-step"></p>
+      <h2 id="lesson-title"></h2>
+      <div id="lesson-content"></div>
+    </div>
+  </dialog>
+
+  <dialog id="account-dialog" aria-labelledby="account-title">
+    <div class="dialog-body">
+      <form method="dialog" class="close-form"><button class="close" aria-label="계정 창 닫기">×</button></form>
+      <h2 id="account-title">보호자 로그인</h2>
+      <form id="account-form">
+        <p id="account-intro">로그인하고 아이의 학습 기록을 확인하세요.</p>
+        <label for="email">이메일</label>
+        <input type="email" name="email" id="email" autocomplete="email" required maxlength="254">
+        <label for="password">비밀번호</label>
+        <input type="password" name="password" id="password" autocomplete="current-password" required maxlength="128">
+        <p class="form-help" id="password-help" hidden>10자 이상으로 입력해 주세요.</p>
+        <button class="button primary" id="account-submit">로그인</button>
+        <button class="button quiet" type="button" id="switch-mode">보호자 계정 만들기</button>
+      </form>
+      <div id="account-panel" hidden>
+        <p id="account-email"></p>
+        <h3>완료한 학습</h3>
+        <ul id="progress-list"></ul>
+        <button class="button outline" type="button" id="logout">로그아웃</button>
+      </div>
+      <p class="form-error" id="account-error" role="alert"></p>
+    </div>
+  </dialog>
+</body>
+</html>

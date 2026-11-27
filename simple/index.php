@@ -1,6 +1,13 @@
 <?php
 const SIMPLE_IMAGE_PATH = '/assets/simple/images';
 const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+function simple_image($name) {
+    return SIMPLE_IMAGE_PATH . '/' . $name . '?v=' . filemtime(__DIR__ . '/..' . SIMPLE_IMAGE_PATH . '/' . $name);
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -30,7 +37,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         body {
             font-family: 'Nanum Gothic', sans-serif;
             background-color: #fff4ce;
-            background-image: url('<?= SIMPLE_IMAGE_PATH ?>/potal_land.jpg');
+            background-image: url('<?= simple_image('potal_land.jpg') ?>');
             background-size: 100% 100%;
             background-position: center top;
             background-repeat: no-repeat;
@@ -56,11 +63,14 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         .site-header .home-link { color: #fff; font-size: 18px; }
         .site-header nav { display: flex; align-items: center; gap: 42px; }
         .utility-nav { display: flex; align-items: center; gap: 18px; margin-left: auto; }
-        .utility-nav a { color: #8a9184; text-decoration: none; font-weight: 700; cursor: pointer; }
+        .utility-nav a { color: rgba(255,255,255,.92); text-decoration: none; font-weight: 700; cursor: pointer; padding: 6px 10px; border-radius: 18px; }
+        .utility-nav a:hover { color: #fff; background: rgba(255,255,255,.15); }
+        .nav-toggle { display: none; border: 0; background: transparent; color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer; }
+        .header-welcome { display: none; }
 
         @media (max-width: 767px) {
             body {
-                background-image: url('<?= SIMPLE_IMAGE_PATH ?>/potal_port.jpg');
+                background-image: url('<?= simple_image('potal_port.jpg') ?>');
             }
             #banner {
                 height: 0.8rem;
@@ -421,9 +431,36 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
                 font-size: 14px;
             }
 
-            .site-header { padding: 12px 16px; align-items: flex-start; gap: 12px; }
-            .site-header nav { gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
-            .utility-nav { gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+            /* 모바일: 메뉴를 햄버거 버튼으로 접고, 펼치면 헤더 아래 세로 목록 */
+            .site-header { position: relative; padding: 12px 16px; z-index: 900; }
+            .nav-toggle { display: block; }
+            /* 상단 visitor-strip 대신 햄버거 앞에 로그인 문구 */
+            .visitor-strip { display: none; }
+            .header-welcome {
+                display: block;
+                margin-left: auto;
+                margin-right: 12px;
+                color: #eafff0;
+                font-size: 13px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .site-header .utility-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                padding: 10px 16px 16px;
+                background: #2e7d46;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 2px;
+                box-shadow: 0 8px 24px rgba(0,0,0,.25);
+            }
+            .site-header .utility-nav.open { display: flex; }
+            .utility-nav a, .utility-nav .right { display: block; padding: 11px 16px; border-radius: 10px; }
 
             /* .back-button {
                 left: 10px;
@@ -577,7 +614,9 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
     </div>
     <header class="site-header">
         <a class="home-link" href="../index.php">🏠 Home</a>
-        <nav class="utility-nav">
+        <span class="header-welcome" id="headerUserName">방문자님 환영합니다</span>
+        <button type="button" class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" onclick="toggleSimpleNav()">☰</button>
+        <nav class="utility-nav" id="simpleNav" onclick="if (event.target.closest('a, .right')) toggleSimpleNav(false)">
             <span id="simpleRoleMenu" style="display:contents"></span>
             <div class="right" onclick="openLogin()">로그인</div>
         </nav>
@@ -633,7 +672,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
     <div id="loginModal" class="login-modal">
         <div class="login-box">
             <button class="close-login-btn" onclick="closeLogin()">×</button>
-            <img src="<?= SIMPLE_IMAGE_PATH ?>/login.png" alt="로그인" class="login-image">
+            <img src="<?= simple_image('login.png') ?>" alt="로그인" class="login-image">
             <div class="login-body">
                 <form id="logForm" class="login-form" onsubmit="handleLogin(event)">
                     <div class="form-group">
@@ -657,8 +696,8 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
         </div>
     </div>
 
-    <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
-    <script src="../js/roles.js"></script>
+    <script src="../js/common.js?v=<?= filemtime('../js/common.js') ?>"></script>
+    <script src="../js/roles.js?v=<?= filemtime(__DIR__ . '/../js/roles.js') ?>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script>
         let currentMode = '';
@@ -710,7 +749,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
 
         function requireLearningAccess(level) {
             if (learningUntil(level)) return true;
-            CallToast('교재 구매 후 이용 가능합니다.', 'error');
+            CallToast(learningAccess.blocked ? '급파한 과정 교사는 학습 콘텐츠를 이용할 수 없습니다.' : '교재 구매 후 이용 가능합니다.', 'error');
             return false;
         }
 
@@ -725,6 +764,22 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
             }));
         }
 
+        // 환영 문구: 상단 visitor-strip(PC)과 헤더(모바일) 둘 다 갱신
+        function setUserName(text) {
+            document.getElementById('idUserName').textContent = text;
+            document.getElementById('headerUserName').textContent = text;
+        }
+
+        // 모바일 햄버거 메뉴 열기/닫기 (open 생략 시 토글)
+        function toggleSimpleNav(open) {
+            const nav = document.getElementById('simpleNav');
+            const isOpen = nav.classList.toggle('open', open);
+            const btn = document.querySelector('.nav-toggle');
+            btn.textContent = isOpen ? '✕' : '☰';
+            btn.setAttribute('aria-expanded', isOpen);
+            btn.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
+        }
+
         function restoreSimpleLogin(){
             const info = getLocalStorage('infochaitalk');
             const isCurrent = info && info.loginAt && Date.now() - Number(info.loginAt) <= 8 * 60 * 60 * 1000;
@@ -737,7 +792,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
             loginBtn.classList.add('logged-in');
             loginBtn.onclick = logout;
             renderSimpleMenu(info.role);
-            document.getElementById('idUserName').textContent = (info.name || info.user) + '님 환영합니다!';
+            setUserName((info.name || info.user) + '님 환영합니다!');
             document.getElementsByClassName('container')[0].style.display = 'block';
             updateMainBackground();
             enableAllButtons();
@@ -792,6 +847,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
                         clas: resp.success[0].clas,
                         loginAt: Date.now()
                     });
+                    if (resp.success[0].mustChange) { location.href = '../login/changepw.php?temp=1'; return; }
                     const loginIdVal = document.getElementById('loginId').value;
                     if (document.getElementById('chkSaveId').checked) {
                         localStorage.setItem('savedLoginId', loginIdVal);
@@ -807,7 +863,7 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
                     renderSimpleMenu(resp.success[0].role);
 
                     document.getElementsByClassName('container')[0].style.display = 'block';
-                    document.getElementById('idUserName').textContent = resp.success[0].name + '님 환영합니다!';
+                    setUserName(resp.success[0].name + '님 환영합니다!');
                     updateMainBackground();
                     enableAllButtons();
                     applyLevelAccess(resp.success[0].clas);
@@ -836,8 +892,8 @@ const SIMPLE_VIDEO_PATH = '/assets/simple/videos';
             loginBtn.onclick = openLogin;
             renderSimpleMenu(null);
             document.getElementsByClassName('container')[0].style.display = 'none';
-            document.getElementById('idUserName').textContent = '방문자님 환영합니다';
-            document.body.style.backgroundImage = `url('${SIMPLE_IMAGE_PATH}/potal_land.jpg')`;
+            setUserName('방문자님 환영합니다');
+            document.body.style.backgroundImage = `url('<?= simple_image('potal_land.jpg') ?>')`;
             disableAllButtons();
             location.href = '../index.php';
         }

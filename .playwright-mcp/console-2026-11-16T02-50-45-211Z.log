@@ -1,0 +1,25 @@
+[    9829ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3001/favicon.ico:0
+[   10556ms] [ERROR] Pattern attribute value [A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40} is not a valid regular expression: Uncaught SyntaxError: Invalid regular expression: /[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ._@-]{2,40}/v: Invalid character in character class @ http://localhost:3001/maljam/:0
+[   10616ms] [LOG] [DB] connected: mariadb (SMethods.php?dest=) @ http://localhost:3001/js/common.js?v=1784378092:89
+[   12642ms] [LOG] [DB] connected: mariadb (SMethods.php) @ http://localhost:3001/js/common.js:89
+[   12643ms] TypeError: Cannot set properties of null (setting 'textContent')
+    at http://localhost:3001/purchase/branchmgr.php:1090:62
+    at http://localhost:3001/purchase/branchmgr.php:1092:7
+[   30394ms] [LOG] [DB] connected: mariadb (SMethods.php) @ http://localhost:3001/js/common.js:89
+[   30395ms] TypeError: Cannot set properties of null (setting 'textContent')
+    at http://localhost:3001/purchase/branchmgr.php:1090:62
+    at http://localhost:3001/purchase/branchmgr.php:1092:7
+[   49183ms] [LOG] [DB] connected: mariadb (SMethods.php) @ http://localhost:3001/js/common.js:89
+[   49183ms] TypeError: Cannot set properties of null (setting 'textContent')
+    at http://localhost:3001/purchase/branchmgr.php:1090:62
+    at http://localhost:3001/purchase/branchmgr.php:1092:7
+[   64449ms] [LOG] [DB] connected: mariadb (SMethods.php) @ http://localhost:3001/js/common.js:89
+[   64450ms] TypeError: Cannot set properties of null (setting 'textContent')
+    at http://localhost:3001/purchase/branchmgr.php:1090:62
+    at http://localhost:3001/purchase/branchmgr.php:1092:7
+[   92797ms] [LOG] [DB] connected: mariadb (SMethods.php) @ http://localhost:3001/js/common.js:89
+[   92797ms] TypeError: Cannot set properties of null (setting 'textContent')
+    at http://localhost:3001/purchase/branchmgr.php:1090:62
+    at http://localhost:3001/purchase/branchmgr.php:1092:7
+[   95149ms] [ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:3001/Server/SMethods.php:0
+[   99168ms] [ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:3001/Server/SMethods.php:0

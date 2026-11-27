@@ -10,9 +10,26 @@ function escapeAttr(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
+// 지사별조회 option 의 조회 값 — 본사 option 은 표시가 이름·지점명이라 data-id(지사 아이디)를 쓴다 (order.php orderList)
+function porBranchName(option) {
+  return option ? option.dataset.id || option.text : "";
+}
+
+// 주문내역 조회 기간 — 시작월 1일 ~ 종료월 다음 날 (rdate 가 일시라 종료월 말일 주문까지 포함)
+function porRange() {
+  const start = moment(document.getElementById("monthPicker").value).startOf("month");
+  let end = moment(document.getElementById("monthPickerEnd").value);
+  if (end.isBefore(start)) end = start.clone();
+  return {
+    start: start.format("YYYY-MM-DD"),
+    end: end.endOf("month").add(1, "days").format("YYYY-MM-DD"),
+  };
+}
+
 $(document).ready(function (e) {
   //$("#cardDest").hide();
   $("#cardPDF").hide();
@@ -491,10 +508,7 @@ listPor = (por_id) => {
     },
   };
   dispList = (res) => {
-    var js = "";
-    if (res.length > 0) {
-      js = res[0]["json"];
-    }
+    if (!res.length) return;
 
     document.getElementById("idInvoieNo").value = res[0].invoice ?? "";
     document.getElementById("idRefund").value = res[0].refund ?? "";
@@ -513,10 +527,10 @@ listPor = (por_id) => {
     }
 
     _pdfname = res[0]["pdfname"];
-    let loc = window.origin.includes("localhost")
-      ? window.origin + ""
-      : window.origin;
-    document.getElementById("pdfDiv").src = loc + "/assets/por/uploads/" + _pdfname;
+    const preview = new URL("order-document.php", location.href);
+    preview.searchParams.set("id", por_id);
+    if (getServerDbType() === "sqlite") preview.searchParams.set("db", "sqlite");
+    document.getElementById("pdfDiv").src = _pdfname ? preview.href : "about:blank";
   };
   dispErr = (error) => {
     CallToast("SPorDetailList falure!", "error");
@@ -544,7 +558,7 @@ globalsort = (sortobj) => {
 
   var selectElement = document.getElementById("idPorBranch"); // 지사 또는 원관리
   var selectedOption = selectElement.options[selectElement.selectedIndex];
-  var name = selectedOption.text;
+  var name = porBranchName(selectedOption);
 
   if (name == "") {
     name = "전지사";
@@ -834,6 +848,7 @@ addPurcharseList = (res, id) => {
   const parcelInput = $("#idParcel");
   const fallbackPorId = selectedPurchasePorId;
   selectedPurchasePorId = "";
+  updatePorPayment("");
 
   tbody.empty();
 
@@ -868,9 +883,9 @@ addPurcharseList = (res, id) => {
         jarr += `
         <tr>
           <td class='nb'>${i}.&nbsp;</td>
-          <td class='nb'>${el.title}</td>
+          <td class='nb'>${escapeAttr(GP_ROLE.courseLabel(el.title))}</td>
           <td class='nb'>${cvtCurrency(parseInt(el.price))}원</td>
-          <td class='nb'>${el.count}개</td>
+          <td class='nb'>${escapeAttr(el.count)}개</td>
         </tr>`;
 
       } else if (el.title == "택배비") {
@@ -918,7 +933,7 @@ addPurcharseList = (res, id) => {
         "원 / <br/> -" +
         cvtCurrency(refund) +
         "원 / <br/> " +
-        bracketsContent;
+        escapeAttr(bracketsContent);
 
       totrefund += refund;
     }
@@ -949,9 +964,9 @@ addPurcharseList = (res, id) => {
     html += `
       <tr class="purchase-row" data-por-id="${escapeAttr(porId)}" data-status="${escapeAttr(ell.confirm)}" data-invoice="${escapeAttr(ell.invoice)}" data-refund="${escapeAttr(ell.refund)}" style="margin-top:10px; cursor:pointer">
 
-        <td>${user == "admin" ? ell.id : ell.order}</br><span style="color:blue">(${ell.owner || ''})</span></td>
+        <td>${escapeAttr(user == "admin" ? ell.id : ell.order)}<br><span style="color:blue">(${escapeAttr(ell.owner)})</span></td>
 
-        <td>${dat.slice(0,11)}</td>
+        <td>${escapeAttr(dat.slice(0,11))}</td>
 
         <td>
           <table class='nb' style='width:100%'>
@@ -962,9 +977,9 @@ addPurcharseList = (res, id) => {
         <td>${refundHtml}</td>
 
         <td>
-          <div>${ell.addr}</div>
+          <div>${escapeAttr(ell.addr)}</div>
           <br/>
-          <div>${ell.order}</div>
+          <div>${escapeAttr(ell.order)}</div>
         </td>
 
         <td>
@@ -973,7 +988,7 @@ addPurcharseList = (res, id) => {
 
         ${
           (stat == "물품준비중" && (id == "" || user == "admin"))
-          ? `<td><a href='javascript:cancelOrder("${escapeAttr(porId)}")'>구매취소</a></td>`
+          ? `<td><button type="button" class="btn btn-sm btn-outline-danger" data-remove-order="${escapeAttr(porId)}">구매취소</button></td>`
           : "<td></td>"
         }
 
@@ -1097,6 +1112,10 @@ addPurcharseList = (res, id) => {
   // }
 
   tbody.html(html);
+  tbody.find("[data-remove-order]").on("click", function (event) {
+    event.stopPropagation();
+    cancelOrder(this.dataset.removeOrder);
+  });
 
   tbody.find(".purchase-row").on("click", function () {
     const row = $(this);
@@ -1105,6 +1124,7 @@ addPurcharseList = (res, id) => {
     row.css("background-color", "#d9edf7");
 
     selectedPurchasePorId = row.data("por-id") || "";
+    updatePorPayment(selectedPurchasePorId);
 
     if (selectedPurchasePorId) {
       $("#idPorList").val(selectedPurchasePorId);
@@ -1120,6 +1140,54 @@ addPurcharseList = (res, id) => {
     tbody.find(".purchase-row").trigger("click");
   }
 };
+
+async function updatePorPayment(id) {
+  const pay = document.getElementById("idPorPay");
+  const refund = document.getElementById("idPorRefund");
+  const receipt = document.getElementById("idPorReceipt");
+  if (!pay || !refund || !receipt) return;
+  pay.hidden = refund.hidden = receipt.hidden = true;
+  if (!id) return;
+
+  try {
+    const payment = await gpPaymentCall("SPaymentPorInfo", { id });
+    if (id !== selectedPurchasePorId) return;
+    pay.hidden = !payment.canPay;
+    pay.textContent = payment.status === "CONFIRMING" ? "승인 상태 확인" : "카드결제";
+    pay.onclick = async () => {
+      pay.disabled = true;
+      try {
+        await gpPay("por", id);
+      } catch (error) {
+        CallToast(error.message, "error");
+      } finally {
+        pay.disabled = false;
+      }
+    };
+    refund.hidden = !payment.canCancel;
+    refund.textContent = payment.status === "CANCELING" ? "환불 상태 확인" : "카드 전액 환불";
+    refund.onclick = async () => {
+      const reason = prompt("카드 전액 환불 사유를 입력해 주세요.");
+      if (!reason) return;
+      refund.disabled = true;
+      try {
+        await gpPaymentCall("SPaymentCancel", { orderId: payment.orderId, reason });
+        listPor(id);
+      } catch (error) {
+        CallToast(error.message, "error");
+        updatePorPayment(id);
+      } finally {
+        refund.disabled = false;
+      }
+    };
+    if (payment.receiptUrl) {
+      receipt.href = payment.receiptUrl;
+      receipt.hidden = false;
+    }
+  } catch (error) {
+    if (id === selectedPurchasePorId) CallToast(error.message, "error");
+  }
+}
 
 function AddDelever() {
   const selectOpt = $("#idPorList").find(":selected");
@@ -1149,7 +1217,7 @@ function AddDelever() {
     listPor(porId);
   };
   dispErr = (xhr) => {
-    CallToast("배송 처리 실패!!", "error");
+    CallToast(xhr?.responseJSON?.error || "배송 처리 실패!!", "error");
   };
 
   var options = {
@@ -1177,11 +1245,13 @@ function cancelOrder(rowPorId) {
 
   dispList = (resp) => {
     CallToast("주문 취소 성공!!", "success");
+    updatePorPayment("");
+    orderList();
     if (document.getElementById("pdfDiv"))
       document.getElementById("pdfDiv").src = "";
   };
   dispErr = (xhr) => {
-    CallToast("주문 취소 실패!!", "error");
+    CallToast(xhr?.responseJSON?.error || "주문 취소 실패!!", "error");
   };
 
   var options = {
@@ -1194,7 +1264,6 @@ function cancelOrder(rowPorId) {
 
   CallAjax("SMethods.php", "POST", options, dispList, dispErr);
 
-  listPor(porId);
 }
 
 document.getElementById("idPorList").addEventListener("change", function () {
@@ -1326,15 +1395,15 @@ monthPicker.addEventListener("input", function (evt) {
 
   if (endMoment.isBefore(startMoment)) {
     document.getElementById("monthPickerEnd").value = monthPicker.value;
-    endMoment = startMoment.clone();
   }
 
-  let startOfMonth = startMoment.startOf("month").format("YYYY-MM-DD");
-  let endOfMonth = endMoment.endOf("month").format("YYYY-MM-DD");
+  const range = porRange();
+  let startOfMonth = range.start;
+  let endOfMonth = range.end;
 
   var selectElement = document.getElementById("idPorBranch"); // 지사 또는 원관리
   var selectedOption = selectElement.options[selectElement.selectedIndex];
-  var bname = selectedOption.text;
+  var bname = porBranchName(selectedOption);
 
   if (bname == "") {
     if (getUser() == "admin") bname = "전지사";
@@ -1354,17 +1423,12 @@ document.getElementById("idPorBranch").addEventListener("change", function () {
 
   var selectedOption = this.options[this.selectedIndex];
 
-  var name = selectedOption.text;
+  var name = porBranchName(selectedOption);
   var id = selectedOption.value; // admin or 지사명
 
-  let thisMoment = moment(monthPicker.value);
-  let endOfMonth = moment(thisMoment)
-    .endOf("month")
-    .add(1, "days")
-    .format("YYYY-MM-DD");
-  let startOfMonth = moment(thisMoment).startOf("month").format("YYYY-MM-DD");
-
-  listPorRange(startOfMonth, endOfMonth, name, id);
+  // 시작월만이 아니라 종료월까지 조회
+  const range = porRange();
+  listPorRange(range.start, range.end, name, id);
 
   if (selectedOption.text != "전지사") {
     if (user == "admin") $("#idBtParcel").removeClass("disabled");
@@ -1383,7 +1447,7 @@ AddParcel = () => {
 
   var selectElement = document.getElementById("idPorBranch"); // 지사 또는 원관리
   var selectedOption = selectElement.options[selectElement.selectedIndex];
-  var bname = selectedOption.text;
+  var bname = porBranchName(selectedOption);
   var id = selectElement.value;
 
   var options = {
@@ -1421,12 +1485,13 @@ monthPickerEnd.addEventListener("input", function (evt) {
     return;
   }
 
-  let startOfMonth = startMoment.startOf("month").format("YYYY-MM-DD");
-  let endOfMonth = endMoment.endOf("month").format("YYYY-MM-DD");
+  const range = porRange();
+  let startOfMonth = range.start;
+  let endOfMonth = range.end;
 
   var selectElement = document.getElementById("idPorBranch");
   var selectedOption = selectElement.options[selectElement.selectedIndex];
-  var bname = selectedOption.text;
+  var bname = porBranchName(selectedOption);
 
   if (bname == "") {
     if (getUser() == "admin") bname = "전지사";

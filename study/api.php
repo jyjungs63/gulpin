@@ -1,8 +1,11 @@
 <?php
 // api.php
 header('Content-Type: application/json');
-require_once '../libs/db_config.php'; // DB 설정 파일 포함
-require_once '../Server/roles.php';   // role 정의
+if (!defined('GULPIN_INTERNAL_DB_CONFIG')) {
+    define('GULPIN_INTERNAL_DB_CONFIG', true);
+}
+require_once __DIR__ . '/../_private/db_config.php'; // DB 설정 파일 포함
+require_once __DIR__ . '/../Server/roles.php';       // role 정의
 
 try {
     $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

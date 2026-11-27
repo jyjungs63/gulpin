@@ -1,0 +1,60 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Shopping Mall" [ref=e3] [cursor=pointer]:
+      - /url: index.php
+    - navigation [ref=e4]:
+      - link "상품" [ref=e5] [cursor=pointer]:
+        - /url: index.php
+      - link "장바구니 0" [ref=e6] [cursor=pointer]:
+        - /url: cart.php
+      - link "주문내역" [ref=e7] [cursor=pointer]:
+        - /url: orders.php
+      - link "Admin" [ref=e8] [cursor=pointer]:
+        - /url: admin.php
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - heading "Admin 로그인" [level=1] [ref=e11]
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - text: 아이디
+          - textbox "아이디" [ref=e14]
+        - generic [ref=e15]:
+          - text: 비밀번호
+          - textbox "비밀번호" [ref=e16]
+        - button "로그인" [ref=e17] [cursor=pointer]
+        - paragraph
+  - contentinfo [ref=e18]:
+    - generic [ref=e19]:
+      - navigation "약관 및 정책" [ref=e20]:
+        - link "이용약관" [ref=e21] [cursor=pointer]:
+          - /url: ../policy/terms.php
+        - link "개인정보처리방침" [ref=e22] [cursor=pointer]:
+          - /url: ../policy/privacy.php
+        - link "교환·반품·환불 안내" [ref=e23] [cursor=pointer]:
+          - /url: ../policy/refund.php
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - term [ref=e26]: 상호
+          - definition [ref=e27]: (입력 필요)
+        - generic [ref=e28]:
+          - term [ref=e29]: 대표자
+          - definition [ref=e30]: (입력 필요)
+        - generic [ref=e31]:
+          - term [ref=e32]: 사업자등록번호
+          - definition [ref=e33]: (입력 필요)
+        - generic [ref=e34]:
+          - term [ref=e35]: 통신판매업 신고번호
+          - definition [ref=e36]: (입력 필요)
+        - generic [ref=e37]:
+          - term [ref=e38]: 주소
+          - definition [ref=e39]: (입력 필요)
+        - generic [ref=e40]:
+          - term [ref=e41]: 고객센터
+          - definition [ref=e42]: (입력 필요) · (입력 필요)
+        - generic [ref=e43]:
+          - term [ref=e44]: 개인정보 보호책임자
+          - definition [ref=e45]: (입력 필요)
+        - generic [ref=e46]:
+          - term [ref=e47]: 호스팅 제공자
+          - definition [ref=e48]: (입력 필요)
+      - paragraph [ref=e49]: © 2026 (입력 필요). All rights reserved.

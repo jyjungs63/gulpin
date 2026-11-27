@@ -17,7 +17,7 @@ import openpyxl
 
 # 대분류 블록 (시작행, 끝행) → 가격표 그룹 키
 CATEGORY_ROWS = [
-    ('homeschool', '홈스쿨', 4, 23),
+    ('homeschool', '방문수업', 4, 23),
     ('afterschool', '방과후', 24, 43),
     ('academy', '학원', 44, 140),
     ('kinder', '유치원', 141, 211),
@@ -37,6 +37,9 @@ def family_of(title):
     """필터용 교재군: 끝의 단계/호수/번호를 뗀 이름 (예: '한어사 세트 12' → '한어사 세트')"""
     if '노트' in title:
         return '노트'
+    # 홈스쿨 교재는 화면 이름만 '방문수업' — 교재군은 학생 과정 값(student_policy.php)과 맞춰 '홈스쿨' 유지
+    if title.startswith('방문수업'):
+        return '방문수업'
     return re.sub(r'\s*(\d+단계\s*[A-Z]?|\d+호|\d+)$', '', title).strip() or title
 
 

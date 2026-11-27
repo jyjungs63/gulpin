@@ -9,9 +9,9 @@
  *            sdate/edate = 수업 시작/종료일, status = 학습상태(1 등원 / 0 퇴원)
  * 선생님은 본인(tid)에게 등록된 학생만 조회·수정·삭제한다.
  *
- * 아이디 학생관리(purchase/kgardenmgr.php) — 유치원·홈스쿨 선생(10/30)
+ * 아이디 학생관리(purchase/kgardenmgr.php) — 유치원·방문수업 선생(10/30)
  *   학생이 학습 화면에 로그인하므로 선생님이 아이디/암호를 만든다 (confirm = 1).
- *   step = 과정 — 유치원 잼잼별/말잼별/글잼별, 홈스쿨 급파한/홈스쿨
+ *   step = 과정 — 유치원 잼잼별/말잼별/글잼별, 방문수업 급파한/방문수업
  *
  * SMethods.php / SMethodsSQLite.php 공용 (catalog.php 다음에 require)
  */
@@ -42,16 +42,19 @@ function gpTeacherActor(): array
     if (!$rows) {
         gpMgrRespond(array('error' => '로그인이 만료되었습니다. 다시 로그인해 주세요.'), 401);
     }
+    if (gpUserColumn('pw_temp') !== null) {
+        gpRequirePasswordChanged(gpMgrQuery('SELECT pw_temp FROM gulpin_user WHERE id = ?', array($id))[0]);
+    }
 
     $actor = $rows[0];
     $actor['role'] = (int) $actor['role'];
     if (!in_array($actor['role'], GP_TEACHER_ROLES, true)) {
-        gpMgrRespond(array('error' => '학생관리는 선생님 계정으로 이용할 수 있습니다.'), 403);
+        gpMgrRespond(array('error' => '학생관리는 교사 계정으로 이용할 수 있습니다.'), 403);
     }
     return $actor;
 }
 
-/** 선생님 그룹 가격표의 과정 목록 — 교재군 => [{code, title, step}] (화상수업은 홈스쿨 가격표, GP_PRICE_GROUP_OF) */
+/** 선생님 그룹 가격표의 과정 목록 — 교재군 => [{code, title, step}] (화상수업은 방문수업 가격표, GP_PRICE_GROUP_OF) */
 function gpStudentCourses(array $actor): array
 {
     $key = GP_PRICE_GROUP_OF[gpRoleGroup($actor['role'])] ?? '';
@@ -191,15 +194,15 @@ function STeacherStudentDelete($data)
 // 아이디 학생관리 그룹 => 선택할 수 있는 과정(step) (JS 쪽: purchase/kgardenmgr.php STEP_LIST, 두 곳을 같게 유지)
 const GP_ID_STUDENT_STEPS = array(
     1 => array('잼잼별', '말잼별', '글잼별'),
-    3 => array('급파한', '홈스쿨'),
+    3 => array('급파한', '방문수업'),
 );
 
-/** 아이디 학생관리 선생님(유치원·홈스쿨) */
+/** 아이디 학생관리 선생님(유치원·방문수업) */
 function gpIdTeacherActor(): array
 {
     $actor = gpTeacherActor();
     if (!isset(GP_ID_STUDENT_STEPS[gpRoleGroup($actor['role'])])) {
-        gpMgrRespond(array('error' => '아이디 학생관리는 유치원·홈스쿨 선생님 계정으로 이용할 수 있습니다.'), 403);
+        gpMgrRespond(array('error' => '아이디 학생관리는 유치원·방문수업 교사 계정으로 이용할 수 있습니다.'), 403);
     }
     return $actor;
 }
@@ -239,6 +242,9 @@ function SIdStudentSave($data)
 {
     $actor = gpIdTeacherActor();
     $group = gpRoleGroup($actor['role']);
+    if ($group === 3) {
+        gpMgrRespond(array('error' => '방문수업 전용 학생관리 화면에서 저장해 주세요. 화면을 새로고침해 주세요.'), 409);
+    }
     $items = is_array($data['items'] ?? null) ? $data['items'] : array();
     if (!$items) {
         gpMgrRespond(array('error' => '저장할 학생이 없습니다.'), 400);

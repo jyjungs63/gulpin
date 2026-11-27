@@ -130,6 +130,7 @@
                     };
 
                     saveLocalStorage('info', respo);
+                    if (resp['success'][0]['mustChange']) { window.location.href = 'changepw.php?temp=1'; return; }
                     if (window.origin.includes("localhost"))
                         window.location.href = window.origin + '/' + 'index.php'
                     else

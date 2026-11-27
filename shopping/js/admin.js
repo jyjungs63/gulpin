@@ -13,7 +13,8 @@ loginForm.addEventListener('submit', async (event) => {
     loginMessage.textContent = '';
     const body = Object.fromEntries(new FormData(loginForm));
     try {
-        await apiRequest('/login', { method: 'POST', body: JSON.stringify(body) });
+        const { user } = await apiRequest('/login', { method: 'POST', body: JSON.stringify(body) });
+        if (!isAdminUser(user)) throw new Error('본사 관리자만 이용할 수 있습니다.');
         showAdmin();
     } catch (error) {
         loginMessage.textContent = error.message;
@@ -63,10 +64,54 @@ function showAdmin() {
     loginPanel.classList.add('hidden');
     adminPanel.classList.remove('hidden');
     loadAdminProducts();
+    loadAdminOrders();
+}
+
+const ADMIN_ORDER_STATUS = { pending: '결제 대기', paid: '결제 완료', canceled: '결제 취소(환불)' };
+const ADMIN_PAYMENT_STATUS = { CONFIRMING: '승인 확인 중', CANCELING: '환불 확인 중', PARTIAL: '부분 환불' };
+
+async function loadAdminOrders() {
+    const adminOrders = document.getElementById('adminOrders');
+    try {
+        const { orders } = await serverCall('SShoppingAdminOrders', {});
+        adminOrders.innerHTML = orders.length ? orders.map((order) => `
+            <article class="panel order">
+                <div class="order-head">
+                    <strong>#${escapeHtml(order.id)} · ${escapeHtml(order.user_id)}</strong>
+                    <span class="badge badge-${escapeHtml(order.status)}">${escapeHtml(ADMIN_PAYMENT_STATUS[order.payment_status] || ADMIN_ORDER_STATUS[order.status] || order.status)}</span>
+                </div>
+                <p>${(order.items || []).map((item) => `${escapeHtml(item.name)} × ${Number(item.quantity)}`).join(', ') || '-'}</p>
+                <p>${formatPrice(order.amount)} · ${escapeHtml(order.created_at)} ${order.approved_at ? '· 승인 ' + escapeHtml(order.approved_at) : ''}</p>
+                <p class="notice">${escapeHtml(order.receiver_name)} · ${escapeHtml(order.receiver_phone)} · (${escapeHtml(order.zip)}) ${escapeHtml(order.addr)}</p>
+                <div class="actions">
+                    ${['DONE', 'CANCELING'].includes(order.payment_status) ? `<button class="danger" data-cancel="${escapeHtml(order.payment_order_id)}">결제취소(환불)</button>` : ''}
+                    ${order.receipt_url ? `<a class="secondary btn-link" href="${escapeHtml(order.receipt_url)}" target="_blank" rel="noopener noreferrer">영수증</a>` : ''}
+                </div>
+            </article>`).join('') : '<p class="empty">주문이 없습니다.</p>';
+
+        adminOrders.querySelectorAll('[data-cancel]').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const reason = prompt('결제 취소 사유를 입력하세요. (예: 고객 청약철회, 품절)');
+                if (!reason) {
+                    return;
+                }
+                button.disabled = true;
+                try {
+                    await gpPaymentCall('SPaymentCancel', { orderId: button.dataset.cancel, reason });
+                    loadAdminOrders();
+                } catch (error) {
+                    alert(error.message);
+                    button.disabled = false;
+                }
+            });
+        });
+    } catch (error) {
+        adminOrders.innerHTML = `<p class="empty">${escapeHtml(error.message)}</p>`;
+    }
 }
 
 function isAdminUser(user) {
-    return user && (String(user.role) === '9' || user.user === 'admin' || user.id === 'admin' || user.id === 'chaitalk');
+    return user && String(user.role) === '9';
 }
 
 async function loadAdminProducts() {

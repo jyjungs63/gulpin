@@ -11,8 +11,7 @@
  *   "image_count":  10,
  *   "image_format": "png",   // 감지된 이미지 확장자 (null = 없음)
  *   "audio_format": "mp3",   // 감지된 오디오 확장자 (null = 없음)
- *   "pdf_file":     "book.pdf", // 폴더에 PDF가 정확히 1개일 때
- *   "path":         "..."
+ *   "pdf_file":     "book.pdf"  // 폴더에 PDF가 정확히 1개일 때
  * }
  */
 
@@ -20,7 +19,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 $path = $_GET['path'] ?? '';
 
-if (empty($path)) {
+if (!is_string($path) || $path === '' || strlen($path) > 2048 || strpos($path, "\0") !== false) {
     echo json_encode(['error' => 'path 파라미터가 필요합니다.']);
     exit;
 }
@@ -52,23 +51,37 @@ if (preg_match('/^https?:\/\//', $path)) {
     }
 }
 
-// 경로 정규화
-$path = rtrim($path, '/');
-
-if (!is_dir($path)) {
+// 웹에서 제공하는 교재 폴더만 조회한다. 심볼릭 링크는 실경로로 검사한다.
+$resolved = realpath($path);
+$roots = array_filter([realpath($_SERVER['DOCUMENT_ROOT'] ?? ''), realpath(dirname(__DIR__, 2))]);
+$allowed = false;
+if ($resolved && is_dir($resolved)) {
+    foreach ($roots as $root) {
+        $prefix = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $inside = DIRECTORY_SEPARATOR === '\\'
+            ? strncasecmp($resolved, $prefix, strlen($prefix)) === 0
+            : strncmp($resolved, $prefix, strlen($prefix)) === 0;
+        if ($inside) {
+            $relative = str_replace('\\', '/', substr($resolved, strlen($prefix)));
+            if (!preg_match('~(?:^|/)(?:\\.[^/]*|_private|Server|reviews/data|doc|tests)(?:/|$)~i', $relative)) {
+                $allowed = true;
+                break;
+            }
+        }
+    }
+}
+if (!$allowed) {
+    http_response_code(404);
     echo json_encode([
-        'error'        => "디렉토리를 찾을 수 없습니다: $path",
-        'image_count'  => 0,
+        'error' => '교재 폴더를 찾을 수 없습니다.',
+        'image_count' => 0,
         'image_format' => null,
         'audio_format' => null,
-        '_debug'       => [
-            'resolved_path' => $path,
-            'document_root' => $_SERVER['DOCUMENT_ROOT'] ?? 'N/A',
-            'script_file'   => $_SERVER['SCRIPT_FILENAME'] ?? 'N/A',
-        ]
-    ]);
+        'pdf_file' => null,
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
+$path = $resolved;
 
 // ── 지원 확장자 목록 ───────────────────────
 $IMG_EXTS   = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp'];
@@ -114,6 +127,5 @@ echo json_encode([
     'audio_format' => $audioInfo['format'],
     'pdf_file'     => $pdfFile,
     'pdf_count'    => count($pdfFiles),
-    'path'         => $path
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

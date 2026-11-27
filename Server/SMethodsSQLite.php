@@ -4,6 +4,8 @@ require_once 'sqlite_compat.php';
 require_once 'mgr_policy.php'; // SShowMgr, SRegistermgr, SShowConfirmUpdate, SDeleteMgr
 require_once 'catalog.php';    // SGetPriceCatalog, SGetLearningAccess (가격표.xlsx)
 require_once 'student_policy.php'; // STeacherStudents/Save/Delete, SIdStudents/MaxNo/Save
+require_once __DIR__ . '/homeschool_policy.php';
+require_once __DIR__ . '/payment_policy.php';
 
 $urlFromGET = "";
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
@@ -15,7 +17,24 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $urlFromGET = $_GET['dest'];
         }
 
+        // 이 프로젝트에서 정의한 S* API 함수만 호출 (system 등 PHP 내장 함수 차단. 함수명은 대소문자 무시)
+        $callable = is_string($functionName)
+            && preg_match('/^S[A-Za-z0-9_]+$/D', $functionName)
+            && function_exists($functionName)
+            && ($method = new ReflectionFunction($functionName))->isUserDefined()
+            && substr($method->getName(), 0, 1) === 'S'
+            // SetLogin: 로그인 내부 처리용 / 나머지: 화면에서 쓰지 않는 함수 (권한 확인 없음)
+            && !in_array(strtolower($functionName), array('setlogin', 'sremovechild', 'scheckstudentid',
+                'sinsertstudent', 'supdatestudent', 'smanagestudent', 'sgetlistprice'), true);
+        if (!$callable) {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('error' => '허용되지 않은 요청입니다.'), JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
         if (is_callable($functionName)) {
+            $functionName = $method->getName();
             if (
                 "SUploadBoardPDF" == $functionName
                 || "SUploadBoard" == $functionName
@@ -32,42 +51,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 function Sfindpassword($data)
 {
-    $Id     = $data["id"];
-    $Mobile = $data["mobile"];
-
-    if (!empty($Id) && !empty($Mobile)) {
-
-        $res = CheckPasswd($Id, $Mobile);
-
-        if ($res) {
-            $characterToRemove = "-";
-            $passwd1 = str_replace(' ', '', str_replace($characterToRemove, "", $res['mobile']));
-            $passwd2 = str_replace(' ', '', str_replace($characterToRemove, "", $Mobile));
-            if ($passwd1 == $passwd2)
-                echo json_encode(array("success" => $res['password']));
-            else
-                echo json_encode(array("error" => "사용자 아이디 와 휴대폰 번호가 일치하지 않아요"), JSON_UNESCAPED_UNICODE);
-        } else {
-            echo json_encode(array("error" => "사용자 아이디 와 휴대폰 번호가 일치하지 않아요"), JSON_UNESCAPED_UNICODE);
-        }
-    } else {
-        echo json_encode(array("error" => "사용자 아이디 와 휴대폰을 입력하세요"), JSON_UNESCAPED_UNICODE);
-    }
-}
-function CheckPasswd($login, $password)
-{
-    global $conn;
-    $user = "";
-    $login = sqlite_escape_string($conn, $login);
-    $rs = sqlite_query($conn, "select * from gulpin_user where id='{$login}' ");
-
-    if ($rs) {
-        $user = sqlite_fetch_assoc($rs);
-        $passwordnew = sqlite_escape_string($conn, password_hash($password, PASSWORD_BCRYPT));
-        sqlite_free_result($rs);
-    }
-    $conn->close();
-    return $user;
+    gpMgrRespond(['error' => '담당 선생님, 지사 또는 본사에 비밀번호 재설정을 요청해 주세요.'], 403);
 }
 
 function Slogon($data, $dest)
@@ -93,7 +77,14 @@ function Slogon($data, $dest)
         }
 
         if ($res) {
+            // 세션 쿠키: JS 접근 차단, 외부 사이트 요청엔 미전송(Lax — PG 결제 후 복귀는 유지), HTTPS 면 Secure
+            session_set_cookie_params(array(
+                'httponly' => true,
+                'samesite' => 'Lax',
+                'secure'   => gpIsHttpsRequest(),
+            ));
             sqlite_start_session();
+            session_regenerate_id(true);   // 로그인 전 세션 id 재사용(세션 고정) 방지
             $_SESSION["authenticated"] = 'true';
             $_SESSION["user"] = $res['id'];
             $_SESSION["name"] = $res['name'];
@@ -101,6 +92,10 @@ function Slogon($data, $dest)
             $_SESSION["confirm"] = $res['confirm'];
             $_SESSION["location"] = $location;
             $_SESSION["dest"] = $dest;
+
+            // 로그인과 영역 검증이 끝난 뒤 입력 비밀번호로 확인용 사본을 저장한다.
+            $captureStatus = gpPasswordCapture($res, (string) $Password);
+            header('X-Gulpin-Password-View: ' . $captureStatus);
 
             array_push(
                 $rows,
@@ -114,7 +109,8 @@ function Slogon($data, $dest)
                     'location'  => $location,
                     'dest'  => $dest,
                     'step'  => isset($res['step']) == true ? $res['step'] : "",
-                    'clas'  => $res['etc']
+                    'clas'  => $res['etc'],
+                    'mustChange' => (int) ($res['pw_temp'] ?? 0) === 1   // 임시 비밀번호 → login/changepw.php
                 )
             );
 
@@ -173,9 +169,7 @@ function CheckUser($login, $password)
     if ($rs) {
         $user = sqlite_fetch_assoc($rs);
         $passwordnew = sqlite_escape_string($conn, password_hash($password, PASSWORD_BCRYPT));
-        $storedPassword = $user && isset($user['password']) ? $user['password'] : '';
-        $isHash = !empty(password_get_info($storedPassword)['algo']);
-        if ($user &&  (($isHash && !password_verify($password, $storedPassword)) || (!$isHash && strcmp($password, $storedPassword) != 0))) {
+        if ($user && !gpPasswordCheck($user, (string) $password)) {   // 해시/평문 확인 + 평문이면 해시로 교체
             $user = "";
         }
         sqlite_free_result($rs);
@@ -196,12 +190,14 @@ function SstudentList($data)
 {
     sqlite_start_session();
 
-    $tid       = $data['tid'];
+    $tid       = (string) $data['tid'];
     $role     = $data['role'];
 
-    global $conn;
+    if (!gpCanView(gpSessionUser(), $tid)) {
+        gpMgrRespond(array('error' => '조회 권한이 없습니다.'), 403);
+    }
 
-    $sqlString = "SELECT name FROM gulpin_user u where u.tid = '{$tid}' and role = {$role}";
+    global $conn;
 
     $rows = array();
 
@@ -209,9 +205,9 @@ function SstudentList($data)
 
     try {
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText("SELECT name FROM gulpin_user u where u.tid = ? and role = ?", array($tid, $role));
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -232,17 +228,18 @@ function SShowOrderList($data)
 
     sqlite_start_session();
 
-    $id = $data['id'];
+    // 조회 대상은 브라우저가 보낸 id 가 아니라 로그인 계정 — 본사는 전체, 지사는 본인 주문
+    $actor = gpMgrActor();
 
     global $conn;
 
-    //$sqlString = "SELECT p.*, u.name FROM gulpin_porlist p gulpin_user u where confirm = 0";
-    if ($id == "admin")
+    $params = array();
+    if (gpMgrIsAdmin($actor))
         $sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id order by p.rdate ";
-    //$sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id and p.confirm = 0";
-    else
-        $sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id and  u.id = '{$id}' order by p.rdate";
-    //$sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id and p.confirm = 0 and u.id = '{$id}'";
+    else {
+        $sqlString = "SELECT p.*, u.owner bname FROM gulpin_porlist p , gulpin_user u where u.id = p.id and  u.id = ? order by p.rdate";
+        $params[] = $actor['id'];
+    }
 
     $rows = array();
 
@@ -250,9 +247,9 @@ function SShowOrderList($data)
 
     try {
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText($sqlString, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -291,13 +288,20 @@ function SPorDetailList($data)
         die("Connection failed: " . $conn->connect_error);
     }
 
-    $stmt = "select * from gulpin_porlist where por_id='{$pid}' ";
+    // 본사는 모든 주문, 지사는 본인 주문만
+    $actor = gpMgrActor();
+    $stmt = "select * from gulpin_porlist where por_id = ?";
+    $params = array($pid);
+    if (!gpMgrIsAdmin($actor)) {
+        $stmt .= " and id = ?";
+        $params[] = $actor['id'];
+    }
 
     try {
 
-        $rs = sqlite_query($conn, $stmt);
+        $rs = gpMgrQueryText($stmt, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -362,38 +366,35 @@ function SPorDetailListRangeSort($data)
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+    // 지사는 브라우저가 보낸 id 대신 본인 id 로만 조회
+    $actor = gpMgrActor();
+    if (!gpMgrIsAdmin($actor)) {
+        $id = $actor['id'];
+    }
+
     $tsql = "select p.*, u.owner owner from gulpin_porlist p ,  gulpin_user u  where u.id = p.id and ";
 
-    if ($id == "admin" || $id == "chaitalk") {
-
-        if ($sortobj == "주문상태")
-            $stmt = $tsql . "p.rdate between '{$start}' and '{$end}' order by confirm {$ss} , id asc, rdate desc";
-        else if ($sortobj == "날짜")
-            $stmt = $tsql . "p.rdate between '{$start}' and '{$end}' order by  rdate {$ds}, id {$bs} ";
-        else
-            $stmt = $tsql . "p.rdate between '{$start}' and '{$end}' order by id {$bs}, rdate {$ds} ";
+    if (gpMgrIsAdmin($actor) && ($id == "admin" || $id == "chaitalk")) {
+        $where  = "p.rdate between ? and ?";
+        $params = array($start, $end);
+    } else if ($name == "전유치원") {
+        $where  = "p.id = ?  and p.rdate between ? and ?";
+        $params = array($id, $start, $end);
     } else {
-        if ($name == "전유치원") {
-            if ($sortobj == "주문상태")
-                $stmt = $tsql . "p.id = '{$id}'  and p.rdate between '{$start}' and '{$end}' order by confirm {$ss} , id asc, rdate desc";
-            else if ($sortobj == "날짜")
-                $stmt = $tsql . "p.id = '{$id}'  and p.rdate between '{$start}' and '{$end}' order by  rdate {$ds}, id {$bs} ";
-            else
-                $stmt = $tsql . "p.id = '{$id}'  and p.rdate between '{$start}' and '{$end}' order by id {$bs}, rdate {$ds} ";
-        } else {
-            if ($sortobj == "주문상태")
-                $stmt = $tsql . "p.id = '{$id}' and p.order =  '{$name}' and p.rdate between '{$start}' and '{$end}' order by confirm {$ss} , id asc, rdate desc";
-            else if ($sortobj == "날짜")
-                $stmt = $tsql . "p.id = '{$id}' and p.order =  '{$name}' and p.rdate between '{$start}' and '{$end}' order by  rdate {$ds}, id {$bs} ";
-            else
-                $stmt = $tsql . "p.id = '{$id}' and p.order =  '{$name}' and p.rdate between '{$start}' and '{$end}' order by id {$bs}, rdate {$ds} ";
-        }
+        $where  = "p.id = ? and p.order =  ? and p.rdate between ? and ?";
+        $params = array($id, $name, $start, $end);
     }
+    if ($sortobj == "주문상태")
+        $stmt = $tsql . $where . " order by confirm {$ss} , id asc, rdate desc";
+    else if ($sortobj == "날짜")
+        $stmt = $tsql . $where . " order by  rdate {$ds}, id {$bs} ";
+    else
+        $stmt = $tsql . $where . " order by id {$bs}, rdate {$ds} ";
     try {
 
-        $rs = sqlite_query($conn, $stmt);
+        $rs = gpMgrQueryText($stmt, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -414,13 +415,16 @@ function SPorDetailListRangeSort($data)
         }
         array_push($ret,  array('list' => $rows));
         $nstart = substr($start, 0, 7);
-        $stmt = "select * from gulpin_parcel where  DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
-        if ($id != "전지사")
-            $stmt = "select * from gulpin_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
+        $stmt = "select * from gulpin_parcel where  DATE_FORMAT(`date`,'%Y-%m') = ? ";
+        $params = array($nstart);
+        if ($id != "전지사") {
+            $stmt = "select * from gulpin_parcel where id=? and DATE_FORMAT(`date`,'%Y-%m') = ? ";
+            $params = array($id, $nstart);
+        }
 
-        $rs1 = sqlite_query($conn, $stmt);
+        $rs1 = gpMgrQueryText($stmt, $params);
         $rows = [];
-        while ($row = sqlite_fetch_array($rs1)) {
+        foreach ($rs1 as $row) {
             array_push(
                 $rows,
                 array(
@@ -461,28 +465,42 @@ function SPorDetailListRange($data)
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+    // 지사는 브라우저가 보낸 id 대신 본인 id 로, 전지사(전체) 조회는 본인 주문 전체로
+    $actor = gpMgrActor();
+    if (!gpMgrIsAdmin($actor)) {
+        $id = $actor['id'];
+        if ($name == "전지사")
+            $name = "전유치원";
+    }
+
     $tsql = "select p.*, u.owner owner from gulpin_porlist p ,  gulpin_user u  where u.id = p.id and ";
 
 
-    if ($name == "전지사")
-        $stmt = $tsql . "p.rdate between '{$start}' and '{$end}' order by id , rdate desc";
-
-    else if ($name == "전유치원")
-        $stmt = $tsql . "u.id = '{$id}' and p.rdate between '{$start}' and '{$end}' order by p.id, rdate desc";
-
+    if ($name == "전지사") {
+        $stmt = $tsql . "p.rdate between ? and ? order by id , rdate desc";
+        $params = array($start, $end);
+    }
+    else if ($name == "전유치원") {
+        $stmt = $tsql . "u.id = ? and p.rdate between ? and ? order by p.id, rdate desc";
+        $params = array($id, $start, $end);
+    }
     else {
-        if ($id != "admin")
-            $stmt = $tsql . "p.id = '{$id}' and p.order =  '{$name}' and  p.rdate >= '{$start}' and  p.rdate <= '{$end}' order by p.id, rdate desc";
+        if ($id != "admin") {
+            $stmt = $tsql . "p.id = ? and p.order =  ? and  p.rdate >= ? and  p.rdate <= ? order by p.id, rdate desc";
+            $params = array($id, $name, $start, $end);
+        }
         // $stmt = $tsql . "p.id = '{$id}' and p.order =  '{$name}' and  p.rdate between '{$start}' and '{$end}' order by p.id, rdate desc";
-        else
-            $stmt = $tsql . "p.id = '{$name}' and p.rdate between '{$start}' and '{$end}' order by p.id, rdate desc";
+        else {
+            $stmt = $tsql . "p.id = ? and p.rdate between ? and ? order by p.id, rdate desc";
+            $params = array($name, $start, $end);
+        }
     }
 
     try {
 
-        $rs = sqlite_query($conn, $stmt);
+        $rs = gpMgrQueryText($stmt, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -503,13 +521,16 @@ function SPorDetailListRange($data)
         }
         array_push($ret,  array('list' => $rows));
         $nstart = substr($start, 0, 7);
-        $stmt = "select * from gulpin_parcel where  DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
-        if ($id != "전지사")
-            $stmt = "select * from gulpin_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$nstart}' ";
+        $stmt = "select * from gulpin_parcel where  DATE_FORMAT(`date`,'%Y-%m') = ? ";
+        $params = array($nstart);
+        if ($id != "전지사") {
+            $stmt = "select * from gulpin_parcel where id=? and DATE_FORMAT(`date`,'%Y-%m') = ? ";
+            $params = array($id, $nstart);
+        }
 
-        $rs1 = sqlite_query($conn, $stmt);
+        $rs1 = gpMgrQueryText($stmt, $params);
         $rows = [];
-        while ($row = sqlite_fetch_array($rs1)) {
+        foreach ($rs1 as $row) {
             array_push(
                 $rows,
                 array(
@@ -538,6 +559,11 @@ function SPorAddParcel($data)
     $name     = $data['name'];
     $price    = $data['price'];
 
+    // 택배비 등록은 본사만 (order.js 에서도 admin 만 버튼 활성)
+    if (!gpMgrIsAdmin(gpMgrActor())) {
+        gpMgrRespond(array('error' => '본사만 택배비를 등록할 수 있습니다.'), 403);
+    }
+
     try {
         global $conn;
         $res = "";
@@ -545,24 +571,19 @@ function SPorAddParcel($data)
         // check id, date exist
 
         //$stmt = "select * from gulpin_parcel where id='{$id}' and DATE_FORMAT(`date`,'%Y-%m') = '{$start}' ";
-        $stmt = "select * from gulpin_parcel where id='{$id}' and `date` = '{$start} 00:00:00' ";
+        $rs1 = gpMgrQuery("select * from gulpin_parcel where id=? and `date` = ? ", array($id, "{$start} 00:00:00"));
 
-        $rs1 = sqlite_query($conn, $stmt);
-
-        if ($rs1->num_rows > 0) {
-            $sql = "UPDATE gulpin_parcel SET price =  {$price}  WHERE  id = '{$id}' and  `date` = '{$start} 00:00:00'";
+        if (count($rs1) > 0) {
+            gpMgrQuery("UPDATE gulpin_parcel SET price = ? WHERE id = ? and `date` = ?", array($price, $id, "{$start} 00:00:00"));
             //$sql = "UPDATE gulpin_parcel SET price =  {$price}  WHERE  id = '{$id}' and  DATE_FORMAT(`date`,'%Y-%m') = '{$start}'";
-            $res = $conn->query($sql);
         } // update
         else {
-            $sqlstring = "insert into gulpin_parcel (id, name, price) 
-            values ( '{$id}', '{$name}',{$price} )";
             if ($start != "")
-                $sqlstring = "insert into gulpin_parcel (id, name, price, `date`) 
-            values ( '{$id}', '{$name}', {$price}, '{$start}' )";
-
-            $res = sqlite_query($conn, $sqlstring);
+                gpMgrQuery("insert into gulpin_parcel (id, name, price, `date`) values ( ?, ?, ?, ? )", array($id, $name, $price, $start));
+            else
+                gpMgrQuery("insert into gulpin_parcel (id, name, price) values ( ?, ?, ? )", array($id, $name, $price));
         }
+        $res = TRUE;
 
         $conn->close();
     } catch (Exception $e) {
@@ -584,19 +605,21 @@ function SShowAddr($data)
     global $conn;
 
     $id   = $data['id'];
+    // 지사는 본인 배송지만
+    $actor = gpMgrActor();
+    if (!gpMgrIsAdmin($actor)) {
+        $id = $actor['id'];
+    }
 
     try {
 
 
-        $sqlString = "SELECT * FROM gulpin_addrlist where mid = '" . $id . "'  order by rdate desc";
-
-
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText("SELECT * FROM gulpin_addrlist where mid = ?  order by rdate desc", array($id));
         $rows = array();
 
         $i = 0;
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -611,10 +634,9 @@ function SShowAddr($data)
             );
         }
 
-        $sqlString2 = "SELECT * FROM gulpin_user where mid = '" . $id . "'";
-        $rs = sqlite_query($conn, $sqlString2);
+        $rs = gpMgrQueryText("SELECT * FROM gulpin_user where mid = ?", array($id));
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -673,18 +695,20 @@ function SRemoveAddress($data)    // 프로그램 update 필요함
 
     $id  = $data["id"];
 
+    // 지사는 본인 배송지만 삭제
+    $actor = gpMgrActor();
+    $owner = gpMgrQuery("SELECT mid FROM gulpin_addrlist WHERE id = ?", array($id));
+    if (!gpMgrIsAdmin($actor) && (!$owner || $owner[0]['mid'] !== $actor['id'])) {
+        gpMgrRespond(array('error' => '본인 배송지만 삭제할 수 있습니다.'), 403);
+    }
+
     global $conn;
     $res = "";
 
     try {
 
-        $sql = "DELETE FROM gulpin_addrlist WHERE id = '" . $id . "'";
-
-        if ($conn->query($sql) === TRUE) {
-            $res = true;
-        } else {
-            $res =  json_encode(array("Error deleting record: " . $conn->error));
-        }
+        gpMgrQuery("DELETE FROM gulpin_addrlist WHERE id = ?", array($id));
+        $res = true;
 
         $conn->close();
     } catch (Exception $e) {
@@ -696,37 +720,27 @@ function SRemoveAddress($data)    // 프로그램 update 필요함
 
 function SRemovPorID($data)    // 프로그램 update 필요함
 {
-    //sqlite_start_session();
-
-    $id  = $data["id"];
-    $pdf = $data["pdfname"];
-
-    global $conn;
-    $res = "";
-
+    $actor = gpOrderActor();
+    $id = (string) ($data['id'] ?? '');
     try {
-
-        $sql = "DELETE FROM gulpin_porlist WHERE por_id = '" . $id . "'";
-
-        if ($conn->query($sql) === TRUE) {
-            $res = true;
-            if ($pdf != "" && file_exists('../assets/por/uploads/' . $pdf)) {
-                if (unlink('../assets/por/uploads/' . $pdf)) {
-                    $res = true;
-                } else {
-                    $res = false;
-                }
+        $pdf = gpPaymentTransaction(function () use ($id, $actor) {
+            $order = gpPaymentLockOrder('por', $id);
+            if (!gpMgrIsAdmin($actor) && ($order['owner'] !== $actor['id'] || (int) $order['status'] !== 0)) {
+                throw new GpPaymentError('물품준비중인 본인 주문만 취소할 수 있습니다.', 403);
             }
-        } else {
-            $res =  json_encode(array("Error deleting record: " . $conn->error));
+            gpPaymentGuardPorEdit($id, null);
+            $row = gpPaymentQuery('SELECT pdfname FROM gulpin_porlist WHERE por_id = ?', [$id])[0];
+            gpPaymentQuery('DELETE FROM gulpin_porlist WHERE por_id = ?', [$id]);
+            return basename((string) $row['pdfname']);
+        });
+        $path = __DIR__ . '/../assets/por/uploads/' . $pdf;
+        if ($pdf !== '' && is_file($path) && !unlink($path)) {
+            error_log('[orders] failed to remove order PDF');
         }
-
-        $conn->close();
-    } catch (Exception $e) {
-        echo json_encode($e->getMessage());
+        echo json_encode(true);
+    } catch (GpPaymentError $e) {
+        gpMgrRespond(['error' => $e->getMessage()], $e->getCode());
     }
-
-    echo json_encode($res);
 }
 
 // function SAddDelever($data)    // 프로그램 update 필요함
@@ -758,38 +772,26 @@ function SRemovPorID($data)    // 프로그램 update 필요함
 // }
 function SAddDelever($data)
 {
-    $id = $data["id"];
-    $status = $data["status"];
-    $invoice = $data["invoice"];
-    $refund = $data["refund"];
-
-    global $conn;
-    $res = "";
-
-    try {
-        $sql = "UPDATE gulpin_porlist SET confirm = ?, invoice = ?, refund = ? WHERE por_id = ?";
-        $stmt = $conn->prepare($sql);
-
-        // 빈 문자열이면 NULL 처리
-        $invoiceValue = ($invoice === "") ? null : $invoice;
-        $refundValue = ($refund === "") ? null : $refund;
-
-        // 데이터 타입 변경: "issi" → "isii"
-        $stmt->bind_param("isss", $status, $invoiceValue, $refundValue, $id);
-
-        if ($stmt->execute()) {
-            $res = true;
-        } else {
-            $res = "SQL 실행 오류: " . $stmt->error;
-        }
-
-        $stmt->close();
-        $conn->close();
-    } catch (Exception $e) {
-        $res = "예외 발생: " . $e->getMessage();
+    if (!gpMgrIsAdmin(gpMgrActor())) {
+        gpMgrRespond(['error' => '본사만 주문 상태를 변경할 수 있습니다.'], 403);
+    }
+    $status = (string) ($data['status'] ?? '');
+    if (!in_array($status, ['0', '1', '2', '3', '10', '99', '999'], true)) {
+        gpMgrRespond(['error' => '올바르지 않은 주문 상태입니다.'], 400);
     }
 
-    echo json_encode($res);
+    try {
+        gpPaymentTransaction(function () use ($data, $status) {
+            $id = (string) ($data['id'] ?? '');
+            gpPaymentLockOrder('por', $id);
+            gpPaymentGuardPorEdit($id, (int) $status);
+            gpPaymentQuery('UPDATE gulpin_porlist SET confirm = ?, invoice = ?, refund = ? WHERE por_id = ?',
+                [(int) $status, ($data['invoice'] ?? '') ?: null, ($data['refund'] ?? '') ?: null, $id]);
+        });
+        echo json_encode(true);
+    } catch (GpPaymentError $e) {
+        gpMgrRespond(['error' => $e->getMessage()], $e->getCode());
+    }
 }
 
 
@@ -814,15 +816,20 @@ function SRegistermgr2($data)
     $mid      = $data['items']['mid'];
     //$role     = $data['items']['role'];
 
+    // 지사는 본인 배송지로만 등록
+    $actor = gpMgrActor();
+    if (!gpMgrIsAdmin($actor)) {
+        $mid = $actor['id'];
+    }
+
     $error = "";
 
     try {
         global $conn;
 
-        $sqlstring = "insert into gulpin_addrlist ( name, owner,  mobile, addr, zipcode,  mid ) 
-                    values (  '{$name}','{$owner}', '{$mobile} ','{$addr}', '{$zipcode}',  '{$mid}' )";
-
-        $res = sqlite_query($conn, $sqlstring);
+        gpMgrQuery("insert into gulpin_addrlist ( name, owner,  mobile, addr, zipcode,  mid ) values ( ?, ?, ?, ?, ?, ? )",
+            array($name, $owner, "{$mobile} ", $addr, $zipcode, $mid));
+        $res = TRUE;
 
         $conn->close();
     } catch (Exception $e) {
@@ -840,6 +847,11 @@ function SRegistermgr2($data)
 function SShowConfirm($data)
 {
     sqlite_start_session();
+
+    // 전체 계정(암호 포함) 조회는 본사만 (login/adminLogin.php)
+    if (!gpMgrIsAdmin(gpMgrActor())) {
+        gpMgrRespond(array('error' => '본사만 조회할 수 있습니다.'), 403);
+    }
 
     $num = $data['num'];
 
@@ -866,7 +878,7 @@ function SShowConfirm($data)
                 array(
                     'id'        => $row['id'],
                     'name'      => $row['name'],
-                    'password'  => $row['password'],
+                    'password'  => gpPasswordHashed((int) $row['role']) ? '' : $row['password'],
                     'mobile'    => $row['mobile'],
                     'addr'      => $row['addr'],
                     'zipcode'   => $row['zipcode'],
@@ -888,6 +900,11 @@ function SShowConfirm($data)
 function SShowConfirm2($data)
 {
     sqlite_start_session();
+
+    // 전체 계정(암호 포함) 조회는 본사만 (login/adminLogin.php)
+    if (!gpMgrIsAdmin(gpMgrActor())) {
+        gpMgrRespond(array('error' => '본사만 조회할 수 있습니다.'), 403);
+    }
 
     $num = $data['num'];
 
@@ -913,7 +930,7 @@ function SShowConfirm2($data)
                 array(
                     'id'        => $row['id'],
                     'name'      => $row['name'],
-                    'password'  => $row['password'],
+                    'password'  => gpPasswordHashed((int) $row['role']) ? '' : $row['password'],
                     'mobile'    => $row['mobile'],
                     'addr'      => $row['addr'],
                     'zipcode'   => $row['zipcode'],
@@ -935,34 +952,21 @@ function SShowConfirm2($data)
 
 function SShowConfirmUpdatePOR($data)
 {
-    sqlite_start_session();
-
-    // $json = file_get_contents('php://input');
-    // $arr = json_decode($json, true);
-
-    $arr = $data;
-    global $conn;
-    $result = "";
-
-    try {
-
-        $id = $arr['data']['id'];
-        $por_id = $arr['data']['porid'];
-        $sql = "UPDATE gulpin_porlist SET confirm = 1  WHERE  por_id = '{$por_id}'";
-
-        if ($conn->query($sql) === TRUE) {
-            $result = true;
-        }
-
-
-        $conn->close();
-    } catch (Exception $e) {
-        $result = $e->getMessage();
+    if (!gpMgrIsAdmin(gpMgrActor())) {
+        gpMgrRespond(['error' => '본사만 주문 상태를 변경할 수 있습니다.'], 403);
     }
-
-    header('Content-Type: application/json');
-
-    echo json_encode(array("result: " => $result));
+    $id = (string) ($data['data']['porid'] ?? '');
+    try {
+        gpPaymentTransaction(function () use ($id) {
+            gpPaymentLockOrder('por', $id);
+            gpPaymentGuardPorEdit($id, 1);
+            gpPaymentQuery('UPDATE gulpin_porlist SET confirm = 1 WHERE por_id = ?', [$id]);
+        });
+        header('Content-Type: application/json');
+        echo json_encode(['result: ' => true]);
+    } catch (GpPaymentError $e) {
+        gpMgrRespond(['error' => $e->getMessage()], $e->getCode());
+    }
 }
 
 function SShowStudentList($data)
@@ -976,18 +980,27 @@ function SShowStudentList($data)
     if (isset($data['kgarden']))   //
         $kgarden    = $data['kgarden'];
 
+    // "admin"(전체) 조회는 본사만, 그 외는 본인/하위 계정의 학생만
+    $user = gpSessionUser();
+    if ($tid == "admin" ? $user['role'] !== GP_ROLE_ADMIN : !gpCanView($user, (string) $tid)) {
+        gpMgrRespond(array('error' => '조회 권한이 없습니다.'), 403);
+    }
 
+    $params = array();
     if ($tid == "admin") {
         if ($sel == '1') {
             if ($step == '전체')
                 $sqlString = "SELECT *  FROM gulpin_user where  role = 100";
-            else
+            else {
                 //$sqlString = "SELECT *  FROM gulpin_user where  step = '{$step}' and role = 100 and tid='{$kgarden}'";
-                $sqlString = "SELECT *  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100 and step='{$step}'";
+                $sqlString = "SELECT *  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100 and step=?";
+                $params = array($step);
+            }
         } else if ($sel == '2') {
 
             //$sqlString = "SELECT *  FROM gulpin_user where classnm = '{$step}' and role = 100 and tid='{$kgarden}'";
-            $sqlString = "SELECT *  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100 and classnm='{$step}'";
+            $sqlString = "SELECT *  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100 and classnm=?";
+            $params = array($step);
         } else if ($sel == '3')
             //$sqlString = "SELECT *  FROM gulpin_user where tid = '{$step}' and role = 100";
             if ($step == '전체')
@@ -996,23 +1009,30 @@ function SShowStudentList($data)
             else
                 $sqlString =  "SELECT au.*  FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100";
     } else {
+        $params = array($tid);
         if ($sel == '1') {
             if ($step == '전체')
-                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' ";
-            else
-                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and step = '{$step}'";
-        } else if ($sel == '2')
-            $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and classnm = '{$step}'";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = ? ";
+            else {
+                $sqlString = "SELECT *  FROM gulpin_user where tid = ? and step = ?";
+                $params[] = $step;
+            }
+        } else if ($sel == '2') {
+            $sqlString = "SELECT *  FROM gulpin_user where tid = ? and classnm = ?";
+            $params[] = $step;
+        }
         else if ($sel == '3')
             if ($step == '전체')
-                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' ";
-            else
-                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and owner = '{$step}'";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = ? ";
+            else {
+                $sqlString = "SELECT *  FROM gulpin_user where tid = ? and owner = ?";
+                $params[] = $step;
+            }
         else if ($sel == '4')
             if ($step == '전체')
-                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' ";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = ? ";
             else
-                $sqlString = "SELECT *  FROM gulpin_user where tid = '{$tid}' and status = 1";
+                $sqlString = "SELECT *  FROM gulpin_user where tid = ? and status = 1";
     }
     $rows = array();
 
@@ -1020,9 +1040,9 @@ function SShowStudentList($data)
 
     try {
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText($sqlString, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -1061,11 +1081,18 @@ function SShowStudyList($data)
     $start = $data['start'];
     $end = $data['end'];
 
+    if (!gpCanView(gpSessionUser(), (string) $tid)) {
+        gpMgrRespond(array('error' => '조회 권한이 없습니다.'), 403);
+    }
+
     $tsql = "select u.id id, u.name name , s.volume v, s.step s, s.uid uid, count(u.id) cnt from study_record s, gulpin_user u where ";
-    if ($step == '전체')
-        $sqlString = $tsql . "u.id = s.id and u.tid = '{$tid}'  and  s.rdate >= '{$start}' and s.rdate <= '{$end}'  group by id";
-    else
-        $sqlString = $tsql . " s.step = '{$step}' and u.id = s.id and u.tid = '{$tid}'  and  s.rdate >= '{$start}' and s.rdate <= '{$end}' group by id, s.step";
+    if ($step == '전체') {
+        $sqlString = $tsql . "u.id = s.id and u.tid = ?  and  s.rdate >= ? and s.rdate <= ?  group by u.id";
+        $params = array($tid, $start, $end);
+    } else {
+        $sqlString = $tsql . " s.step = ? and u.id = s.id and u.tid = ?  and  s.rdate >= ? and s.rdate <= ? group by u.id, s.step";
+        $params = array($step, $tid, $start, $end);
+    }
 
     $rows = array();
 
@@ -1073,9 +1100,9 @@ function SShowStudyList($data)
 
     try {
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText($sqlString, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -1149,11 +1176,18 @@ function SShowStudyList2($data)
     $start = $data['start'];
     $end = $data['end'];
 
+    if (!gpCanView(gpSessionUser(), (string) $tid)) {
+        gpMgrRespond(array('error' => '조회 권한이 없습니다.'), 403);
+    }
+
     $tsql = "select u.id id, u.name name ,u.classnm classnm, s.volume v, s.step s, s.uid uid, count(u.id) cnt from study_record s, gulpin_user u where ";
-    if ($classnm == '전체' || $classnm == "")
-        $sqlString = $tsql . "u.id = s.id and u.tid = '{$tid}' and  s.rdate >= '{$start}' and s.rdate <= '{$end}' group by id";
-    else
-        $sqlString = $tsql . " u.classnm = '{$classnm}' and u.id = s.id and u.tid = '{$tid}' and s.rdate >= '{$start}' and s.rdate <= '{$end}' group by id";
+    if ($classnm == '전체' || $classnm == "") {
+        $sqlString = $tsql . "u.id = s.id and u.tid = ? and  s.rdate >= ? and s.rdate <= ? group by u.id";
+        $params = array($tid, $start, $end);
+    } else {
+        $sqlString = $tsql . " u.classnm = ? and u.id = s.id and u.tid = ? and s.rdate >= ? and s.rdate <= ? group by u.id";
+        $params = array($classnm, $tid, $start, $end);
+    }
 
     $rows = array();
 
@@ -1161,9 +1195,9 @@ function SShowStudyList2($data)
 
     try {
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText($sqlString, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -1191,21 +1225,30 @@ function SShowClassList($data)
 
     global $conn;
 
-    $sqlString = "select DISTINCT classnm from gulpin_user where tid = '{$tid}'";
+    // "admin"(전체) 조회는 본사만, 그 외는 본인/하위 계정만
+    $user = gpSessionUser();
+    if ($tid == "admin" ? $user['role'] !== GP_ROLE_ADMIN : !gpCanView($user, (string) $tid)) {
+        gpMgrRespond(array('error' => '조회 권한이 없습니다.'), 403);
+    }
 
-    if ($tid == "admin")
+    $sqlString = "select DISTINCT classnm from gulpin_user where tid = ?";
+    $params = array($tid);
+
+    if ($tid == "admin") {
         //$sqlString = "select DISTINCT classnm from gulpin_user where tid = '{$kgarden}' and classnm is not null";
         $sqlString = "SELECT DISTINCT classnm FROM gulpin_user au, (select id from gulpin_user ) u where u.id = au.tid and role = 100";
+        $params = array();
+    }
     $rows = array();
 
     $i = 0;
 
     try {
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText($sqlString, $params);
 
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -1230,19 +1273,28 @@ function SShowKgardenList($data)
 
     global $conn;
 
-    $sqlString = "select DISTINCT owner from gulpin_user where mid = '{$tid}' and owner is not null and role=10";
+    // "admin"(전체) 조회는 본사만, 그 외는 본인/하위 계정만
+    $user = gpSessionUser();
+    if ($tid == "admin" ? $user['role'] !== GP_ROLE_ADMIN : !gpCanView($user, (string) $tid)) {
+        gpMgrRespond(array('error' => '조회 권한이 없습니다.'), 403);
+    }
 
-    if ($tid == "admin")
+    $sqlString = "select DISTINCT owner from gulpin_user where mid = ? and owner is not null and role=10";
+    $params = array($tid);
+
+    if ($tid == "admin") {
         $sqlString = "select DISTINCT owner from gulpin_user where owner is not null and role=10";
+        $params = array();
+    }
     $rows = array();
 
     $i = 0;
 
     try {
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText($sqlString, $params);
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -1433,7 +1485,6 @@ function SmanageStudent($data)
 function SUploadBoardPDF($data) {
     $id      = $data['id'];
     $porlist = $data['postlist'];
-    $porid   = $data['porid'];
     $addr    = $data['addr'];
     $mobile  = $data['mobile'];
     $order   = $data['order'];
@@ -1444,25 +1495,31 @@ function SUploadBoardPDF($data) {
     global $conn;
     global $location;
 
-    if ( $location == "localhost" )
-         $url = "http://localhost:3000/assets/por/uploads/";
-    else
-        $url = "https://www.chaitalkkid.co.kr/assets/por/uploads/";
+    // 금액은 가격표(price_catalog.json)로 다시 확인, 주문번호는 서버에서 생성 (P + yy 로 시작: order.php 연도 필터)
+    $actor = gpOrderActor();
+    if (!gpMgrIsAdmin($actor)) {
+        $id = $actor['id'];
+    }
+    if (($data['agree'] ?? '') !== '1') {
+        gpMgrRespond(array('error' => '주문 내용 확인 및 필수 항목에 동의해 주세요.'), 400);
+    }
+    $pgAmount = gpOrderAmount($actor, (string) $porlist);
+    $porid = 'P' . date('ymdHis') . bin2hex(random_bytes(4));
 
     $fileUploadError = '';
     
     try {
         // DB INSERT 먼저 수행 (파일 업로드 실패와 무관하게 처리)
         $sqlstring = "
-            INSERT INTO gulpin_porlist (id, por_id, por_list, rdate, `order`, addr, mobile, pdfname, zip)
-            VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?)
+            INSERT INTO gulpin_porlist (id, por_id, por_list, rdate, `order`, addr, mobile, pdfname, zip, pg_amount)
+            VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)
         ";
         $stmt = $conn->prepare($sqlstring);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $stmt->bind_param("ssssssss", $id, $porid, $porlist, $order, $addr, $mobile, $pdfname, $zip);
+        $stmt->bind_param("ssssssssi", $id, $porid, $porlist, $order, $addr, $mobile, $pdfname, $zip, $pgAmount);
         if (!$stmt->execute()) {
             throw new Exception("Execute failed: " . $stmt->error);
         }
@@ -1486,8 +1543,13 @@ function SUploadBoardPDF($data) {
                     throw new Exception("File is not a valid uploaded file.");
                 }
 
+                // 주문서는 PDF 만 (확장자 + 파일 시작 "%PDF")
+                if (!gpUploadAllowed($fileName, array('pdf')) || file_get_contents($fileTempName, false, null, 0, 4) !== '%PDF') {
+                    throw new Exception("PDF 파일만 업로드할 수 있습니다.");
+                }
+
                 $RandomName = generateRandomString(15);
-                $pdfname    = $RandomName . basename($fileName);
+                $pdfname    = $RandomName . '.pdf';
 
                 if (!move_uploaded_file($fileTempName, __DIR__ . "/../assets/por/uploads/" . $pdfname)) {
                     throw new Exception("Failed to move uploaded file.");
@@ -1510,7 +1572,8 @@ function SUploadBoardPDF($data) {
         // DB insert는 성공했으므로 성공 응답
         $result = [
             'status' => 'success', 
-            'url' => !empty($pdfname) ? $url . $pdfname : '',
+            'porid' => $porid,
+            'url' => !empty($pdfname) ? 'order-document.php?id=' . rawurlencode($porid) . '&db=sqlite' : '',
             'file_error' => $fileUploadError // 파일 업로드 에러가 있다면 포함
         ];
         $conn->close();
@@ -1537,11 +1600,20 @@ function SUploadBoard($data)
     $user =   $data['user'];
     set_time_limit(300);
 
+    gpRequireBoardWriter();
 
     global $conn;
     $rows = array();
 
     if (!empty($user)) {
+        // 자료실 첨부 허용 확장자 (php·html·svg 등 실행/스크립트 가능한 파일 차단)
+        $allowedExts = array('pdf', 'hwp', 'hwpx', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv',
+            'jpg', 'jpeg', 'png', 'gif', 'webp', 'mp3', 'wav', 'mp4', 'zip');
+        foreach ($_FILES as $file) {
+            if (!gpUploadAllowed((string) $file['name'], $allowedExts)) {
+                gpMgrRespond(array('error' => '업로드할 수 없는 파일 형식입니다: ' . $file['name']), 400);
+            }
+        }
         foreach ($_FILES as $index => $file) {
             // for easy access
             $fileName     = $file['name'];
@@ -1568,14 +1640,9 @@ function SUploadBoard($data)
         $jsarr = json_encode($rows, JSON_UNESCAPED_UNICODE);
         try {
 
-            $sqlstring = "insert into gulpin_repository ( title, id, contents, `desc`, rdate, cate ) values ( '$content', '$user',  '$jsarr', '$desc',  NOW(), '$cate')";
-            $res = sqlite_query($conn,  $sqlstring);
-
-            if ($res === TRUE) {
-                $result = true;
-            } else {
-                $result =  "Error: " . $sqlstring . "<br>" . $conn->error;
-            }
+            gpMgrQuery("insert into gulpin_repository ( title, id, contents, `desc`, rdate, cate ) values ( ?, ?, ?, ?, NOW(), ? )",
+                array($content, $user, $jsarr, $desc, $cate));
+            $result = true;
 
             $conn->close();
         } catch (Exception $e) {
@@ -1596,25 +1663,20 @@ function SUdateBoard($data)
     $user = 'admin';
     $user = $data['user'];
 
+    gpRequireBoardWriter();
+
     global $conn;
 
     if (!empty($user)) {
         try {
             // Update query
-            $sqlstring = "UPDATE gulpin_repository 
-                          SET title = '$content', 
-                              `desc` = '$desc', 
-                              cate = '$cate', 
-                              rdate = NOW() 
-                          WHERE num = '$id'";
-
-            $res = sqlite_query($conn, $sqlstring);
-
-            if ($res === TRUE) {
-                $result = true;
-            } else {
-                $result = "Error: " . $sqlstring . "<br>" . $conn->error;
-            }
+            gpMgrQuery("UPDATE gulpin_repository
+                          SET title = ?,
+                              `desc` = ?,
+                              cate = ?,
+                              rdate = NOW()
+                          WHERE num = ?", array($content, $desc, $cate, $id));
+            $result = true;
 
             $conn->close();
         } catch (Exception $e) {
@@ -1637,20 +1699,25 @@ function SShowBoardList($data)
     global $conn;
 
     try {
+        $params = array();
         if ($cate == "1") {
             if ($num == "전체")
                 $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository order by num desc";
-            else
-                $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository where cate = '$num' order by num desc";
-        } else
-            $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository where num = $num order by num desc";
+            else {
+                $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository where cate = ? order by num desc";
+                $params = array($num);
+            }
+        } else {
+            $sqlString = "SELECT num, title, id, contents, `desc`, rdate, cate  FROM gulpin_repository where num = ? order by num desc";
+            $params = array($num);
+        }
 
-        $rs = sqlite_query($conn, $sqlString);
+        $rs = gpMgrQueryText($sqlString, $params);
         $rows = array();
 
         $i = 0;
 
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             array_push(
                 $rows,
                 array(
@@ -1679,17 +1746,17 @@ function SDeleteBoardlist($data)
 
     $num  = $data["num"][0];
 
+    gpRequireBoardWriter();
+
     global $conn;
     $res = "";
     $rows = array();
     $cont = "";
 
     try {
-        $sql = "SELECT contents from gulpin_repository WHERE num = " . $num . "";
+        $rs = gpMgrQueryText("SELECT contents from gulpin_repository WHERE num = ?", array($num));
 
-        $rs = sqlite_query($conn, $sql);
-
-        while ($row = sqlite_fetch_array($rs)) {
+        foreach ($rs as $row) {
             $cont =  $row['contents'];
         }
         $jsobj = json_decode($cont, true);
@@ -1697,7 +1764,8 @@ function SDeleteBoardlist($data)
         if ($jsobj !== null) {
             $arrlen = count($jsobj);
             for ($i = 0; $i < $arrlen; $i++) {
-                if (unlink('../assets/board/uploads/' . $jsobj[$i]['fakename'])) {
+                // 파일명에 경로(../)가 섞여도 업로드 폴더 밖은 지우지 않도록 basename
+                if (unlink('../assets/board/uploads/' . basename((string) $jsobj[$i]['fakename']))) {
                     $res = true;
                 } else {
                     $res = false;
@@ -1705,13 +1773,8 @@ function SDeleteBoardlist($data)
             }
         }
 
-        $sql = "DELETE FROM gulpin_repository WHERE num = '" . $num . "'";
-
-        if ($conn->query($sql) === TRUE) {
-            $res = true;
-        } else {
-            $res =  json_encode(array("Error deleting record: " . $conn->error));
-        }
+        gpMgrQuery("DELETE FROM gulpin_repository WHERE num = ?", array($num));
+        $res = true;
 
         $conn->close();
     } catch (Exception $e) {
@@ -1719,6 +1782,21 @@ function SDeleteBoardlist($data)
     }
 
     echo json_encode($res);
+}
+
+/** 게시판 등록/수정/삭제는 본사 또는 게시판 계정만 (board/boardmgr.php 버튼 조건과 같음) */
+function gpRequireBoardWriter(): void
+{
+    $user = gpSessionUser();
+    if ($user['role'] !== GP_ROLE_ADMIN && $user['id'] !== '게시판') {
+        gpMgrRespond(array('error' => '게시판 관리 권한이 없습니다.'), 403);
+    }
+}
+
+/** 업로드 파일명의 확장자가 허용 목록에 있는지 */
+function gpUploadAllowed(string $fileName, array $exts): bool
+{
+    return in_array(strtolower(pathinfo($fileName, PATHINFO_EXTENSION)), $exts, true);
 }
 
 function generateRandomString($length = 15)

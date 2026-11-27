@@ -45,7 +45,7 @@ function serverCall(functionName, data) {
     }
 
     return new Promise((resolve, reject) => {
-        CallAjax(
+        requestJson(
             'SMethods.php',
             'POST',
             payload,
@@ -56,7 +56,8 @@ function serverCall(functionName, data) {
                 }
                 resolve(response);
             },
-            (error) => reject(new Error(readAjaxError(error)))
+            (error) => reject(new Error(readAjaxError(error))),
+            functionName === 'SShoppingCreateOrder' ? { headers: { 'X-Gulpin-Payment': '1' } } : {}
         );
     });
 }

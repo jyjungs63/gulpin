@@ -12,11 +12,14 @@ function json_response(array $data, int $status = 200)
 }
 
 try {
-    $db = review_db();
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $includeHidden = ($_GET['admin'] ?? '') === '1';
+    if ($method !== 'GET' || $includeHidden) {
+        require_once __DIR__ . '/../../_private/admin_auth.php';
+    }
+    $db = review_db();
 
     if ($method === 'GET') {
-        $includeHidden = ($_GET['admin'] ?? '') === '1';
         $sql = 'SELECT id, title, content, author, student_grade, rating, image_path, is_visible, created_at FROM reviews';
         if (!$includeHidden) {
             $sql .= ' WHERE is_visible = 1';

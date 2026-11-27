@@ -4,9 +4,9 @@ require_once 'sqlite_dbinit.php';
 
 class SQLiteCompatResult
 {
-    private array $rows;
-    private int $index = 0;
-    public int $num_rows = 0;
+    private $rows;
+    private $index = 0;
+    public $num_rows = 0;
 
     public function __construct(array $rows)
     {
@@ -38,10 +38,10 @@ class SQLiteCompatResult
 
 class SQLiteCompatStatement
 {
-    private PDO $pdo;
-    private string $sql;
-    private array $params = array();
-    public string $error = '';
+    private $pdo;
+    private $sql;
+    private $params = array();
+    public $error = '';
 
     public function __construct(PDO $pdo, string $sql)
     {
@@ -73,10 +73,10 @@ class SQLiteCompatStatement
 
 class SQLiteCompatConnection
 {
-    private PDO $pdo;
-    public string $error = '';
-    public string $connect_error = '';
-    public int $insert_id = 0;
+    private $pdo;
+    public $error = '';
+    public $connect_error = '';
+    public $insert_id = 0;
 
     public function __construct(PDO $pdo)
     {

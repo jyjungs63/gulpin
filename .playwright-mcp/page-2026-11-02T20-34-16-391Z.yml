@@ -1,0 +1,110 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - img "글핀 로고" [ref=e4]
+      - generic [ref=e5]: 글핀
+      - generic [ref=e6]: 방문자님 환영합니다
+    - banner [ref=e7]:
+      - generic [ref=e8] [cursor=pointer]: 🏠 Home
+      - navigation [ref=e9]:
+        - button "글핀이란?" [ref=e10] [cursor=pointer]
+        - button "글핀 중국어" [ref=e11] [cursor=pointer]
+        - button "상담·신청" [ref=e12] [cursor=pointer]
+        - button "글핀 가맹점 찾기/모집" [ref=e13] [cursor=pointer]
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - button "‹" [disabled] [ref=e16]
+        - button "›" [ref=e17] [cursor=pointer]
+        - generic [ref=e19]:
+          - img "글에 어휘의 핀을 꽂다 - 학원 전용" [ref=e22] [cursor=pointer]
+          - img "홈스쿨 전용" [ref=e25] [cursor=pointer]
+          - img "온라인 화상수업" [ref=e28] [cursor=pointer]
+          - img "학교 방과후 전용" [ref=e31] [cursor=pointer]
+      - generic [ref=e32]:
+        - generic [ref=e33]: "1"
+        - generic [ref=e34]: "2"
+        - button "❚❚" [ref=e35] [cursor=pointer]
+    - generic [ref=e36]:
+      - button "학원 학원" [ref=e37] [cursor=pointer]:
+        - img "학원" [ref=e40]
+        - generic [ref=e41]: 학원
+      - button "홈스쿨 홈스쿨" [ref=e42] [cursor=pointer]:
+        - img "홈스쿨" [ref=e45]
+        - generic [ref=e46]: 홈스쿨
+      - button "방과후 한자 방과후 한자" [ref=e47] [cursor=pointer]:
+        - img "방과후 한자" [ref=e50]
+        - generic [ref=e51]: 방과후 한자
+      - button "화상 수업< 화상 수업" [ref=e52] [cursor=pointer]:
+        - img "화상 수업<" [ref=e55]
+        - generic [ref=e56]: 화상 수업
+      - button "문해력 테스트 문해력 테스트" [ref=e57] [cursor=pointer]:
+        - img "문해력 테스트" [ref=e60]
+        - generic [ref=e61]: 문해력 테스트
+    - generic [ref=e62]:
+      - button [ref=e65] [cursor=pointer]:
+        - img "카카오톡 상담·문의" [ref=e66]
+      - generic "글핀 소셜 미디어" [ref=e67]:
+        - link "인스타그램 새 창에서 열기" [ref=e68] [cursor=pointer]:
+          - /url: https://www.instagram.com/geulpin82
+          - generic [aria-hidden] [ref=e69]: 
+        - link "유튜브 새 창에서 열기" [ref=e70] [cursor=pointer]:
+          - /url: https://www.youtube.com/@geulpin
+          - generic [aria-hidden] [ref=e71]: 
+        - link "네이버 새 창에서 열기" [ref=e72] [cursor=pointer]:
+          - /url: https://blog.naver.com/geulpin82
+          - generic [aria-hidden] [ref=e73]: "N"
+    - region [ref=e74]:
+      - generic [ref=e75]:
+        - paragraph [ref=e76]: 아이와 학부모님이 직접 경험한
+        - heading "생생 리얼 후기" [level=2] [ref=e77]
+        - paragraph [ref=e78]: 글핀과 함께 달라진 아이들의 이야기를 만나보세요.
+      - generic [ref=e80]:
+        - article [ref=e81]:
+          - img "새로운 컨텐츠와 체계적 교육과정 후기 이미지" [ref=e82]
+          - generic "평점 5점" [ref=e83]: ★★★★★
+          - heading "새로운 컨텐츠와 체계적 교육과정" [level=3] [ref=e84]
+          - paragraph [ref=e85]: 새로운 컨텐츠와 체계적 교육과정이 아주 잘짜여있고, 흥미로운 커리큘럼이 맘에 든다
+          - generic [ref=e86]:
+            - generic [ref=e87]: 정00
+            - generic [ref=e88]: 초등1
+        - article [ref=e89]:
+          - generic "평점 5점" [ref=e90]: ★★★★★
+          - heading "꼼꼼한 피드백이 만족스러워요" [level=3] [ref=e91]
+          - paragraph [ref=e92]: 아이의 강점과 보완할 부분을 구체적으로 알려주셔서 집에서도 학습을 이어가기 좋습니다.
+          - generic [ref=e93]:
+            - generic [ref=e94]: 정○○ 학부모
+            - generic [ref=e95]: 초등 5학년
+        - article [ref=e96]:
+          - generic "평점 5점" [ref=e97]: ★★★★★
+          - heading "학교 공부에도 도움이 돼요" [level=3] [ref=e98]
+          - paragraph [ref=e99]: 교과서 속 어려운 낱말을 이해하는 속도가 빨라지고 발표할 때도 자신감이 붙었어요.
+          - generic [ref=e100]:
+            - generic [ref=e101]: 최○○ 학부모
+            - generic [ref=e102]: 초등 4학년
+        - article [ref=e103]:
+          - generic "평점 5점" [ref=e104]: ★★★★★
+          - heading "수업 시간이 기다려진대요" [level=3] [ref=e105]
+          - paragraph [ref=e106]: 아이 눈높이에 맞춘 활동이 많아서 집중도 잘하고 매주 수업을 기다립니다.
+          - generic [ref=e107]:
+            - generic [ref=e108]: 이○○ 학부모
+            - generic [ref=e109]: 초등 1학년
+        - article [ref=e110]:
+          - generic "평점 5점" [ref=e111]: ★★★★★
+          - heading "어휘 자신감이 좋아졌어요" [level=3] [ref=e112]
+          - paragraph [ref=e113]: 그림과 이야기로 한자를 배우니 새 단어를 만날 때 뜻을 유추하는 재미가 생겼습니다.
+          - generic [ref=e114]:
+            - generic [ref=e115]: 박○○ 학부모
+            - generic [ref=e116]: 초등 3학년
+        - article [ref=e117]:
+          - generic "평점 5점" [ref=e118]: ★★★★★
+          - heading "혼자 읽는 힘이 생겼어요" [level=3] [ref=e119]
+          - paragraph [ref=e120]: 책 읽기를 어려워하던 아이가 글핀 수업 후 스스로 문장을 읽고 뜻을 설명하기 시작했어요.
+          - generic [ref=e121]:
+            - generic [ref=e122]: 김○○ 학부모
+            - generic [ref=e123]: 초등 2학년
+      - generic [ref=e124]:
+        - button "이전 후기" [ref=e125] [cursor=pointer]: ←
+        - generic [ref=e126]: 1 / 6
+        - button "다음 후기" [ref=e127] [cursor=pointer]: →
+    - contentinfo [ref=e128]
+  - text: Q. Q. Q.

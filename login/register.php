@@ -35,7 +35,7 @@
                                 <label for="idrolebm" class="label-agree-term"><span><span></span></span>지사회원</label>
                                 &nbsp;&nbsp;&nbsp;
                                 <input type="checkbox" name="idrolet" id="idrolet" class="agree-term" />
-                                <label for="idrolet" class="label-agree-term"><span><span></span></span>원장 및 선생님
+                                <label for="idrolet" class="label-agree-term"><span><span></span></span>원장 및 교사
                                 </label>&nbsp;&nbsp;
                                 <input type="checkbox" name="idrolesite" id="idrolesite" class="agree-term" />
                                 <label for="idrolesite" class="label-agree-term"><span><span></span></span>가맹관리

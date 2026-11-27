@@ -1,0 +1,40 @@
+- generic [active] [ref=f3e1]:
+  - main [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - heading "결제를 확인하고 있습니다…" [level=1] [ref=f3e4]
+      - paragraph [ref=f3e5]: 창을 닫지 말고 잠시 기다려 주세요.
+  - contentinfo [ref=f3e6]:
+    - generic [ref=f3e7]:
+      - navigation "약관 및 정책" [ref=f3e8]:
+        - link "이용약관" [ref=f3e9] [cursor=pointer]:
+          - /url: ../policy/terms.php
+        - link "개인정보처리방침" [ref=f3e10] [cursor=pointer]:
+          - /url: ../policy/privacy.php
+        - link "교환·반품·환불 안내" [ref=f3e11] [cursor=pointer]:
+          - /url: ../policy/refund.php
+      - generic [ref=f3e12]:
+        - generic [ref=f3e13]:
+          - term [ref=f3e14]: 상호
+          - definition [ref=f3e15]: (입력 필요)
+        - generic [ref=f3e16]:
+          - term [ref=f3e17]: 대표자
+          - definition [ref=f3e18]: (입력 필요)
+        - generic [ref=f3e19]:
+          - term [ref=f3e20]: 사업자등록번호
+          - definition [ref=f3e21]: (입력 필요)
+        - generic [ref=f3e22]:
+          - term [ref=f3e23]: 통신판매업 신고번호
+          - definition [ref=f3e24]: (입력 필요)
+        - generic [ref=f3e25]:
+          - term [ref=f3e26]: 주소
+          - definition [ref=f3e27]: (입력 필요)
+        - generic [ref=f3e28]:
+          - term [ref=f3e29]: 고객센터
+          - definition [ref=f3e30]: (입력 필요) · (입력 필요)
+        - generic [ref=f3e31]:
+          - term [ref=f3e32]: 개인정보 보호책임자
+          - definition [ref=f3e33]: (입력 필요)
+        - generic [ref=f3e34]:
+          - term [ref=f3e35]: 호스팅 제공자
+          - definition [ref=f3e36]: (입력 필요)
+      - paragraph [ref=f3e37]: © 2026 (입력 필요). All rights reserved.

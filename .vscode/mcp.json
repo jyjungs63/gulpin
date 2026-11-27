@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "photocraft": {
+      "command": "D:\\Utils\\photocraft\\photocraft-cli.exe",
+      "args": [
+        "mcp",
+        "--automation-read-root",
+        "C:/Projects/MyProject/Images",
+        "--automation-write-root",
+        "C:/Projects/MyProject/Output"
+      ]
+    }
+  }
+}

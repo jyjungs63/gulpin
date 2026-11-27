@@ -31,13 +31,10 @@ async function loadProduct() {
             document.getElementById('message').textContent = '장바구니에 담았습니다.';
         });
 
-        document.getElementById('buyBtn').addEventListener('click', async () => {
-            const message = document.getElementById('message');
-            const order = await apiRequest('/orders', {
-                method: 'POST',
-                body: JSON.stringify({ product_id: product.id, quantity: quantity() }),
-            });
-            message.textContent = `주문이 생성되었습니다. 주문번호: ${order.order.id}`;
+        // 구매는 주문/결제 화면(cart.php)에서 배송 정보·약관 동의 후 진행
+        document.getElementById('buyBtn').addEventListener('click', () => {
+            addToCart(product, quantity());
+            location.href = 'cart.php';
         });
     } catch (error) {
         detail.innerHTML = `<p class="notice">${error.message}</p>`;

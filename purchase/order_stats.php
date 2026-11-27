@@ -43,8 +43,11 @@
 /* ================================================================
    DB 연결 (싱글톤)
 ================================================================ */
-require_once '../libs/db_config.php';
-$db   = Database::getInstance()->getConnection();
+if (!defined('GULPIN_INTERNAL_DB_CONFIG')) {
+    define('GULPIN_INTERNAL_DB_CONFIG', true);
+}
+require_once __DIR__ . '/../_private/db_config.php';
+$db = $pdo;
 
 /* ================================================================
    파라미터

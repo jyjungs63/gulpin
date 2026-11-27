@@ -11,30 +11,23 @@
     <title>Document</title>
 
     <?php
-    include '../include.php';
+    require_once __DIR__ . '/../libs/include.php';
+    require_once __DIR__ . '/../libs/includescr.php';
     ?>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/alasql/4.2.2/alasql.min.js"></script> -->
     <!-- json util like sql -->
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
-    <script src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
-    <link href="../common.css" rel="stylesheet">
     <link rel="stylesheet" href="../role-nav.css">
     <script src="../js/role-nav.js" defer></script>
 </head>
@@ -134,7 +127,7 @@
                                                     <option value="0" selected>전체</option>
                                                     <option value="1">유치원지사</option>
                                                     <option value="2">학원지사</option>
-                                                    <option value="3">홈스쿨지사</option>
+                                                    <option value="3">방문수업지사</option>
                                                     <option value="4">화상수업지사</option>
                                                     <option value="5">방과후지사</option>
                                                 </select>&nbsp;&nbsp;
@@ -185,13 +178,9 @@
         </div>
     </div>
     <script src="../js/roles.js"></script>
-    <script src="../purchase/kgardenlist.js"></script>
-    <?php
-    include '../includescr.php';
-    ?>
-    <script src="../common.js"></script>
-    <script src="../header.js"></script>
-    <script src="adminLogin.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/header.js"></script>
+    <script src="adminLogin.js?v=<?= filemtime(__DIR__ . '/adminLogin.js') ?>"></script>
     <script>
         $("#exampleModal").on("hidden.bs.modal", function() {
             // window.location.href = "https://www.eplat.co.kr/index.php";

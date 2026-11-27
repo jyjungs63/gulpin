@@ -7,7 +7,8 @@
 
 header('Content-Type: application/javascript; charset=utf-8');
 
-require_once 'db_config.php';
+require_once __DIR__ . '/../../_private/admin_auth.php';
+require_once __DIR__ . '/db_config.php';
 
 try {
     $db = Database::getInstance()->getConnection();

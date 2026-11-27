@@ -1,0 +1,53 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - link "Shopping Mall" [ref=f2e3] [cursor=pointer]:
+      - /url: index.php
+    - navigation [ref=f2e4]:
+      - link "상품" [ref=f2e5] [cursor=pointer]:
+        - /url: index.php
+      - link "장바구니 2" [ref=f2e6] [cursor=pointer]:
+        - /url: cart.php
+      - link "주문내역" [ref=f2e7] [cursor=pointer]:
+        - /url: orders.php
+      - link "Admin" [ref=f2e8] [cursor=pointer]:
+        - /url: admin.php
+  - main [ref=f2e9]:
+    - generic [ref=f2e11]:
+      - heading "주문 내역" [level=1] [ref=f2e12]
+      - paragraph [ref=f2e13]: 결제 전 주문은 여기서 다시 결제할 수 있습니다. 취소·반품은 고객센터로 요청해 주세요.
+    - paragraph
+  - contentinfo [ref=f2e14]:
+    - generic [ref=f2e15]:
+      - navigation "약관 및 정책" [ref=f2e16]:
+        - link "이용약관" [ref=f2e17] [cursor=pointer]:
+          - /url: ../policy/terms.php
+        - link "개인정보처리방침" [ref=f2e18] [cursor=pointer]:
+          - /url: ../policy/privacy.php
+        - link "교환·반품·환불 안내" [ref=f2e19] [cursor=pointer]:
+          - /url: ../policy/refund.php
+      - generic [ref=f2e20]:
+        - generic [ref=f2e21]:
+          - term [ref=f2e22]: 상호
+          - definition [ref=f2e23]: (입력 필요)
+        - generic [ref=f2e24]:
+          - term [ref=f2e25]: 대표자
+          - definition [ref=f2e26]: (입력 필요)
+        - generic [ref=f2e27]:
+          - term [ref=f2e28]: 사업자등록번호
+          - definition [ref=f2e29]: (입력 필요)
+        - generic [ref=f2e30]:
+          - term [ref=f2e31]: 통신판매업 신고번호
+          - definition [ref=f2e32]: (입력 필요)
+        - generic [ref=f2e33]:
+          - term [ref=f2e34]: 주소
+          - definition [ref=f2e35]: (입력 필요)
+        - generic [ref=f2e36]:
+          - term [ref=f2e37]: 고객센터
+          - definition [ref=f2e38]: (입력 필요) · (입력 필요)
+        - generic [ref=f2e39]:
+          - term [ref=f2e40]: 개인정보 보호책임자
+          - definition [ref=f2e41]: (입력 필요)
+        - generic [ref=f2e42]:
+          - term [ref=f2e43]: 호스팅 제공자
+          - definition [ref=f2e44]: (입력 필요)
+      - paragraph [ref=f2e45]: © 2026 (입력 필요). All rights reserved.

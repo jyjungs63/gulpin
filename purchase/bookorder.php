@@ -315,6 +315,13 @@ include "../libs/header.php";
                                 <a id="idOKOrder" href="javascript:orderOK()" class="btn btn-warning disabled"
                                     role="button" data-toggle="tooltip" title="구매완료" aria-disabled="true"></i>구매완료</a>
                             </div>
+                            <!-- 주문 전 확인·동의 — 서버 SUploadBoardPDF 에서도 확인 (order.php 와 같음) -->
+                            <div class="small mt-2">
+                                <label class="d-block mb-1"><input type="checkbox" id="idAgreeOrder"> [필수] 주문 내용과 결제 금액을 확인했으며
+                                    <a href="../policy/terms.php" target="_blank">이용약관</a>·<a href="../policy/refund.php" target="_blank">교환·반품·환불 안내</a>에 동의합니다.</label>
+                                <label class="d-block mb-0"><input type="checkbox" id="idAgreePrivacy"> [필수] 배송을 위한 개인정보(배송지명, 전화, 주소) 수집·이용에 동의합니다.
+                                    (보유기간: 5년, <a href="../policy/privacy.php" target="_blank">개인정보처리방침</a>)</label>
+                            </div>
                             <div class="card-tools">
                                 <button id="idCardPDFBtn" type="button" class="btn btn-sm btn-primary"
                                     data-card-widget="collapse" data-toggle="tooltip" title="Collapse">접기/펴기</button>
@@ -352,8 +359,8 @@ include "../libs/header.php";
     <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js">
     </script>
 
-    <script src="../js/common.js"></script>
-    <script src="../js/roles.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/roles.js?v=<?= filemtime(__DIR__ . '/../js/roles.js') ?>"></script>
     <script src="../js/header.js"></script>
     <script src="../js/libpdf.js"></script>
     <script src="bookorder.js"></script>
@@ -385,7 +392,7 @@ include "../libs/header.php";
             const group = priceGroups[key];
             listprice2 = (group ? group.items : []).map(item => ({
                 uid: item.code,
-                grade: item.family,
+                grade: GP_ROLE.courseLabel(item.family),
                 title: item.title,
                 price: item.price,
             }));
@@ -718,6 +725,10 @@ include "../libs/header.php";
 
         var orderPrint = () => {
 
+            if (!$("#idAgreeOrder").is(":checked") || !$("#idAgreePrivacy").is(":checked")) {
+                alert("주문 내용 확인 및 필수 항목에 동의해 주세요.");
+                return;
+            }
             if (table1.getDataCount() > 0) {
                 makePurchasePDFList();
 
@@ -936,15 +947,15 @@ include "../libs/header.php";
             formData.append('addr', $("#idAddr").val());
             formData.append('mobile', $("#idMobile").val());
             formData.append('postlist', JSON.stringify(porList));
-            porId = 'P' + formatDate().slice(2) + $("#idOwner").val() + Math.floor(Math.random() * 10) + 1;
-            formData.append('porid', porId)
+            formData.append('agree', '1');   // 확인·동의 (orderPrint 에서 체크)
 
             dispList = (resp) => {
+                porId = resp['porid'];   // 주문번호는 서버에서 생성
                 CallToast('Upload Pdf successfully!!', "success")
                 document.getElementById('pdfDiv').src = resp['url'];
             }
             dispErr = (xhr) => {
-                CallToast('Upload Pdf falure!', "error")
+                CallToast((xhr && xhr.responseJSON && xhr.responseJSON.error) || 'Upload Pdf falure!', "error")
             }
 
             formData.append('functionName', 'SUploadBoardPDF');

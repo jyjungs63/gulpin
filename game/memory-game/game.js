@@ -342,7 +342,7 @@ loadPairs().then(() => {
         selectors.start.classList.add('disabled')
     } else {
         selectors.game.style.display = 'none'
-        selectors.notice.textContent = `${Number(level)}단계 한자게임은 준비 중입니다.`
+        selectors.notice.textContent = `${Number(level)}${isHomeschool ? '단계 한자게임' : '호 게임2'}은 준비 중입니다.`
         selectors.notice.classList.add('show')
     }
 })

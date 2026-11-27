@@ -31,6 +31,7 @@
 .role-nav__menu { display: flex; align-items: center; gap: 6px; }
 .role-nav__menu a { padding: 8px 14px; border-radius: 22px; }
 .role-nav__menu a:hover { background: rgba(255, 255, 255, .13); color: #fff; }
+.role-nav__menu a.is-active { background: #fff; color: #2E7D46; }
 .role-nav__menu .role-nav__logout { background: #E8292A; color: #fff; }
 .role-nav__toggle { display: none; border: 0; background: transparent; color: #fff; font-size: 1.5rem; cursor: pointer; }
 

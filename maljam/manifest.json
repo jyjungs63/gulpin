@@ -1,0 +1,16 @@
+{
+  "name": "말잼별글잼별 - 유치원 전용 학습 프로그램",
+  "short_name": "말잼별글잼별",
+  "id": "/maljam/",
+  "start_url": "/maljam/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#32a55f",
+  "lang": "ko",
+  "icons": [
+    { "src": "/assets/pwa/maljam/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/pwa/maljam/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

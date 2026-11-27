@@ -357,17 +357,18 @@
             user = "admin";
         }
 
-        // 유치원(10)·홈스쿨(30) 선생님 공용 — 서버: Server/student_policy.php (SIdStudents/SIdStudentMaxNo/SIdStudentSave)
+        // 유치원(10)·방문수업(30) 선생님 공용 — 서버: Server/student_policy.php (SIdStudents/SIdStudentMaxNo/SIdStudentSave)
         const IS_HOMESCHOOL = GP_ROLE.group(role) === 3;
+        if (Number(role) === 30) window.location.replace('homeschoolstudents.php');
         // [select value, 과정] — 서버 GP_ID_STUDENT_STEPS 와 같게 유지
         //   유치원 과정 sb/s1/s2 = 선생님 과정 코드 0/A/B (STEP_OPTIONS)
         const STEP_LIST = IS_HOMESCHOOL
-            ? [['급파한', '급파한'], ['홈스쿨', '홈스쿨']]
+            ? [['급파한', '급파한'], ['방문수업', '방문수업']]
             : [['sb', '잼잼별'], ['s1', '말잼별'], ['s2', '글잼별']];
         // 예전 유치원 과정 이름 — 목록에서 새 이름으로 보이고, 그 행을 수정해 저장하면 바뀐다
         const LEGACY_STEP = { '한자뚝0': '잼잼별', '한자뚝A': '말잼별', '한자뚝B': '글잼별' };
         const WORD = IS_HOMESCHOOL
-            ? { student: '학생', owner: '선생님', obj: '학생을' }
+            ? { student: '학생', owner: '교사', obj: '학생을' }
             : { student: '원아', owner: '유치원', obj: '원아를' };
 
         const STEP_OPTIONS = {
@@ -382,7 +383,7 @@
         const stepSelect = document.getElementById('idStudent');
         stepSelect.replaceChildren(new Option('', 'v0'), ...STEP_LIST.map(([value, text]) => new Option(text, value)));
         if (!IS_HOMESCHOOL) applyStepOptions(clas);
-        document.getElementById("idHead").textContent = `[ ${user} ] ${IS_HOMESCHOOL ? '홈스쿨 ' : ''}학생등록 관리리스트`;
+        document.getElementById("idHead").textContent = `[ ${user} ] ${IS_HOMESCHOOL ? '방문수업 ' : ''}학생등록 관리리스트`;
         document.querySelector('label[for="idStudent"]').textContent = '과정 선택';
         document.querySelector('label[for="idNumstudent"]').textContent = `${WORD.student}수`;
         document.getElementById('idNumstudent').placeholder = `${WORD.student}수`;

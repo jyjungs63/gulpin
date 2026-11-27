@@ -15,18 +15,23 @@ $isLocal  = (strpos($fullURL, "localhost") !== false)
          || (strpos($fullURL, "jyjungs1963") !== false)  // nas server 
          || (strpos($fullURL, "10.") !== false);
 
-// 데이터베이스 설정
-define('DB_HOST', 'localhost');
+// 데이터베이스 설정 — 접속 정보는 _private/.env 에서 읽는다 (env.php)
+require_once __DIR__ . '/../_private/env.php';
+loadEnv(__DIR__ . '/../_private/.env');
+
 define('DB_CHARSET', 'utf8mb4');
-define('DB_NAME', 'happyzip2');
 if ($isLocal) {
-    define('DB_USER', 'root');                   // 데이터베이스 사용자명
-    define('DB_PASS', 'manager');                // 데이터베이스 비밀번호 (XAMPP 기본값은 빈 문자열) 
+    define('DB_HOST', env('LOCAL_DB_HOST', 'localhost'));
+    define('DB_NAME', env('LOCAL_DB_NAME'));
+    define('DB_USER', env('LOCAL_DB_USER'));
+    define('DB_PASS', env('LOCAL_DB_PASS'));
 }
 else {
     // 운영 서버 데이터베이스 설정
-    define('DB_USER', 'happyzip2');
-    define('DB_PASS', 'skl32935028@');
+    define('DB_HOST', env('PROD_DB_HOST', 'localhost'));
+    define('DB_NAME', env('PROD_DB_NAME'));
+    define('DB_USER', env('PROD_DB_USER'));
+    define('DB_PASS', env('PROD_DB_PASS'));
 }
 
 

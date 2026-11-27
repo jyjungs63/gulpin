@@ -1,6 +1,9 @@
 <?php
 
-require_once __DIR__ . '/dbinit.php';
+if (!defined('GULPIN_INTERNAL_BOOTSTRAP')) {
+    define('GULPIN_INTERNAL_BOOTSTRAP', true);
+}
+require_once __DIR__ . '/../_private/dbinit.php';
 
 header('Content-Type: application/json; charset=utf-8');
 

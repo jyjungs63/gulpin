@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>글핀 | 초등 문해력 골든타임 완성 학습 프로그램</title>
+<meta name="theme-color" content="#32a55f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="글핀">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<script src="js/pwa.js?v=<?= filemtime('js/pwa.js') ?>"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -27,6 +32,7 @@
 
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
     <button class="burger" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
     <nav class="main-nav" id="mainNav">
       <button class="menu-close" type="button" aria-label="메뉴 닫기" onclick="document.getElementById('mainNav').classList.remove('open')">×</button>
@@ -40,16 +46,19 @@
 
   <!-- Carousel: 4 real banners, 3 visible at a time, arrows move by 1 -->
   <div class="carousel-wrap">
+    <div class="carousel-stage">
     <button class="car-arrow prev" id="prevBtn" onclick="slide(-1)">‹</button>
     <button class="car-arrow next" id="nextBtn" onclick="slide(1)">›</button>
     <div class="carousel-viewport">
       <div class="carousel-track" id="track">
+        <!-- 말잼/글잼(유치원 전용)은 별도 도메인으로 분리 예정 — 현재 도메인에서는 숨김
         <div class="slide" onclick="goToAfterLogin('page-mj')">
           <div class="imgbox">
             <img data-src="mj_online_3.png" alt="말잼별글잼별 - 유치원 전용" onerror="onImgErr(this)">
             <div class="fallback">🐢<br>mjm_kinder_bn.png<br>유치원 전용</div>
           </div>
         </div>
+        -->
         <div class="slide" onclick="goToAfterLogin('page-gp')">
           <div class="imgbox">
             <img data-src="gp_partner_bn.png" alt="글에 어휘의 핀을 꽂다 - 학원 전용" onerror="onImgErr(this)">
@@ -58,8 +67,8 @@
         </div>
         <div class="slide" onclick="openWindowAfterLogin('simple/index.php')">
           <div class="imgbox">
-            <img data-src="bn_school.png" alt="홈스쿨 전용" onerror="onImgErr(this)">
-            <div class="fallback">💻<br>bn_school.png<br>홈스쿨 전용</div>
+            <img data-src="bn_visit.png" alt="방문수업 전용" onerror="onImgErr(this)">
+            <div class="fallback">💻<br>bn_visit.png<br>방문수업 전용</div>
           </div>
         </div>
         <div class="slide" onclick="goToAfterLogin('page-class')">
@@ -77,15 +86,16 @@
         </div>
       </div>
     </div>
+    </div>
     <div class="car-controls">
       <span class="dot" id="dot1">1</span>
       <span class="dot" id="dot2">2</span>
       <button class="play-toggle" id="playBtn" onclick="togglePlay()">❚❚</button>
     </div>
-    <button class="kakao-btn" onclick="openKakao()">
-      <img data-src="btn_kakao.png" alt="카카오톡 상담·문의" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;background:#f9e000;border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.6rem;color:#391b1b;&quot;>TALK</div>';">
-    </button>
     <div class="main-social-links" aria-label="글핀 소셜 미디어">
+      <a class="social-link naver" href="https://blog.naver.com/geulpin82" target="_blank" rel="noopener noreferrer" aria-label="네이버 새 창에서 열기" title="Naver">
+        <span aria-hidden="true">N</span>
+      </a>
       <a class="social-link instagram" href="https://www.instagram.com/geulpin82" target="_blank" rel="noopener noreferrer" aria-label="인스타그램 새 창에서 열기" title="Instagram">
         <i class="fa-brands fa-instagram" aria-hidden="true"></i>
       </a>
@@ -95,25 +105,27 @@
       <!-- <a class="social-link facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="페이스북 새 창에서 열기" title="Facebook">
         <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
       </a> -->
-      <a class="social-link naver" href="https://blog.naver.com/geulpin82" target="_blank" rel="noopener noreferrer" aria-label="네이버 새 창에서 열기" title="Naver">
-        <span aria-hidden="true">N</span>
-      </a>
+      <button class="kakao-btn" onclick="openKakao()">
+        <img data-src="btn_kakao.png" alt="카카오톡 상담·문의" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;background:#f9e000;border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.6rem;color:#391b1b;&quot;>TALK</div>';">
+      </button>
     </div>
   </div>
 
   <!-- Icons: green border on hover, mark selected on click -->
   <div class="icon-row" onclick="selectIcon(event)">
+    <!-- 말잼/글잼(유치원 전용)은 별도 도메인으로 분리 예정 — 현재 도메인에서는 숨김
     <button class="icon-btn" onclick="goToAfterLogin('page-mj')">
       <span class="icon-box"><div class="imgbox"><img data-src="icon_child.jpg" alt="유치원" onerror="onImgErr(this)"><div class="fallback">🧒</div></div></span>
       <span>유치원</span>
     </button>
+    -->
     <button class="icon-btn" onclick="goToAfterLogin('page-gp')">
       <span class="icon-box"><div class="imgbox"><img data-src="icon_gp.png" alt="학원" onerror="onImgErr(this)"><div class="fallback">🗂️</div></div></span>
       <span>학원</span>
     </button>
     <button class="icon-btn" onclick="openWindowAfterLogin('simple/index.php', 'homeschool')">
-      <span class="icon-box"><div class="imgbox"><img data-src="icon_home.png" alt="홈스쿨" onerror="onImgErr(this)"><div class="fallback">🗂️</div></div></span>
-      <span>홈스쿨</span>
+      <span class="icon-box"><div class="imgbox"><img data-src="icon_home.png" alt="방문수업" onerror="onImgErr(this)"><div class="fallback">🗂️</div></div></span>
+      <span>방문수업</span>
     </button>
     <button class="icon-btn" onclick="openWindowAfterLogin('simple/index.php', 'afterschool')">
       <span class="icon-box"><div class="imgbox"><img data-src="icon_school.png" alt="방과후 한자" onerror="onImgErr(this)"><div class="fallback">🏫</div></div></span>
@@ -127,6 +139,12 @@
       <span class="icon-box"><div class="imgbox"><img data-src="icon_check.png" alt="문해력 테스트" onerror="onImgErr(this)"><div class="fallback">📝</div></div></span>
       <span>문해력 테스트</span>
     </button>
+  </div>
+
+  <div class="ad-video-wrap">
+    <div class="carousel-ad-video">
+      <video src="assets/banner/compressed/advertisement_h264.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+    </div>
   </div>
 
   <section class="review-showcase" aria-labelledby="reviewTitle">
@@ -145,13 +163,14 @@
     </div>
   </section>
 
-  <footer></footer>
+  <?php $gpFooterBase = ''; include __DIR__ . '/libs/footer.php'; ?>
 </div>
 
 <!-- ============================================================ 문해력 진단 테스트 ============================================================ -->
 <div id="word-test" class="page">
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <iframe class="word-test-frame" src="WordTest.html" title="문해력 진단 테스트"></iframe>
 </div>
@@ -164,6 +183,7 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
     <button class="gp-utility-toggle" type="button" aria-label="관리 메뉴 열기" aria-expanded="false" onclick="toggleGpUtilityMenu(this)">☰ 메뉴</button>
   </header>
   <div class="header-simple" id="gpUtilityMenu">
@@ -210,6 +230,7 @@
         </div>
         <p class="login-error" id="gpLoginError" role="alert"></p>
         <button type="submit" class="login-submit" id="gpSignin">로그인</button>
+        <a href="login/findpasswd.php" style="display:block; margin-top:12px; text-align:center; font-size:14px; color:#666;">비밀번호를 잊으셨나요?</a>
       </form>
     </div>
   </div>
@@ -223,6 +244,7 @@
   </div>
   <header class="site-header">
     <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/hp_online.png');" role="img" aria-label="그림으로 배우는 한자파닉스">
@@ -239,6 +261,7 @@
   </div>
   <header class="site-header">
     <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/wj_online.png');" role="img" aria-label="우리 아이의 공부 자신감, 어휘잼">
@@ -255,6 +278,7 @@
   </div>
   <header class="site-header">
     <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/hj_vocab.png');" role="img" aria-label="한자로 어휘를 사고한다">
@@ -271,6 +295,7 @@
   </div>
   <header class="site-header">
     <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <div class="banner-hero">
     <div class="imgbox embedded-learning-hero" role="img" aria-label="한자기반 어휘사고력, 급수파자한자">
@@ -287,6 +312,7 @@
   </div>
   <header class="site-header">
     <button class="home-link back-icon-link" type="button" aria-label="뒤로 가기" data-tooltip="뒤로 가기" onclick="goTo('page-gp')">↩</button>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <div class="banner-hero" style="background:#1c2b4a;">
     <div class="imgbox embedded-learning-hero" style="background-image:url('https://www.chaitalkkid.co.kr/gulpin/portal_image/ws_online.png');" role="img" aria-label="어휘력의 신을 깨우다">
@@ -296,6 +322,8 @@
 </div>
 
 <!-- ============================================================ 말잼별글잼별 페이지 ============================================================ -->
+<!-- [분리됨] 아래 page-mj / page-jj / page-mjplay / page-gj 는 별도 도메인용 maljam/index.php 로 복사됨 (2차스팩 1).
+     현재 도메인 진입 버튼은 숨김 상태. 화면을 고칠 때는 maljam/index.php 도 같이 고친다. -->
 <div id="page-mj" class="page">
   <div class="visitor-strip">
     <img class="strip-logo" data-src="gp_logo_03.png" alt="글핀 로고" onerror="this.style.display='none';">
@@ -303,6 +331,7 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
 
   <div class="mj-hero">
@@ -335,9 +364,10 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼별 글잼별으로</button>
-  <section class="star-learning-panel" style="--star-bg:url('assets/banner/jj_main_2.png')" aria-label="잼잼별 영상 학습">
+  <section class="star-learning-panel" data-video-prefix="JJ" data-video-free style="--star-bg:url('assets/banner/jj_main_2.png')" aria-label="잼잼별 영상 학습">
     <div class="star-levels" aria-label="잼잼별 단계 선택"></div>
     <div class="star-learning-actions">
       <!-- <h3>level-01 / unit-01</h3> -->
@@ -363,6 +393,7 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼별글잼별으로</button>
   <section class="star-learning-panel" data-video-prefix="MJ" style="--star-bg:url('assets/banner/mj_main_2.png')" aria-label="말잼별 영상 학습">
@@ -390,6 +421,7 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
   <button class="back-btn" onclick="goTo('page-mj')">← 말잼별글잼별으로</button>
   <section class="star-learning-panel" data-video-prefix="GJ" style="--star-bg:url('assets/banner/gj_bg_04.png')" aria-label="글잼별 영상 학습">
@@ -400,7 +432,7 @@
       <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-gj/level-01/학습영상2.mp4')">학습영상2</button>
       <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-gj/level-01/어휘송.mp4')">어휘송</button>
       <button type="button" onclick="playStarVideo(this,'assets/gulpin/programs/jj/page-gj/level-01/한자송.mp4')">한자송</button>
-      <a class="star-game-link" href="game/paza-game/index.php" target="_blank" rel="noopener">문장마스터</a>
+      <a class="star-game-link" href="game/paza-game/index.php" target="_blank" rel="noopener">어휘마스터</a>
       <a class="star-game-link" href="game/word-game/index.html?star=gj&level=01" onclick="return setStarGameLevel(this)">어휘게임</a>
       <a class="star-game-link" href="game/memory-game/index.html?star=gj&level=01" onclick="return setStarGameLevel(this)">한자게임</a>
     </div>
@@ -419,6 +451,7 @@
   </div>
   <header class="site-header">
     <a class="home-link" onclick="goTo('page-main')">🏠 Home</a>
+    <span class="header-welcome" data-login-welcome>방문자님 환영합니다</span>
   </header>
 
   <div class="class-photo">
@@ -435,7 +468,7 @@
       <p class="class-sub">거리의 제약 없이, 전국 어디에서나!<br>글핀은 전국 어디에서나 참여할 수 있는 실시간 화상수업을 운영합니다.</p>
       <div class="class-features">
         <div class="feature"><span class="f-icon">🗣️</span><p>실시간<br>1:1 그룹 수업</p></div>
-        <div class="feature"><span class="f-icon">👩‍🏫</span><p>전문 선생님과<br>체계적인 수업</p></div>
+        <div class="feature"><span class="f-icon">👩‍🏫</span><p>전문 교사와<br>체계적인 수업</p></div>
         <div class="feature"><span class="f-icon">💡</span><p>교재·영상 연계로<br>학습 효과 UP!</p></div>
         <div class="feature"><span class="f-icon">🖥️</span><p>집에서<br>편리하게, 꾸준히!</p></div>
       </div>
@@ -449,7 +482,7 @@
         <div class="cls-arrow">›</div>
         <div class="cls-process-step"><div class="cls-step-num">2</div><h4>화상 접속</h4><p>정해진 시간에 링크를 눌러<br>화상수업방에 입장해요</p></div>
         <div class="cls-arrow">›</div>
-        <div class="cls-process-step"><div class="cls-step-num">3</div><h4>1:1 맞춤 수업</h4><p>선생님과 실시간으로<br>교재를 보며 학습해요</p></div>
+        <div class="cls-process-step"><div class="cls-step-num">3</div><h4>1:1 맞춤 수업</h4><p>교사와 실시간으로<br>교재를 보며 학습해요</p></div>
       </div>
     </div>
 
@@ -478,12 +511,12 @@
     </div>
 
     <div class="cls-section">
-      <h3 class="cls-h2">선생님 <span>소개</span></h3>
-      <p class="cls-h2-sub">경험 많은 전문 선생님이 함께합니다</p>
+      <h3 class="cls-h2">교사 <span>소개</span></h3>
+      <p class="cls-h2-sub">경험 많은 전문 교사가 함께합니다</p>
       <div class="cls-teacher-cards">
-        <div class="cls-teacher-card"><div class="cls-teacher-avatar">👩‍🏫</div><h4>김민지 선생님</h4><p>초등 문해력 8년차</p></div>
-        <div class="cls-teacher-card"><div class="cls-teacher-avatar">🧑‍🏫</div><h4>박준호 선생님</h4><p>한자·어휘 지도 6년차</p></div>
-        <div class="cls-teacher-card"><div class="cls-teacher-avatar">👩‍🏫</div><h4>이수연 선생님</h4><p>독서·논술 지도 5년차</p></div>
+        <div class="cls-teacher-card"><div class="cls-teacher-avatar">👩‍🏫</div><h4>김민지 교사</h4><p>초등 문해력 8년차</p></div>
+        <div class="cls-teacher-card"><div class="cls-teacher-avatar">🧑‍🏫</div><h4>박준호 교사</h4><p>한자·어휘 지도 6년차</p></div>
+        <div class="cls-teacher-card"><div class="cls-teacher-avatar">👩‍🏫</div><h4>이수연 교사</h4><p>독서·논술 지도 5년차</p></div>
       </div>
     </div>
 
@@ -700,12 +733,14 @@
   }
 
   // 교재 구매에 따른 단계 열람 권한 (Server/catalog.php SGetLearningAccess)
-  //   말잼별 N단계 = 영상코드 MJN, 글잼별 = GJN (data-video-prefix), 주문일로부터 6개월. 접두어 없는 패널(잼잼별)은 제한 없음
+  //   말잼별 N단계 = 영상코드 MJN, 글잼별 = GJN (data-video-prefix), 주문일로부터 6개월. 접두어 없는 패널은 제한 없음
+  //   잼잼별(data-video-free)은 영업 계정(demo)만 제한
   let gpLearningAccess = null;
 
   function starLevelOpen(panel, level){
     const prefix = panel.dataset.videoPrefix;
     if(!prefix) return true;
+    if(panel.dataset.videoFree !== undefined && !gpLearningAccess?.demo) return true;
     if(!gpLearningAccess) return false;
     return gpLearningAccess.all || Boolean(gpLearningAccess.codes[`${prefix}${Number(level)}`]);
   }
@@ -1123,6 +1158,7 @@
           };
           saveLocalStorage('infochaitalk', gpLoginInfo);
           passwordInput.value = '';
+          if(login.mustChange){ location.href = 'login/changepw.php?temp=1'; return; }
           renderGpLogin();
           window.renderRoleNav?.();
           const destination = gpLoginDestination;
@@ -1168,18 +1204,21 @@
     }
   }
 
-  const totalSlides = 4, visible = 3, maxIndex = totalSlides - visible;
+  const totalSlides = 4;
+  // 한 화면에 보이는 배너 수: PC 3장, 모바일(welcome.css 840px 이하) 1장
+  const maxIndex = () => totalSlides - (window.matchMedia('(max-width: 840px)').matches ? 1 : 3);
   let idx = 0, playing = true, timer = null;
   const track = document.getElementById('track');
   function render(){
+    idx = Math.min(idx, maxIndex());
     const slideWidth = track.children[0].getBoundingClientRect().width + 18;
     track.style.transform = `translateX(${-idx*slideWidth}px)`;
     document.getElementById('prevBtn').disabled = idx===0;
-    document.getElementById('nextBtn').disabled = idx===maxIndex;
+    document.getElementById('nextBtn').disabled = idx===maxIndex();
     document.getElementById('dot1').classList.toggle('on', idx===0);
-    document.getElementById('dot2').classList.toggle('on', idx===maxIndex);
+    document.getElementById('dot2').classList.toggle('on', idx===maxIndex());
   }
-  function slide(dir){ idx = Math.min(maxIndex, Math.max(0, idx+dir)); render(); }
+  function slide(dir){ idx = Math.min(maxIndex(), Math.max(0, idx+dir)); render(); }
   function togglePlay(){
     playing = !playing;
     document.getElementById('playBtn').textContent = playing ? '❚❚' : '▶';
@@ -1187,7 +1226,7 @@
   }
   function startAuto(){
     clearInterval(timer);
-    timer = setInterval(()=>{ idx = idx>=maxIndex ? 0 : idx+1; render(); }, 10000);
+    timer = setInterval(()=>{ idx = idx>=maxIndex() ? 0 : idx+1; render(); }, 10000);
   }
 
   const reviewState={items:[],index:0,timer:null,startX:0};

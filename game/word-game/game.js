@@ -206,6 +206,6 @@ if (groups) {
     startGame();
 } else {
     centerEl.style.display = 'none';
-    noticeEl.textContent = `${Number(level)}단계 어휘게임은 준비 중입니다.`;
+    noticeEl.textContent = `${Number(level)}호 게임1은 준비 중입니다.`;
     noticeEl.classList.add('show');
 }

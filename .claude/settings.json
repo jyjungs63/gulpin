@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-NetTCPConnection -LocalPort 3001 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Confirm:$false })",
+      "Bash(node tests/homeschool-ui.cjs)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(PLAYWRIGHT_MODULE=\"C:/Users/정진영/AppData/Local/npm-cache/_npx/381cec31605a419a/node_modules/playwright\" node tests/homeschool-ui.cjs)"
+    ]
+  }
+}
